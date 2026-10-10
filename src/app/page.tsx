@@ -813,7 +813,7 @@ export default function GenWorksMarketplaceLandingPage() {
       specialization: "16:9 Widescreen Brand Epics & Sci-Fi Commercials",
       category: "video",
       avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80",
-      portfolioImg: "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800&auto=format&fit=crop&q=80",
+      portfolioImg: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&auto=format&fit=crop&q=80",
       deliverableType: "16:9 Cinematic Video Trailer",
       aspectRatio: "16:9",
       tools: ["Runway Gen-3", "Luma Dream Machine", "DaVinci"],
