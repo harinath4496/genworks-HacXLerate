@@ -67,6 +67,79 @@ interface Creator {
   workflow: CreatorWorkflow;
 }
 
+// ─────────────────────────────────────────────────────────
+// REUSABLE SCROLL & MOUNT REVEAL COMPONENT
+// Provides silky-smooth staggered entrance transitions on page load and scroll
+// ─────────────────────────────────────────────────────────
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+  direction = "up",
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+  direction?: "up" | "down" | "none";
+}) {
+  const [isVisible, setIsVisible] = useState(false);
+  const domRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = domRef.current;
+    if (!el) return;
+
+    // Immediately trigger for elements in or near initial viewport on page load
+    const rect = el.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || (typeof document !== "undefined" ? document.documentElement.clientHeight : 800);
+    if (rect.top <= viewportHeight + 100) {
+      setIsVisible(true);
+      return;
+    }
+
+    if (typeof IntersectionObserver === "undefined") {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(el);
+        }
+      },
+      {
+        threshold: 0.01,
+        rootMargin: "120px 0px -20px 0px",
+      }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const translateClasses = !isVisible
+    ? direction === "up"
+      ? "opacity-0 translate-y-7"
+      : direction === "down"
+      ? "opacity-0 -translate-y-7"
+      : "opacity-0 scale-[0.98]"
+    : "opacity-100 translate-y-0 scale-100";
+
+  return (
+    <div
+      ref={domRef}
+      style={{
+        transitionDelay: isVisible ? `${delay}ms` : "0ms",
+      }}
+      className={`transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none motion-reduce:transform-none ${translateClasses} ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default function GenWorksMarketplaceLandingPage() {
   // Navigation & Interactive States
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -82,13 +155,34 @@ export default function GenWorksMarketplaceLandingPage() {
   const [authRemember, setAuthRemember] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
-  // Hero Video & Interactive Controls State
+  // Hero Video & Mobile Optimization State
   const [intentRole, setIntentRole] = useState<"hire" | "work">("hire");
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {});
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Immediately trigger playback on mount
+    video.play().catch(() => {});
+
+    // High performance IntersectionObserver:
+    // When hero video is scrolled out of view on mobile or desktop, pause playback
+    // to stop background GPU rendering, eliminate frame drops, and guarantee zero scroll lag.
+    if (typeof IntersectionObserver !== "undefined") {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        },
+        { threshold: 0.05 }
+      );
+
+      observer.observe(video);
+      return () => observer.disconnect();
     }
   }, []);
 
@@ -500,11 +594,11 @@ export default function GenWorksMarketplaceLandingPage() {
 
       {/* ─────────────────────────────────────────────────────────
           2. HERO SECTION — FULL-BLEED CINEMATIC VIDEO BACKDROP
-          (Eliminates margins, gaps & background cutoffs per image_9c69e3.png)
+          (Lag-Free, Mobile-Optimized with Silky Staggered Fade-in)
       ───────────────────────────────────────────────────────── */}
       <section className="relative w-full min-h-[82vh] sm:min-h-[88vh] flex items-center justify-center overflow-hidden bg-[#12130e] pt-28 sm:pt-32 pb-14 sm:pb-16 px-4 sm:px-6 lg:px-8">
         
-        {/* Full-Bleed Edge-to-Edge Background Video */}
+        {/* Full-Bleed Edge-to-Edge Background Video (Lag-Free & Mobile-Optimized) */}
         <video
           ref={videoRef}
           src="/hero-video-lg.mp4"
@@ -512,7 +606,11 @@ export default function GenWorksMarketplaceLandingPage() {
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-70 sm:opacity-85"
+          preload="auto"
+          disablePictureInPicture
+          disableRemotePlayback
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-70 sm:opacity-85 pointer-events-none [transform:translateZ(0)] will-change-transform"
         />
 
         {/* Cinematic Scrim Gradient Overlays: Ensure flawless legibility & mood */}
@@ -523,84 +621,92 @@ export default function GenWorksMarketplaceLandingPage() {
         <div className="relative z-20 max-w-7xl mx-auto w-full flex flex-col justify-center">
           
           {/* Foreground Text & Interactive Controls */}
-          <div className="max-w-3xl opacity-100 transition-all duration-500 ease-out animate-fade-in-up">
+          <div className="max-w-3xl">
             {/* Display Headline matching image_e6ab44.png hierarchy */}
-            <h1 className="font-headline font-black text-4xl sm:text-5xl md:text-6xl lg:text-[66px] tracking-tight leading-[1.06] text-white">
-              Empowering Brands Through{" "}
-              <span className="text-[#e2b888] drop-shadow-sm">AI Creative</span>{" "}
-              Ambition
-            </h1>
+            <Reveal direction="up" delay={60}>
+              <h1 className="font-headline font-black text-4xl sm:text-5xl md:text-6xl lg:text-[66px] tracking-tight leading-[1.06] text-white">
+                Empowering Brands Through{" "}
+                <span className="text-[#e2b888] drop-shadow-sm">AI Creative</span>{" "}
+                Ambition
+              </h1>
+            </Reveal>
 
             {/* Subheadline value proposition */}
-            <p className="font-body text-sm sm:text-base md:text-lg text-white/85 leading-relaxed max-w-2xl mt-4 sm:mt-5 font-normal">
-              Hire verified generative filmmakers, ComfyUI architects, and AI prompt directors who amplify your talent into high-impact campaigns. Guaranteed seed reproducibility, commercial IP warranties, and milestone escrow.
-            </p>
+            <Reveal direction="up" delay={160}>
+              <p className="font-body text-sm sm:text-base md:text-lg text-white/85 leading-relaxed max-w-2xl mt-4 sm:mt-5 font-normal">
+                Hire verified generative filmmakers, ComfyUI architects, and AI prompt directors who amplify your talent into high-impact campaigns. Guaranteed seed reproducibility, commercial IP warranties, and milestone escrow.
+              </p>
+            </Reveal>
 
             {/* Intent Switcher (Segmented Toggle from image_e6ab44.png) */}
-            <div className="flex items-center gap-1 p-1 bg-white/10 backdrop-blur-md rounded-full border border-white/20 w-fit mt-6">
-              <button
-                type="button"
-                onClick={() => {
-                  setIntentRole("hire");
-                  setAuthRole("BRAND");
-                  setAuthStep("role-select");
-                  setAuthMode("signin");
-                  setIsAuthOpen(true);
-                }}
-                className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 ${
-                  intentRole === "hire"
-                    ? "bg-white text-[#1b1c16] shadow-sm font-bold"
-                    : "text-white/90 hover:text-white hover:bg-white/10"
-                }`}
-              >
-                I want to hire AI Creators
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setIntentRole("work");
-                  setAuthRole("CREATOR");
-                  setAuthStep("role-select");
-                  setAuthMode("signin");
-                  setIsAuthOpen(true);
-                }}
-                className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 ${
-                  intentRole === "work"
-                    ? "bg-white text-[#1b1c16] shadow-sm font-bold"
-                    : "text-white/90 hover:text-white hover:bg-white/10"
-                }`}
-              >
-                I want to commission pipelines
-              </button>
-            </div>
+            <Reveal direction="up" delay={260}>
+              <div className="flex items-center gap-1 p-1 bg-white/10 sm:backdrop-blur-md rounded-full border border-white/20 w-fit mt-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIntentRole("hire");
+                    setAuthRole("BRAND");
+                    setAuthStep("role-select");
+                    setAuthMode("signin");
+                    setIsAuthOpen(true);
+                  }}
+                  className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 ${
+                    intentRole === "hire"
+                      ? "bg-white text-[#1b1c16] shadow-sm font-bold"
+                      : "text-white/90 hover:text-white hover:bg-white/10"
+                  }`}
+                >
+                  I want to hire AI Creators
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIntentRole("work");
+                    setAuthRole("CREATOR");
+                    setAuthStep("role-select");
+                    setAuthMode("signin");
+                    setIsAuthOpen(true);
+                  }}
+                  className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 ${
+                    intentRole === "work"
+                      ? "bg-white text-[#1b1c16] shadow-sm font-bold"
+                      : "text-white/90 hover:text-white hover:bg-white/10"
+                  }`}
+                >
+                  I want to commission pipelines
+                </button>
+              </div>
+            </Reveal>
 
             {/* Translucent Glassmorphic Search Bar (Icon-only submit, triggers auth modal) */}
-            <div className="w-full max-w-2xl mt-5 sm:mt-6">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setAuthStep("role-select");
-                  setAuthMode("signin");
-                  setIsAuthOpen(true);
-                }}
-                className="relative flex items-center bg-white/95 hover:bg-white backdrop-blur-md rounded-full p-2 pl-5 sm:pl-7 shadow-2xl border border-white/40 focus-within:ring-4 focus-within:ring-[#d3a373]/30 transition-all duration-300"
-              >
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search for AI content creator portfolio, tools, models..."
-                  className="w-full bg-transparent text-[#1b1c16] placeholder:text-[#50453b]/70 font-body text-xs sm:text-base outline-none pr-3 font-medium"
-                />
-                <button
-                  type="submit"
-                  aria-label="Search"
-                  className="bg-[#1b1c16] hover:bg-[#2d2e26] text-white w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all duration-200 shrink-0 border border-white/10"
+            <Reveal direction="up" delay={360}>
+              <div className="w-full max-w-2xl mt-5 sm:mt-6">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setAuthStep("role-select");
+                    setAuthMode("signin");
+                    setIsAuthOpen(true);
+                  }}
+                  className="relative flex items-center bg-white/95 hover:bg-white sm:backdrop-blur-md rounded-full p-2 pl-5 sm:pl-7 shadow-2xl border border-white/40 focus-within:ring-4 focus-within:ring-[#d3a373]/30 transition-all duration-300"
                 >
-                  <Search className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#d3a373]" />
-                </button>
-              </form>
-            </div>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search for AI content creator portfolio, tools, models..."
+                    className="w-full bg-transparent text-[#1b1c16] placeholder:text-[#50453b]/70 font-body text-xs sm:text-base outline-none pr-3 font-medium"
+                  />
+                  <button
+                    type="submit"
+                    aria-label="Search"
+                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#1b1c16] hover:bg-[#2d2e26] text-[#d3a373] flex items-center justify-center transition-all duration-300 shadow-md hover:scale-105 active:scale-95 shrink-0"
+                  >
+                    <Search className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#d3a373]" />
+                  </button>
+                </form>
+              </div>
+            </Reveal>
 
           </div>
 
@@ -615,98 +721,108 @@ export default function GenWorksMarketplaceLandingPage() {
           (Clean, focused workflow per user design requirements)
       ───────────────────────────────────────────────────────── */}
       <section id="how-it-works" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="font-mono text-xs uppercase tracking-widest text-[#5a6242] font-bold block mb-3">
-            END-TO-END PRODUCTION PIPELINE
-          </span>
-          <h2 className="font-headline font-black text-3xl sm:text-5xl text-[#1b1c16] tracking-tight">
-            How{" "}
-            <span className="bg-[#dfe7bf] text-[#1b1c16] px-4 py-1 rounded-full inline-block border border-[#c2caa4]">
-              GenWorks
-            </span>{" "}
-            Works
-          </h2>
-          <p className="font-body text-[#50453b] text-sm sm:text-base mt-4 leading-relaxed">
-            A deterministic, milestone-escrow platform connecting top-tier brands with vetted generative AI directors. Guaranteed reproducibility, commercial IP warranties, and seamless delivery.
-          </p>
-        </div>
+        <Reveal direction="up" delay={50}>
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="font-mono text-xs uppercase tracking-widest text-[#5a6242] font-bold block mb-3">
+              END-TO-END PRODUCTION PIPELINE
+            </span>
+            <h2 className="font-headline font-black text-3xl sm:text-5xl text-[#1b1c16] tracking-tight">
+              How{" "}
+              <span className="bg-[#dfe7bf] text-[#1b1c16] px-4 py-1 rounded-full inline-block border border-[#c2caa4]">
+                GenWorks
+              </span>{" "}
+              Works
+            </h2>
+            <p className="font-body text-[#50453b] text-sm sm:text-base mt-4 leading-relaxed">
+              A deterministic, milestone-escrow platform connecting top-tier brands with vetted generative AI directors. Guaranteed reproducibility, commercial IP warranties, and seamless delivery.
+            </p>
+          </div>
+        </Reveal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Step 1 */}
-          <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-[#dfe7bf] text-[#1b1c16] flex items-center justify-center font-mono font-black text-base mb-6 group-hover:scale-105 transition-transform">
-                01
+          <Reveal direction="up" delay={100} className="h-full">
+            <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group h-full">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-[#dfe7bf] text-[#1b1c16] flex items-center justify-center font-mono font-black text-base mb-6 group-hover:scale-105 transition-transform">
+                  01
+                </div>
+                <h3 className="font-headline font-black text-lg text-[#1b1c16] mb-2">
+                  Post Brief &amp; Escrow Vault
+                </h3>
+                <p className="font-body text-xs sm:text-sm text-[#50453b] leading-relaxed">
+                  Define creative goals, aspect ratios, and toolchain requirements. Project funds are deposited securely into an escrow vault before production begins.
+                </p>
               </div>
-              <h3 className="font-headline font-black text-lg text-[#1b1c16] mb-2">
-                Post Brief &amp; Escrow Vault
-              </h3>
-              <p className="font-body text-xs sm:text-sm text-[#50453b] leading-relaxed">
-                Define creative goals, aspect ratios, and toolchain requirements. Project funds are deposited securely into an escrow vault before production begins.
-              </p>
+              <div className="mt-6 pt-4 border-t border-[#e4e3d9]/60 flex items-center gap-2 text-[11px] font-mono text-[#5a6242] font-semibold">
+                <ShieldCheck className="w-4 h-4 text-[#5a6242]" />
+                <span>Milestone Escrow Protection</span>
+              </div>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#e4e3d9]/60 flex items-center gap-2 text-[11px] font-mono text-[#5a6242] font-semibold">
-              <ShieldCheck className="w-4 h-4 text-[#5a6242]" />
-              <span>Milestone Escrow Protection</span>
-            </div>
-          </div>
+          </Reveal>
 
           {/* Step 2 */}
-          <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-[#d3a373] text-[#1b1c16] flex items-center justify-center font-mono font-black text-base mb-6 group-hover:scale-105 transition-transform">
-                02
+          <Reveal direction="up" delay={200} className="h-full">
+            <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group h-full">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-[#d3a373] text-[#1b1c16] flex items-center justify-center font-mono font-black text-base mb-6 group-hover:scale-105 transition-transform">
+                  02
+                </div>
+                <h3 className="font-headline font-black text-lg text-[#1b1c16] mb-2">
+                  Match Vetted AI Directors
+                </h3>
+                <p className="font-body text-xs sm:text-sm text-[#50453b] leading-relaxed">
+                  Get matched directly with vetted creators specializing in Runway Gen-3, Flux photorealism, and ComfyUI pipelines tailored to your aesthetic.
+                </p>
               </div>
-              <h3 className="font-headline font-black text-lg text-[#1b1c16] mb-2">
-                Match Vetted AI Directors
-              </h3>
-              <p className="font-body text-xs sm:text-sm text-[#50453b] leading-relaxed">
-                Get matched directly with vetted creators specializing in Runway Gen-3, Flux photorealism, and ComfyUI pipelines tailored to your aesthetic.
-              </p>
+              <div className="mt-6 pt-4 border-t border-[#e4e3d9]/60 flex items-center gap-2 text-[11px] font-mono text-[#50453b] font-semibold">
+                <BadgeCheck className="w-4 h-4 text-[#d3a373]" />
+                <span>Top 1% Curated Creators</span>
+              </div>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#e4e3d9]/60 flex items-center gap-2 text-[11px] font-mono text-[#50453b] font-semibold">
-              <BadgeCheck className="w-4 h-4 text-[#d3a373]" />
-              <span>Top 1% Curated Creators</span>
-            </div>
-          </div>
+          </Reveal>
 
           {/* Step 3 */}
-          <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-[#efeee4] text-[#1b1c16] flex items-center justify-center font-mono font-black text-base mb-6 group-hover:scale-105 transition-transform">
-                03
+          <Reveal direction="up" delay={300} className="h-full">
+            <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group h-full">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-[#efeee4] text-[#1b1c16] flex items-center justify-center font-mono font-black text-base mb-6 group-hover:scale-105 transition-transform">
+                  03
+                </div>
+                <h3 className="font-headline font-black text-lg text-[#1b1c16] mb-2">
+                  Deterministic Seed Review
+                </h3>
+                <p className="font-body text-xs sm:text-sm text-[#50453b] leading-relaxed">
+                  Review generations with full seed reproducibility, CFG scale parameters, LoRA weights, and node pipelines to guarantee consistent output quality.
+                </p>
               </div>
-              <h3 className="font-headline font-black text-lg text-[#1b1c16] mb-2">
-                Deterministic Seed Review
-              </h3>
-              <p className="font-body text-xs sm:text-sm text-[#50453b] leading-relaxed">
-                Review generations with full seed reproducibility, CFG scale parameters, LoRA weights, and node pipelines to guarantee consistent output quality.
-              </p>
+              <div className="mt-6 pt-4 border-t border-[#e4e3d9]/60 flex items-center gap-2 text-[11px] font-mono text-[#50453b] font-semibold">
+                <Sparkles className="w-4 h-4 text-[#1b1c16]" />
+                <span>100% Seed Reproducibility</span>
+              </div>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#e4e3d9]/60 flex items-center gap-2 text-[11px] font-mono text-[#50453b] font-semibold">
-              <Sparkles className="w-4 h-4 text-[#1b1c16]" />
-              <span>100% Seed Reproducibility</span>
-            </div>
-          </div>
+          </Reveal>
 
           {/* Step 4 */}
-          <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-[#1b1c16] text-[#dfe7bf] flex items-center justify-center font-mono font-black text-base mb-6 group-hover:scale-105 transition-transform">
-                04
+          <Reveal direction="up" delay={400} className="h-full">
+            <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group h-full">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-[#1b1c16] text-[#dfe7bf] flex items-center justify-center font-mono font-black text-base mb-6 group-hover:scale-105 transition-transform">
+                  04
+                </div>
+                <h3 className="font-headline font-black text-lg text-[#1b1c16] mb-2">
+                  IP Transfer &amp; Release
+                </h3>
+                <p className="font-body text-xs sm:text-sm text-[#50453b] leading-relaxed">
+                  Approve final assets. Commercial IP rights and raw pipeline workflows are transferred directly to your organization as escrow is released.
+                </p>
               </div>
-              <h3 className="font-headline font-black text-lg text-[#1b1c16] mb-2">
-                IP Transfer &amp; Release
-              </h3>
-              <p className="font-body text-xs sm:text-sm text-[#50453b] leading-relaxed">
-                Approve final assets. Commercial IP rights and raw pipeline workflows are transferred directly to your organization as escrow is released.
-              </p>
+              <div className="mt-6 pt-4 border-t border-[#e4e3d9]/60 flex items-center gap-2 text-[11px] font-mono text-[#5a6242] font-semibold">
+                <CheckCircle2 className="w-4 h-4 text-[#5a6242]" />
+                <span>Full Commercial IP Buyout</span>
+              </div>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#e4e3d9]/60 flex items-center gap-2 text-[11px] font-mono text-[#5a6242] font-semibold">
-              <CheckCircle2 className="w-4 h-4 text-[#5a6242]" />
-              <span>Full Commercial IP Buyout</span>
-            </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -717,67 +833,71 @@ export default function GenWorksMarketplaceLandingPage() {
       <section id="creators" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header with Category Filter Controls & Search */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
-          <div>
-            <span className="font-mono text-xs uppercase tracking-widest text-[#5a6242] font-bold block mb-2">
-              DISCOVERY &amp; REPRODUCIBLE PORTFOLIOS
-            </span>
-            <h2 className="font-headline font-black text-3xl sm:text-5xl text-[#1b1c16] tracking-tight">
-              Verified{" "}
-              <span className="bg-[#dfe7bf] text-[#1b1c16] px-4 py-1 rounded-full inline-block border border-[#c2caa4]">
-                AI Creators
+        <Reveal direction="up" delay={50}>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
+            <div>
+              <span className="font-mono text-xs uppercase tracking-widest text-[#5a6242] font-bold block mb-2">
+                DISCOVERY &amp; REPRODUCIBLE PORTFOLIOS
               </span>
-            </h2>
-          </div>
+              <h2 className="font-headline font-black text-3xl sm:text-5xl text-[#1b1c16] tracking-tight">
+                Verified{" "}
+                <span className="bg-[#dfe7bf] text-[#1b1c16] px-4 py-1 rounded-full inline-block border border-[#c2caa4]">
+                  AI Creators
+                </span>
+              </h2>
+            </div>
 
-          <button
-            onClick={() => { setAuthMode("signup"); setAuthRole("CREATOR"); setIsAuthOpen(true); }}
-            className="px-6 py-3 rounded-full border border-[#1b1c16] hover:bg-[#1b1c16] hover:text-[#fbfaf0] text-[#1b1c16] font-headline font-bold text-xs uppercase tracking-wider transition-all duration-300 self-start sm:self-auto flex items-center gap-2"
-          >
-            <span>Apply as AI Creator</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
+            <button
+              onClick={() => { setAuthMode("signup"); setAuthRole("CREATOR"); setIsAuthOpen(true); }}
+              className="px-6 py-3 rounded-full border border-[#1b1c16] hover:bg-[#1b1c16] hover:text-[#fbfaf0] text-[#1b1c16] font-headline font-bold text-xs uppercase tracking-wider transition-all duration-300 self-start sm:self-auto flex items-center gap-2"
+            >
+              <span>Apply as AI Creator</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </Reveal>
 
         {/* Master Control Hub: Search & Category Filter Pills */}
-        <div className="bg-white p-4 rounded-3xl border border-[#e4e3d9] shadow-sm mb-12 flex flex-col md:flex-row items-center justify-between gap-4">
-          
-          {/* Category Filter Pills */}
-          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-            {[
-              { id: "all", label: "All Disciplines" },
-              { id: "video", label: "Runway & 9:16 Video" },
-              { id: "photography", label: "Flux.1 Photorealism" },
-              { id: "pipelines", label: "ComfyUI & LoRAs" },
-              { id: "audio", label: "Voiceover & Audio" }
-            ].map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 py-2 rounded-full text-xs font-headline font-bold transition-all ${
-                  selectedCategory === cat.id
-                    ? "bg-[#1b1c16] text-[#fbfaf0] shadow"
-                    : "bg-[#efeee4] text-[#50453b] hover:text-[#1b1c16]"
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
+        <Reveal direction="up" delay={150}>
+          <div className="bg-white p-4 rounded-3xl border border-[#e4e3d9] shadow-sm mb-12 flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            {/* Category Filter Pills */}
+            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+              {[
+                { id: "all", label: "All Disciplines" },
+                { id: "video", label: "Runway & 9:16 Video" },
+                { id: "photography", label: "Flux.1 Photorealism" },
+                { id: "pipelines", label: "ComfyUI & LoRAs" },
+                { id: "audio", label: "Voiceover & Audio" }
+              ].map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`px-4 py-2 rounded-full text-xs font-headline font-bold transition-all ${
+                    selectedCategory === cat.id
+                      ? "bg-[#1b1c16] text-[#fbfaf0] shadow"
+                      : "bg-[#efeee4] text-[#50453b] hover:text-[#1b1c16]"
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
 
-          {/* Search Input Box */}
-          <div className="relative w-full md:w-72">
-            <Search className="w-4 h-4 text-[#82756a] absolute left-3.5 top-3" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search tools, models, skills..."
-              className="w-full bg-[#efeee4] text-[#1b1c16] pl-10 pr-4 py-2 rounded-full text-xs font-body border border-transparent focus:border-[#d3a373] focus:outline-none"
-            />
-          </div>
+            {/* Search Input Box */}
+            <div className="relative w-full md:w-72">
+              <Search className="w-4 h-4 text-[#82756a] absolute left-3.5 top-3" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search tools, models, skills..."
+                className="w-full bg-[#efeee4] text-[#1b1c16] pl-10 pr-4 py-2 rounded-full text-xs font-body border border-transparent focus:border-[#d3a373] focus:outline-none"
+              />
+            </div>
 
-        </div>
+          </div>
+        </Reveal>
 
         {/* Empty Search State */}
         {filteredCreators.length === 0 && (
@@ -796,110 +916,111 @@ export default function GenWorksMarketplaceLandingPage() {
           </div>
         )}
 
-        {/* 3-Column x 2-Row Rich Creator Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCreators.map((creator) => (
-            <div
-              key={creator.id}
-              className="bg-white text-[#1b1c16] rounded-[28px] overflow-hidden shadow-lg border border-[#e4e3d9] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group"
-            >
-              <div>
-                {/* Visual Deliverable Header Preview */}
-                <div className="relative h-48 w-full overflow-hidden bg-[#efeee4]">
-                  <Image
-                    src={creator.portfolioImg}
-                    alt={creator.deliverableType}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1b1c16]/80 via-transparent to-transparent" />
-                  
-                  {/* Aspect Ratio Badge */}
-                  <span className="absolute top-3 left-3 bg-[#1b1c16]/80 backdrop-blur-md text-[#d3a373] text-[10px] font-mono font-bold px-2.5 py-1 rounded-full border border-white/20">
-                    {creator.aspectRatio}
-                  </span>
+        {/* 3-Column x 2-Row Rich Creator Cards Grid with Staggered Cascading Reveal */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {filteredCreators.map((creator, idx) => (
+            <Reveal key={creator.id} direction="up" delay={(idx % 3) * 120} className="h-full">
+              <div
+                className="bg-white text-[#1b1c16] rounded-[28px] overflow-hidden shadow-lg border border-[#e4e3d9] hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group h-full"
+              >
+                <div>
+                  {/* Visual Deliverable Header Preview */}
+                  <div className="relative h-48 w-full overflow-hidden bg-[#efeee4]">
+                    <Image
+                      src={creator.portfolioImg}
+                      alt={creator.deliverableType}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1b1c16]/80 via-transparent to-transparent" />
+                    
+                    {/* Aspect Ratio Badge */}
+                    <span className="absolute top-3 left-3 bg-[#1b1c16]/80 backdrop-blur-md text-[#d3a373] text-[10px] font-mono font-bold px-2.5 py-1 rounded-full border border-white/20">
+                      {creator.aspectRatio}
+                    </span>
 
-                  {/* Verification Shield Pill */}
-                  <span className="absolute top-3 right-3 bg-[#dfe7bf] text-[#5a6242] text-[10px] font-mono font-bold px-2.5 py-1 rounded-full border border-[#c2caa4] flex items-center gap-1">
-                    <BadgeCheck className="w-3 h-3" />
-                    {creator.verificationBadge}
-                  </span>
+                    {/* Verification Shield Pill */}
+                    <span className="absolute top-3 right-3 bg-[#dfe7bf] text-[#5a6242] text-[10px] font-mono font-bold px-2.5 py-1 rounded-full border border-[#c2caa4] flex items-center gap-1">
+                      <BadgeCheck className="w-3 h-3" />
+                      {creator.verificationBadge}
+                    </span>
 
-                  {/* Deliverable Title */}
-                  <div className="absolute bottom-3 left-4 right-4">
-                    <p className="font-mono text-[11px] text-[#efeee4]/80">Deliverable Sample</p>
-                    <p className="font-headline font-bold text-sm text-white truncate">
-                      {creator.deliverableType}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Creator Information & Profile */}
-                <div className="p-6">
-                  <div className="flex items-center gap-3.5 mb-4">
-                    <div className="relative w-12 h-12 rounded-full p-1 bg-[#dfe7bf] border border-[#c2caa4] flex items-center justify-center shrink-0 shadow-md">
-                      <Image
-                        src={creator.avatar}
-                        alt={creator.name}
-                        width={48}
-                        height={48}
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-1.5">
-                        <h3 className="font-headline font-extrabold text-base text-[#1b1c16] leading-tight">
-                          {creator.name}
-                        </h3>
-                        <span className="text-[11px] font-mono text-[#82756a]">{creator.handle}</span>
-                      </div>
-                      <p className="font-body text-xs text-[#5a6242] font-semibold mt-0.5">
-                        {creator.role}
+                    {/* Deliverable Title */}
+                    <div className="absolute bottom-3 left-4 right-4">
+                      <p className="font-mono text-[11px] text-[#efeee4]/80">Deliverable Sample</p>
+                      <p className="font-headline font-bold text-sm text-white truncate">
+                        {creator.deliverableType}
                       </p>
                     </div>
                   </div>
 
-                  <p className="font-body text-xs text-[#50453b] leading-relaxed mb-4">
-                    Specialized in: <strong className="text-[#1b1c16]">{creator.specialization}</strong>. Has completed {creator.projectsCompleted} enterprise campaigns with a {creator.rating} ★ client satisfaction rating.
-                  </p>
+                  {/* Creator Information & Profile */}
+                  <div className="p-6">
+                    <div className="flex items-center gap-3.5 mb-4">
+                      <div className="relative w-12 h-12 rounded-full p-1 bg-[#dfe7bf] border border-[#c2caa4] flex items-center justify-center shrink-0 shadow-md">
+                        <Image
+                          src={creator.avatar}
+                          alt={creator.name}
+                          width={48}
+                          height={48}
+                          className="w-full h-full object-cover rounded-full"
+                        />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <h3 className="font-headline font-extrabold text-base text-[#1b1c16] leading-tight">
+                            {creator.name}
+                          </h3>
+                          <span className="text-[11px] font-mono text-[#82756a]">{creator.handle}</span>
+                        </div>
+                        <p className="font-body text-xs text-[#5a6242] font-semibold mt-0.5">
+                          {creator.role}
+                        </p>
+                      </div>
+                    </div>
 
-                  {/* Tools Badges */}
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {creator.tools.map((tool) => (
-                      <span
-                        key={tool}
-                        className="bg-[#efeee4] text-[#1b1c16] px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold"
-                      >
-                        {tool}
-                      </span>
-                    ))}
+                    <p className="font-body text-xs text-[#50453b] leading-relaxed mb-4">
+                      Specialized in: <strong className="text-[#1b1c16]">{creator.specialization}</strong>. Has completed {creator.projectsCompleted} enterprise campaigns with a {creator.rating} ★ client satisfaction rating.
+                    </p>
+
+                    {/* Tools Badges */}
+                    <div className="flex flex-wrap gap-1.5 mb-4">
+                      {creator.tools.map((tool) => (
+                        <span
+                          key={tool}
+                          className="bg-[#efeee4] text-[#1b1c16] px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold"
+                        >
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
+
+                {/* Bottom Card Actions: Inspect Workflow + Hire */}
+                <div className="p-6 pt-0 border-t border-[#e4e3d9]/60 flex items-center justify-between gap-3">
+                  <button
+                    onClick={() => setActiveWorkflowModal(creator)}
+                    className="flex-1 py-2.5 px-3 rounded-full bg-[#efeee4] hover:bg-[#e4e3d9] text-[#1b1c16] text-xs font-headline font-bold flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-[#5a6242]" />
+                    <span>Inspect Workflow</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setAuthMode("signup");
+                      setIsAuthOpen(true);
+                    }}
+                    className="py-2.5 px-4 rounded-full bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-headline font-bold flex items-center justify-center gap-1 transition-all"
+                  >
+                    <span>Hire</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
               </div>
-
-              {/* Bottom Card Actions: Inspect Workflow + Hire */}
-              <div className="p-6 pt-0 border-t border-[#e4e3d9]/60 flex items-center justify-between gap-3">
-                <button
-                  onClick={() => setActiveWorkflowModal(creator)}
-                  className="flex-1 py-2.5 px-3 rounded-full bg-[#efeee4] hover:bg-[#e4e3d9] text-[#1b1c16] text-xs font-headline font-bold flex items-center justify-center gap-1.5 transition-colors"
-                >
-                  <FileText className="w-3.5 h-3.5 text-[#5a6242]" />
-                  <span>Inspect Workflow</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setAuthMode("signup");
-                    setIsAuthOpen(true);
-                  }}
-                  className="py-2.5 px-4 rounded-full bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-headline font-bold flex items-center justify-center gap-1 transition-all"
-                >
-                  <span>Hire</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-            </div>
+            </Reveal>
           ))}
         </div>
 
@@ -912,53 +1033,55 @@ export default function GenWorksMarketplaceLandingPage() {
       <footer className="bg-[#1b1c16] text-[#efeee4] rounded-t-[40px] sm:rounded-t-[56px] pt-16 sm:pt-20 pb-12 px-6 sm:px-10 lg:px-16 mt-16 transition-all border-t border-[#5a6242]/30">
         <div className="max-w-7xl mx-auto">
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
-            
-            {/* Top Left: GenWorks Wordmark with Modular 2x2 Cubes */}
-            <div className="lg:col-span-2 space-y-4">
-              <GenWorksLogo size="md" inverted={true} animated={false} />
-              <p className="font-body text-xs sm:text-sm text-[#efeee4]/75 max-w-sm leading-relaxed">
-                The curated marketplace connecting brands and creative agencies with verified generative filmmakers, ComfyUI architects, and AI directors. Production-grade escrow and deterministic pipeline delivery.
-              </p>
-            </div>
+          <Reveal direction="up" delay={50}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+              
+              {/* Top Left: GenWorks Wordmark with Modular 2x2 Cubes */}
+              <div className="lg:col-span-2 space-y-4">
+                <GenWorksLogo size="md" inverted={true} animated={false} />
+                <p className="font-body text-xs sm:text-sm text-[#efeee4]/75 max-w-sm leading-relaxed">
+                  The curated marketplace connecting brands and creative agencies with verified generative filmmakers, ComfyUI architects, and AI directors. Production-grade escrow and deterministic pipeline delivery.
+                </p>
+              </div>
 
-            {/* Navigation Column 1: Platform */}
-            <div className="space-y-3">
-              <p className="font-headline font-black text-xs uppercase tracking-wider text-[#d3a373]">Platform</p>
-              <ul className="space-y-2 font-body text-xs text-[#efeee4]/80 font-medium">
-                <li><a href="#how-it-works" className="hover:text-white transition-colors">How GenWorks Works</a></li>
-                <li><a href="#creators" className="hover:text-white transition-colors">AI Creators Directory</a></li>
-                <li><button onClick={() => { setAuthRole("BRAND"); setAuthStep("form"); setAuthMode("signin"); setIsAuthOpen(true); }} className="hover:text-white transition-colors text-left">Client Login</button></li>
-                <li><button onClick={() => { setAuthRole("CREATOR"); setAuthStep("form"); setAuthMode("signin"); setIsAuthOpen(true); }} className="hover:text-white transition-colors text-left">Creator Login</button></li>
-              </ul>
-            </div>
+              {/* Navigation Column 1: Platform */}
+              <div className="space-y-3">
+                <p className="font-headline font-black text-xs uppercase tracking-wider text-[#d3a373]">Platform</p>
+                <ul className="space-y-2 font-body text-xs text-[#efeee4]/80 font-medium">
+                  <li><a href="#how-it-works" className="hover:text-white transition-colors">How GenWorks Works</a></li>
+                  <li><a href="#creators" className="hover:text-white transition-colors">AI Creators Directory</a></li>
+                  <li><button onClick={() => { setAuthRole("BRAND"); setAuthStep("form"); setAuthMode("signin"); setIsAuthOpen(true); }} className="hover:text-white transition-colors text-left">Client Login</button></li>
+                  <li><button onClick={() => { setAuthRole("CREATOR"); setAuthStep("form"); setAuthMode("signin"); setIsAuthOpen(true); }} className="hover:text-white transition-colors text-left">Creator Login</button></li>
+                </ul>
+              </div>
 
-            {/* Navigation Column 2: Escrow & Assurance */}
-            <div className="space-y-3">
-              <p className="font-headline font-black text-xs uppercase tracking-wider text-[#d3a373]">Security &amp; Portals</p>
-              <ul className="space-y-2 font-body text-xs text-[#efeee4]/80 font-medium">
-                <li><a href="#how-it-works" className="hover:text-white transition-colors">Milestone Escrow Protection</a></li>
-                <li><a href="#how-it-works" className="hover:text-white transition-colors">Deterministic Seed Review</a></li>
-                <li><button onClick={() => { setAuthRole("BRAND"); setAuthStep("role-select"); setAuthMode("signup"); setIsAuthOpen(true); }} className="hover:text-white transition-colors text-left">Hire Top AI Directors</button></li>
-                <li><button onClick={() => { setAuthRole("CREATOR"); setAuthStep("role-select"); setAuthMode("signup"); setIsAuthOpen(true); }} className="hover:text-white transition-colors text-left">Join as AI Creator</button></li>
-              </ul>
-            </div>
+              {/* Navigation Column 2: Escrow & Assurance */}
+              <div className="space-y-3">
+                <p className="font-headline font-black text-xs uppercase tracking-wider text-[#d3a373]">Security &amp; Portals</p>
+                <ul className="space-y-2 font-body text-xs text-[#efeee4]/80 font-medium">
+                  <li><a href="#how-it-works" className="hover:text-white transition-colors">Milestone Escrow Protection</a></li>
+                  <li><a href="#how-it-works" className="hover:text-white transition-colors">Deterministic Seed Review</a></li>
+                  <li><button onClick={() => { setAuthRole("BRAND"); setAuthStep("role-select"); setAuthMode("signup"); setIsAuthOpen(true); }} className="hover:text-white transition-colors text-left">Hire Top AI Directors</button></li>
+                  <li><button onClick={() => { setAuthRole("CREATOR"); setAuthStep("role-select"); setAuthMode("signup"); setIsAuthOpen(true); }} className="hover:text-white transition-colors text-left">Join as AI Creator</button></li>
+                </ul>
+              </div>
 
-            {/* Navigation Column 3: Quick Connect */}
-            <div className="space-y-3">
-              <p className="font-headline font-black text-xs uppercase tracking-wider text-[#d3a373]">Get Started</p>
-              <p className="font-body text-xs text-[#efeee4]/80">
-                Ready to commission AI creative assets or monetize your workflow?
-              </p>
-              <button
-                onClick={() => { setAuthStep("role-select"); setAuthMode("signin"); setIsAuthOpen(true); }}
-                className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] font-headline font-bold text-xs px-5 py-2.5 rounded-full shadow transition-all"
-              >
-                Sign In / Join →
-              </button>
-            </div>
+              {/* Navigation Column 3: Quick Connect */}
+              <div className="space-y-3">
+                <p className="font-headline font-black text-xs uppercase tracking-wider text-[#d3a373]">Get Started</p>
+                <p className="font-body text-xs text-[#efeee4]/80">
+                  Ready to commission AI creative assets or monetize your workflow?
+                </p>
+                <button
+                  onClick={() => { setAuthStep("role-select"); setAuthMode("signin"); setIsAuthOpen(true); }}
+                  className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] font-headline font-bold text-xs px-5 py-2.5 rounded-full shadow transition-all"
+                >
+                  Sign In / Join →
+                </button>
+              </div>
 
-          </div>
+            </div>
+          </Reveal>
 
           {/* Bottom Bar: Copyright & Social Links */}
           <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-[#efeee4]/60">
