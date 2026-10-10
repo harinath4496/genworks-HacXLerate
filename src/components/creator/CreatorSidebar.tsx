@@ -7,7 +7,7 @@ export function CreatorSidebar() {
       {/* Logo */}
       <div className="px-8 mb-10">
         <h1 className="text-2xl font-bold tracking-tighter text-[#1A1A1A]">
-          Clientora<span className="text-[#D3A373]">.</span>
+          GenWorks<span className="text-[#D3A373]">.</span>
         </h1>
         <p className="text-xs text-gray-500 mt-1 font-medium tracking-wide uppercase">Creator Studio</p>
       </div>

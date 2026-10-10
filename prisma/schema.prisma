@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -17,7 +17,7 @@ enum Role {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
   email         String?   @unique
   emailVerified DateTime?
@@ -37,11 +37,11 @@ model User {
 // ------------------------------------
 
 model CreatorProfile {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], onDelete: Cascade)
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String @db.ObjectId   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  bio             String?  @db.Text
+  bio             String? 
   experienceLevel String?  // e.g., "Beginner", "Intermediate", "Expert"
   
   // Stored as JSON or simple comma separated arrays
@@ -62,9 +62,9 @@ model CreatorProfile {
 }
 
 model PortfolioItem {
-  id          String   @id @default(cuid())
-  creatorId   String
-  creator     CreatorProfile @relation(fields: [creatorId], onDelete: Cascade)
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  creatorId   String @db.ObjectId
+  creator     CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   
   title       String
   mediaUrl    String   // Cloudinary secure URL
@@ -72,18 +72,18 @@ model PortfolioItem {
   toolsUsed   String[] 
   
   // Crucial for AI verification
-  workflow    String?  @db.Text // Exact prompts / pipeline steps
+  workflow    String?  // Exact prompts / pipeline steps
   
   createdAt   DateTime @default(now())
 }
 
 // 🔥 NEE IDEA: Creator Logs / Posts for Dashboard & Public View
 model CreatorLog {
-  id          String   @id @default(cuid())
-  creatorId   String
-  creator     CreatorProfile @relation(fields: [creatorId], onDelete: Cascade)
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  creatorId   String @db.ObjectId
+  creator     CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   
-  content     String   @db.Text // "Just tested Runway Gen-3!"
+  content     String   // "Just tested Runway Gen-3!"
   mediaUrl    String?  // Optional image/video attachment
   
   createdAt   DateTime @default(now())
@@ -94,9 +94,9 @@ model CreatorLog {
 // ------------------------------------
 
 model BrandProfile {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  user        User     @relation(fields: [userId], onDelete: Cascade)
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String @db.ObjectId   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   companyName String
   industry    String?
@@ -107,12 +107,12 @@ model BrandProfile {
 }
 
 model Brief {
-  id            String   @id @default(cuid())
-  brandId       String
-  brand         User     @relation(fields: [brandId], onDelete: Cascade)
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  brandId       String @db.ObjectId
+  brand         User     @relation(fields: [brandId], references: [id], onDelete: Cascade)
   
   title         String
-  description   String   @db.Text
+  description   String  
   
   // Tags
   contentTypes  String[] // ["Video", "Image"]
