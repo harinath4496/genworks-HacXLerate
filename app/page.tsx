@@ -271,7 +271,7 @@ export default function GenWorksMarketplaceLandingPage() {
       specialization: "Automated AI Video Generation & Motion Pipelines",
       category: "pipelines",
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80",
-      portfolioImg: "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800&auto=format&fit=crop&q=80",
+      portfolioImg: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&auto=format&fit=crop&q=80",
       deliverableType: "AnimateDiff & Generative Video Pipeline (.json)",
       aspectRatio: "16:9",
       tools: ["ComfyUI", "AnimateDiff", "Runway Gen-3"],
