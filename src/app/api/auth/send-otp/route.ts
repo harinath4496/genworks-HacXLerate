@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'api-key': apiKey
+        'api-key': apiKey || ''
       },
       body: JSON.stringify({
         sender: {
