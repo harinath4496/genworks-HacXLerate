@@ -8,6 +8,7 @@ import {
   signInWithGoogle,
   signInWithCredentials,
   registerWithCredentials,
+  checkRedirectAuth,
 } from "@/lib/firebase";
 import { GenWorksLogo, AnimatedLogo, SplashScreen } from "@/components/AnimatedLogo";
 import {
@@ -207,12 +208,42 @@ export default function GenWorksMarketplaceLandingPage() {
         setAuthRole("BRAND");
         setAuthStep("form");
         setAuthMode("signin");
-        setAuthError("Authentication required: Please sign in with Google or register to access the Client Portal.");
+        setAuthError(null);
         setIsAuthOpen(true);
         window.history.replaceState({}, document.title, window.location.pathname);
       }
     }
   }, []);
+
+  // Handle return from Google Auth redirect (if popup was blocked)
+  useEffect(() => {
+    async function handleRedirectLogin() {
+      try {
+        const user = await checkRedirectAuth();
+        if (user) {
+          const clientName = user.displayName || user.email?.split("@")[0] || "Client Partner";
+          const clientEmail = user.email || "";
+
+          await fetch("/api/auth/google", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: clientEmail,
+              name: clientName,
+              firebaseUid: user.uid,
+              photoURL: user.photoURL,
+              category: "brand",
+            }),
+          });
+
+          router.push("/dashboard");
+        }
+      } catch (err) {
+        console.error("Redirect auth error:", err);
+      }
+    }
+    handleRedirectLogin();
+  }, [router]);
   
   // Hero Video & Mobile Optimization State
   const [intentRole, setIntentRole] = useState<"hire" | "work">("hire");
@@ -439,6 +470,22 @@ export default function GenWorksMarketplaceLandingPage() {
         }
 
         const user = await signInWithCredentials(authEmail.trim(), authPassword);
+
+        // Issue server session cookie for credentials sign-in
+        try {
+          await fetch("/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: authEmail.trim(),
+              name: user.displayName || authEmail.split("@")[0],
+              category: clientCategory,
+              firebaseUid: user.uid,
+            }),
+          });
+        } catch (syncErr) {
+          console.warn("Session sync notice:", syncErr);
+        }
 
         if (typeof window !== "undefined") {
           try {

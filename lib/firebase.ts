@@ -3,6 +3,8 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
@@ -50,14 +52,38 @@ googleProvider.setCustomParameters({
 export { app, auth, googleProvider };
 
 /**
- * Sign in client using Google Popup
+ * Sign in client using Google Popup with automatic Redirect fallback
  */
 export async function signInWithGoogle() {
   if (!auth) {
     throw new Error("Firebase Auth is not initialized. Please verify environment configuration.");
   }
-  const result = await signInWithPopup(auth, googleProvider);
-  return result.user;
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    return result.user;
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "";
+    if (msg.includes("popup-blocked") || msg.includes("cancelled-popup-request")) {
+      // Fallback seamlessly to redirect flow
+      await signInWithRedirect(auth, googleProvider);
+      return null;
+    }
+    throw err;
+  }
+}
+
+/**
+ * Handle user returning from Google Redirect
+ */
+export async function checkRedirectAuth(): Promise<User | null> {
+  if (!auth) return null;
+  try {
+    const result = await getRedirectResult(auth);
+    return result?.user || null;
+  } catch (err) {
+    console.error("Redirect auth error:", err);
+    return null;
+  }
 }
 
 /**
