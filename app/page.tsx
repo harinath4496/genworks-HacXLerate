@@ -764,9 +764,6 @@ export default function GenWorksMarketplaceLandingPage() {
       <section id="how-it-works" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal direction="up" delay={50}>
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="font-mono text-xs uppercase tracking-widest text-[#5a6242] font-bold block mb-3">
-              END-TO-END PRODUCTION PIPELINE
-            </span>
             <h2 className="font-headline font-black text-3xl sm:text-5xl text-[#1b1c16] tracking-tight">
               How{" "}
               <span className="bg-[#dfe7bf] text-[#1b1c16] px-4 py-1 rounded-full inline-block border border-[#c2caa4]">
