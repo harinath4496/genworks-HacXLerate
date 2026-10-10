@@ -1,1 +1,129 @@
-// placeholder
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------------------
+// 👤 CORE USER & AUTHENTICATION
+// ------------------------------------
+
+enum Role {
+  CREATOR
+  BRAND
+}
+
+model User {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(CREATOR)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  creatorProfile CreatorProfile?
+  brandProfile   BrandProfile?
+  briefs         Brief[]
+}
+
+// ------------------------------------
+// 🎨 CREATOR SIDE (Your Module)
+// ------------------------------------
+
+model CreatorProfile {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String @db.ObjectId   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  bio             String? 
+  experienceLevel String?  // e.g., "Beginner", "Intermediate", "Expert"
+  
+  // Stored as JSON or simple comma separated arrays
+  skills          String[] // e.g., ["Prompt Engineering", "Video Production"]
+  specializations String[] // e.g., ["AI Filmmaking", "Product Viz"]
+  tools           String[] // e.g., ["Midjourney v6", "Runway ML", "Sora"]
+  
+  // Verification signals
+  isVerified      Boolean  @default(false)
+  verificationScore Int    @default(0) // AI Quiz score out of 100
+  
+  // Relationships
+  portfolioItems  PortfolioItem[]
+  creatorLogs     CreatorLog[] // 🔥 Nee Kotha Feature!
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PortfolioItem {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  creatorId   String @db.ObjectId
+  creator     CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  
+  title       String
+  mediaUrl    String   // Cloudinary secure URL
+  contentType String   // "Video", "Image", "3D", "Animation"
+  toolsUsed   String[] 
+  
+  // Crucial for AI verification
+  workflow    String?  // Exact prompts / pipeline steps
+  
+  createdAt   DateTime @default(now())
+}
+
+// 🔥 NEE IDEA: Creator Logs / Posts for Dashboard & Public View
+model CreatorLog {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  creatorId   String @db.ObjectId
+  creator     CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  
+  content     String   // "Just tested Runway Gen-3!"
+  mediaUrl    String?  // Optional image/video attachment
+  
+  createdAt   DateTime @default(now())
+}
+
+// ------------------------------------
+// 🏢 BRAND SIDE (Friend's Module)
+// ------------------------------------
+
+model BrandProfile {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String @db.ObjectId   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  companyName String
+  industry    String?
+  website     String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Brief {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  brandId       String @db.ObjectId
+  brand         User     @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  
+  title         String
+  description   String  
+  
+  // Tags
+  contentTypes  String[] // ["Video", "Image"]
+  styles        String[] // ["Cinematic", "Minimalist"]
+  formats       String[] // ["16:9", "9:16"]
+  
+  budgetRange   String?  // e.g., "₹50k - ₹1L"
+  commercialUse String?  // "Full Ownership", "Limited"
+  
+  isActive      Boolean  @default(true)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

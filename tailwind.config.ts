@@ -37,7 +37,8 @@ const config: Config = {
         "outline": "#82756a",
         "secondary-container": "#dfe7bf",
         "on-tertiary": "#ffffff",
-        "background": "#fbfaf0",
+        "background": "var(--background, #fbfaf0)",
+        "foreground": "var(--foreground, #1b1c16)",
         "surface-dim": "#dbdad1",
         "inverse-surface": "#30312b",
         "on-secondary-fixed": "#181e05",
@@ -106,7 +107,10 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require("tailwind-scrollbar-hide"),
+    require("tailwindcss-animate"),
+  ],
 };
 
 export default config;

@@ -1,0 +1,30 @@
+{
+  "creator_schema_reference": {
+    "User": {
+      "id": "ObjectID",
+      "name": "String",
+      "email": "String",
+      "role": "CREATOR"
+    },
+    "CreatorProfile": {
+      "userId": "ObjectID (Refers to User)",
+      "bio": "String",
+      "experienceLevel": "String (Novice, Intermediate, Pro)",
+      "skills": ["Array of Strings"],
+      "specializations": ["Array of Strings"],
+      "tools": ["Array of Strings"],
+      "isVerified": "Boolean",
+      "verificationScore": "Number"
+    }
+  },
+  "example_dummy_data": [
+    {
+      "name": "Rajesh Kumar",
+      "email": "rajesh@genworks.com",
+      "bio": "AI Video Specialist & Prompt Engineer",
+      "experienceLevel": "Expert",
+      "skills": ["Generative Art", "Video Production"],
+      "tools": ["Midjourney v6", "Runway ML", "Sora"]
+    }
+  ]
+}

@@ -99,3 +99,9 @@
 .tile-charcoal-3 {
   animation-delay: -1.8s;
 }
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

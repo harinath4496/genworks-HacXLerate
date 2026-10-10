@@ -28,7 +28,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files (ABSOLUTELY NO CREDENTIALS COMMITTED)
+# local env files (STRICT ZERO CREDENTIAL LEAKAGE)
 .env
 .env*
 *.env
