@@ -557,12 +557,6 @@ export default function GenWorksMarketplaceLandingPage() {
                 : "opacity-0 translate-y-8"
             }`}
           >
-            {/* Curated AI Talent Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[#d3a373] text-xs font-mono font-bold tracking-widest uppercase mb-5">
-              <span className="w-2 h-2 rounded-full bg-[#d3a373] animate-pulse" />
-              <span>Curated AI Creative Directors</span>
-            </div>
-
             {/* Display Headline matching image_e6ab44.png hierarchy */}
             <h1 className="font-headline font-black text-4xl sm:text-5xl md:text-6xl lg:text-[68px] tracking-tight leading-[1.05] text-white">
               Empowering Brands Through{" "}
@@ -606,81 +600,31 @@ export default function GenWorksMarketplaceLandingPage() {
             </div>
 
             {/* Translucent Glassmorphic Search Bar (Requested by user) */}
-            <div className="w-full max-w-2xl mt-5">
+            <div className="w-full max-w-2xl mt-6">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   const el = document.getElementById("creators");
                   el?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="relative flex items-center bg-white/90 hover:bg-white/95 backdrop-blur-md rounded-full p-2 pl-6 shadow-2xl border border-white/30 focus-within:ring-4 focus-within:ring-[#d3a373]/30 focus-within:bg-white transition-all duration-300"
+                className="relative flex items-center bg-white/90 hover:bg-white/95 backdrop-blur-md rounded-full p-2 pl-4 sm:pl-6 shadow-2xl border border-white/30 focus-within:ring-4 focus-within:ring-[#d3a373]/30 focus-within:bg-white transition-all duration-300"
               >
-                <Search className="w-5 h-5 text-[#50453b]/80 shrink-0 mr-3" />
+                <Search className="w-4 h-4 sm:w-5 sm:h-5 text-[#50453b]/80 shrink-0 mr-2 sm:mr-3" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search for AI content creator portfolio..."
-                  className="w-full bg-transparent text-[#1b1c16] placeholder:text-[#50453b]/75 font-body text-sm sm:text-base outline-none pr-4 font-medium"
+                  className="w-full bg-transparent text-[#1b1c16] placeholder:text-[#50453b]/75 font-body text-xs sm:text-base outline-none pr-3 font-medium"
                 />
                 <button
                   type="submit"
-                  className="bg-[#1b1c16] hover:bg-[#2d2e26] text-white px-6 sm:px-7 py-3 rounded-full font-headline font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md hover:scale-105 active:scale-95 transition-all duration-200 shrink-0 border border-white/10"
+                  className="bg-[#1b1c16] hover:bg-[#2d2e26] text-white px-4.5 sm:px-7 py-2 sm:py-3 rounded-full font-headline font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 shadow-md hover:scale-105 active:scale-95 transition-all duration-200 shrink-0 border border-white/10"
                 >
                   <Search className="w-3.5 h-3.5 text-[#d3a373]" />
                   <span>Search</span>
                 </button>
               </form>
-            </div>
-
-            {/* Suggested Category Chips (from image_e6ab44.png) */}
-            <div className="flex flex-wrap items-center gap-2.5 mt-5">
-              <span className="text-xs text-white/60 font-medium mr-1 hidden sm:inline">Popular:</span>
-              {[
-                { label: "Runway Gen-3 →", query: "Runway" },
-                { label: "Flux.1 Photorealism →", query: "Flux" },
-                { label: "ComfyUI Pipelines →", query: "ComfyUI" },
-                { label: "Brand LoRAs →", query: "LoRA" },
-              ].map((pill, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery(pill.query);
-                    const el = document.getElementById("creators");
-                    el?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-medium backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95"
-                >
-                  {pill.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Quick Action CTAs */}
-            <div className="flex flex-wrap items-center gap-3.5 mt-7">
-              <button
-                type="button"
-                onClick={() => {
-                  const el = document.getElementById("brief-builder");
-                  el?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] font-headline font-black text-xs sm:text-sm px-6 py-2.5 rounded-full flex items-center gap-2 shadow-lg shadow-[#d3a373]/25 hover:scale-105 active:scale-95 transition-all duration-200"
-              >
-                <span>Launch AI Brief</span>
-                <Sparkles className="w-3.5 h-3.5 text-[#1b1c16]" />
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const el = document.getElementById("creators");
-                  el?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="bg-white/15 hover:bg-white/25 text-white border border-white/20 font-headline font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-full flex items-center gap-2 backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95"
-              >
-                <span>Explore Portfolios</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
             </div>
 
           </div>
