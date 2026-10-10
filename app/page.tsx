@@ -466,10 +466,10 @@ export default function GenWorksMarketplaceLandingPage() {
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={() => { setAuthStep("role-select"); setAuthMode("signin"); setIsAuthOpen(true); }}
-              className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-extrabold px-4.5 py-2 rounded-full transition-all duration-300 flex items-center gap-1.5 shadow-md shadow-[#d3a373]/20 active:scale-95"
+              className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-extrabold px-5 py-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shadow-sm shadow-[#d3a373]/20 hover:shadow-md hover:scale-[1.02] active:scale-95"
             >
-              <User className="w-3.5 h-3.5 text-[#1b1c16]" />
-              <span>Sign In</span>
+              <User className="w-3.5 h-3.5 text-[#1b1c16] shrink-0" />
+              <span className="whitespace-nowrap">Log In / Sign Up</span>
             </button>
 
             {/* Mobile Hamburger */}
@@ -490,10 +490,10 @@ export default function GenWorksMarketplaceLandingPage() {
           <a href="#creators" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">AI Creators</a>
           <button
             onClick={() => { setMobileMenuOpen(false); setAuthStep("role-select"); setAuthMode("signin"); setIsAuthOpen(true); }}
-            className="bg-[#d3a373] text-[#1b1c16] px-8 py-3 rounded-full text-base font-extrabold shadow-md flex items-center gap-2"
+            className="bg-[#d3a373] text-[#1b1c16] px-8 py-3.5 rounded-full text-base font-extrabold shadow-md flex items-center gap-2.5"
           >
             <User className="w-4 h-4 text-[#1b1c16]" />
-            <span>Sign In</span>
+            <span>Log In / Sign Up</span>
           </button>
         </div>
       )}
@@ -502,7 +502,7 @@ export default function GenWorksMarketplaceLandingPage() {
           2. HERO SECTION — FULL-BLEED CINEMATIC VIDEO BACKDROP
           (Eliminates margins, gaps & background cutoffs per image_9c69e3.png)
       ───────────────────────────────────────────────────────── */}
-      <section className="relative w-full min-h-[92vh] sm:min-h-screen flex items-center justify-center overflow-hidden bg-[#12130e] pt-32 sm:pt-36 pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative w-full min-h-[82vh] sm:min-h-[88vh] flex items-center justify-center overflow-hidden bg-[#12130e] pt-28 sm:pt-32 pb-14 sm:pb-16 px-4 sm:px-6 lg:px-8">
         
         {/* Full-Bleed Edge-to-Edge Background Video */}
         <video
@@ -525,19 +525,19 @@ export default function GenWorksMarketplaceLandingPage() {
           {/* Foreground Text & Interactive Controls */}
           <div className="max-w-3xl opacity-100 transition-all duration-500 ease-out animate-fade-in-up">
             {/* Display Headline matching image_e6ab44.png hierarchy */}
-            <h1 className="font-headline font-black text-4xl sm:text-5xl md:text-6xl lg:text-[68px] tracking-tight leading-[1.05] text-white">
+            <h1 className="font-headline font-black text-4xl sm:text-5xl md:text-6xl lg:text-[66px] tracking-tight leading-[1.06] text-white">
               Empowering Brands Through{" "}
-              <span className="text-[#d3a373]">AI Creative</span>{" "}
+              <span className="text-[#e2b888] drop-shadow-sm">AI Creative</span>{" "}
               Ambition
             </h1>
 
             {/* Subheadline value proposition */}
-            <p className="font-body text-base sm:text-lg md:text-xl text-white/85 leading-relaxed max-w-2xl mt-5 font-normal">
+            <p className="font-body text-sm sm:text-base md:text-lg text-white/85 leading-relaxed max-w-2xl mt-4 sm:mt-5 font-normal">
               Hire verified generative filmmakers, ComfyUI architects, and AI prompt directors who amplify your talent into high-impact campaigns. Guaranteed seed reproducibility, commercial IP warranties, and milestone escrow.
             </p>
 
             {/* Intent Switcher (Segmented Toggle from image_e6ab44.png) */}
-            <div className="flex items-center gap-1 p-1 bg-white/10 backdrop-blur-md rounded-full border border-white/15 w-fit mt-7">
+            <div className="flex items-center gap-1 p-1 bg-white/10 backdrop-blur-md rounded-full border border-white/20 w-fit mt-6">
               <button
                 type="button"
                 onClick={() => {
@@ -547,10 +547,10 @@ export default function GenWorksMarketplaceLandingPage() {
                   setAuthMode("signin");
                   setIsAuthOpen(true);
                 }}
-                className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 ${
+                className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 ${
                   intentRole === "hire"
                     ? "bg-white text-[#1b1c16] shadow-sm font-bold"
-                    : "text-white/80 hover:text-white hover:bg-white/5"
+                    : "text-white/90 hover:text-white hover:bg-white/10"
                 }`}
               >
                 I want to hire AI Creators
@@ -564,10 +564,10 @@ export default function GenWorksMarketplaceLandingPage() {
                   setAuthMode("signin");
                   setIsAuthOpen(true);
                 }}
-                className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 ${
+                className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 ${
                   intentRole === "work"
                     ? "bg-white text-[#1b1c16] shadow-sm font-bold"
-                    : "text-white/80 hover:text-white hover:bg-white/5"
+                    : "text-white/90 hover:text-white hover:bg-white/10"
                 }`}
               >
                 I want to commission pipelines
@@ -575,7 +575,7 @@ export default function GenWorksMarketplaceLandingPage() {
             </div>
 
             {/* Translucent Glassmorphic Search Bar (Icon-only submit, triggers auth modal) */}
-            <div className="w-full max-w-2xl mt-6">
+            <div className="w-full max-w-2xl mt-5 sm:mt-6">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -583,14 +583,14 @@ export default function GenWorksMarketplaceLandingPage() {
                   setAuthMode("signin");
                   setIsAuthOpen(true);
                 }}
-                className="relative flex items-center bg-white/90 hover:bg-white/95 backdrop-blur-md rounded-full p-2 pl-5 sm:pl-7 shadow-2xl border border-white/30 focus-within:ring-4 focus-within:ring-[#d3a373]/30 focus-within:bg-white transition-all duration-300"
+                className="relative flex items-center bg-white/95 hover:bg-white backdrop-blur-md rounded-full p-2 pl-5 sm:pl-7 shadow-2xl border border-white/40 focus-within:ring-4 focus-within:ring-[#d3a373]/30 transition-all duration-300"
               >
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search for AI content creator portfolio..."
-                  className="w-full bg-transparent text-[#1b1c16] placeholder:text-[#50453b]/75 font-body text-xs sm:text-base outline-none pr-3 font-medium"
+                  placeholder="Search for AI content creator portfolio, tools, models..."
+                  className="w-full bg-transparent text-[#1b1c16] placeholder:text-[#50453b]/70 font-body text-xs sm:text-base outline-none pr-3 font-medium"
                 />
                 <button
                   type="submit"
@@ -606,8 +606,8 @@ export default function GenWorksMarketplaceLandingPage() {
 
         </div>
 
-        {/* Soft bottom blend into the subsequent sections */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#fbfaf0] to-transparent z-20 pointer-events-none" />
+        {/* Clean bottom transition overlay blending seamlessly into page background */}
+        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#fbfaf0] via-[#fbfaf0]/40 to-transparent z-10 pointer-events-none" />
       </section>
 
       {/* ─────────────────────────────────────────────────────────
