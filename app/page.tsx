@@ -209,6 +209,7 @@ export default function GenWorksMarketplaceLandingPage() {
         setAuthMode("signin");
         setAuthError("Authentication required: Please sign in with Google or register to access the Client Portal.");
         setIsAuthOpen(true);
+        window.history.replaceState({}, document.title, window.location.pathname);
       }
     }
   }, []);
