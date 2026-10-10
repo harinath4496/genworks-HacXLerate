@@ -2,6 +2,8 @@
 
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { GenWorksLogo, AnimatedLogo, SplashScreen } from "@/components/AnimatedLogo";
 import {
   Sparkles,
@@ -33,7 +35,8 @@ import {
   Briefcase,
   ArrowLeft,
   ChevronDown,
-  Mail
+  Mail,
+  LayoutDashboard
 } from "lucide-react";
 
 type AuthMode = "signin" | "signup";
@@ -155,6 +158,7 @@ function Reveal({
 }
 
 export default function GenWorksMarketplaceLandingPage() {
+  const router = useRouter();
   // Navigation & Interactive States
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authStep, setAuthStep] = useState<"role-select" | "form">("form");
@@ -286,22 +290,41 @@ export default function GenWorksMarketplaceLandingPage() {
     setAuthLoading(true);
     setTimeout(() => {
       setAuthLoading(false);
+      const categoryLabel =
+        clientCategory === "brand"
+          ? "Brand / Enterprise"
+          : clientCategory === "agency"
+          ? "Creative Agency"
+          : "Individual / Founder";
+
       setAuthSuccess(
         authMode === "signin"
           ? "Welcome back to GenWorks Client Portal!"
-          : `Client workspace provisioned for ${
-              clientCategory === "brand"
-                ? "Brand / Enterprise"
-                : clientCategory === "agency"
-                ? "Creative Agency"
-                : "Individual / Founder"
-            }!`
+          : `Client workspace provisioned for ${categoryLabel}!`
       );
+
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem(
+            "genworks_client_user",
+            JSON.stringify({
+              name: authName.trim() || "Hostlekid",
+              email: authEmail.trim() || "hostlekid629@gmail.com",
+              role: "Client • Enterprise",
+              category: clientCategory,
+            })
+          );
+        } catch {
+          // ignore
+        }
+      }
+
       setTimeout(() => {
         setIsAuthOpen(false);
         setAuthSuccess(null);
-      }, 1400);
-    }, 900);
+        router.push("/dashboard");
+      }, 1000);
+    }, 800);
   };
 
   const handleSubscribe = (e: React.FormEvent) => {
@@ -606,10 +629,27 @@ export default function GenWorksMarketplaceLandingPage() {
           <nav className="hidden md:flex items-center gap-6 text-xs font-semibold tracking-wide text-[#50453b]">
             <a href="#how-it-works" className="hover:text-[#1b1c16] transition-colors">How GenWorks Works</a>
             <a href="#creators" className="hover:text-[#1b1c16] transition-colors">AI Creators</a>
+            <Link
+              href="/dashboard"
+              className="text-[#7d562d] hover:text-[#1b1c16] font-bold flex items-center gap-1.5 transition-colors group"
+            >
+              <span>Client Dashboard</span>
+              <span className="text-[10px] bg-[#d3a373]/20 text-[#7d562d] group-hover:bg-[#d3a373] group-hover:text-[#1b1c16] px-1.5 py-0.5 rounded-full transition-colors">
+                Live
+              </span>
+            </Link>
           </nav>
 
           {/* Right: CTA Button & Mobile Menu Toggle */}
           <div className="flex items-center gap-3 shrink-0">
+            <Link
+              href="/dashboard"
+              className="hidden lg:inline-flex items-center gap-1.5 text-xs font-bold text-[#1b1c16] bg-[#faf9f5] hover:bg-white border border-[#e4e3d9] px-4 py-2 rounded-full transition-all"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5 text-[#d3a373]" />
+              <span>Portal</span>
+            </Link>
+
             <button
               onClick={() => { setAuthRole("BRAND"); setAuthStep("form"); setAuthMode("signup"); setIsAuthOpen(true); }}
               className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-extrabold px-5 py-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shadow-sm shadow-[#d3a373]/20 hover:shadow-md hover:scale-[1.02] active:scale-95"
@@ -634,6 +674,14 @@ export default function GenWorksMarketplaceLandingPage() {
         <div className="fixed inset-0 z-40 bg-[#fbfaf0]/98 backdrop-blur-2xl flex flex-col items-center justify-center gap-8 text-xl font-bold md:hidden text-[#1b1c16]">
           <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">How GenWorks Works</a>
           <a href="#creators" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">AI Creators</a>
+          <Link
+            href="/dashboard"
+            onClick={() => setMobileMenuOpen(false)}
+            className="text-[#7d562d] hover:text-[#1b1c16] flex items-center gap-2"
+          >
+            <LayoutDashboard className="w-5 h-5 text-[#d3a373]" />
+            <span>Client Dashboard</span>
+          </Link>
           <button
             onClick={() => { setMobileMenuOpen(false); setAuthRole("BRAND"); setAuthStep("form"); setAuthMode("signup"); setIsAuthOpen(true); }}
             className="bg-[#d3a373] text-[#1b1c16] px-8 py-3.5 rounded-full text-base font-extrabold shadow-md flex items-center gap-2.5"
