@@ -69,6 +69,20 @@ const config: Config = {
         body: ["Manrope", "sans-serif"],
         label: ["Inter", "sans-serif"],
       },
+      keyframes: {
+        "spin-slow": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        "pulse-sequence": {
+          "0%, 100%": { transform: "scale(1)", opacity: "1" },
+          "50%": { transform: "scale(0.6)", opacity: "0.4" },
+        },
+      },
+      animation: {
+        "spin-slow": "spin-slow 10s linear infinite",
+        "pulse-sequence": "pulse-sequence 2s infinite ease-in-out",
+      },
     },
   },
   plugins: [],
