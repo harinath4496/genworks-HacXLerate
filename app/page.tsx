@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import Image from "next/image";
 import { GenWorksLogo, AnimatedLogo, SplashScreen } from "@/components/AnimatedLogo";
 import {
@@ -74,6 +74,44 @@ export default function GenWorksMarketplaceLandingPage() {
   const [authSuccess, setAuthSuccess] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
+  // Hero Video & Scroll Interaction State (image_e6ab44.png & smooth fade-in)
+  const [heroTextVisible, setHeroTextVisible] = useState(false);
+  const [videoVisible, setVideoVisible] = useState(false);
+  const [intentRole, setIntentRole] = useState<"hire" | "work">("hire");
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    // 1. Text fades in smoothly on mount / load
+    const textTimer = setTimeout(() => {
+      setHeroTextVisible(true);
+    }, 250);
+
+    // 2. Video fades in smoothly when user scrolls slightly (scrollY > 10)
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setVideoVisible(true);
+      }
+    };
+
+    // Fallback: Also fade in video after 2.5s so it plays if user pauses at top
+    const videoTimer = setTimeout(() => {
+      setVideoVisible(true);
+    }, 2500);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      clearTimeout(textTimer);
+      clearTimeout(videoTimer);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (videoVisible && videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
+  }, [videoVisible]);
+
   // Interactive Services Showcase active index
   const [activeService, setActiveService] = useState(0);
 
@@ -487,112 +525,198 @@ export default function GenWorksMarketplaceLandingPage() {
       )}
 
       {/* ─────────────────────────────────────────────────────────
-          2. HERO SECTION (GIANT HIGH-CONTRAST CARD)
+          2. HERO SECTION — CINEMATIC VIDEO BACKDROP WITH TRANSLUCENT OVERLAY
+          (Matches image_e6ab44.png reference & client-first portfolio search)
       ───────────────────────────────────────────────────────── */}
-      <section className="pt-36 sm:pt-40 md:pt-44 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section className="pt-32 sm:pt-36 md:pt-40 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         
-        {/* Giant Rounded Stark White Structural Card in Warm Editorial Framing */}
-        <div className="bg-white text-[#1b1c16] rounded-[32px] sm:rounded-[44px] md:rounded-[54px] p-6 sm:p-10 md:p-12 lg:p-14 relative overflow-hidden shadow-xl border border-[#e4e3d9]">
+        {/* Cinematic Card with Video Backdrop */}
+        <div className="relative rounded-[32px] sm:rounded-[44px] md:rounded-[52px] overflow-hidden min-h-[580px] sm:min-h-[640px] lg:min-h-[700px] flex flex-col justify-center p-6 sm:p-10 md:p-14 lg:p-16 border border-[#2d2e26]/40 bg-[#141510] shadow-2xl">
           
-          {/* Centered Grand Display Headline with Sage Highlighting */}
-          <div className="text-center max-w-4xl mx-auto mb-6">
-            <h1 className="font-headline font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tight leading-[1.05] text-[#1b1c16]">
+          {/* Background Video — Fades in on scroll or timed activation */}
+          <video
+            ref={videoRef}
+            src="/hero-video-lg.mp4"
+            loop
+            muted
+            playsInline
+            className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-out z-0 ${
+              videoVisible ? "opacity-65 sm:opacity-75" : "opacity-0"
+            }`}
+          />
+
+          {/* Cinematic Scrim Gradient: ensures 100% crystal contrast for text legibility like image_e6ab44.png */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#12130e]/95 via-[#12130e]/80 to-[#12130e]/30 z-10 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#12130e]/90 via-transparent to-[#12130e]/40 z-10 pointer-events-none" />
+
+          {/* Foreground Text & Interactive Controls — Fades in smoothly on load */}
+          <div
+            className={`relative z-20 max-w-3xl transition-all duration-1000 ease-out transform ${
+              heroTextVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
+          >
+            {/* Curated AI Talent Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[#d3a373] text-xs font-mono font-bold tracking-widest uppercase mb-5">
+              <span className="w-2 h-2 rounded-full bg-[#d3a373] animate-pulse" />
+              <span>Curated AI Creative Directors</span>
+            </div>
+
+            {/* Display Headline matching image_e6ab44.png hierarchy */}
+            <h1 className="font-headline font-black text-4xl sm:text-5xl md:text-6xl lg:text-[68px] tracking-tight leading-[1.05] text-white">
               Empowering Brands Through{" "}
-              <span className="relative inline-block px-3 py-0.5">
-                <span className="absolute inset-0 bg-[#dfe7bf] -rotate-1 rounded-2xl -z-10 shadow-sm border border-[#c2caa4]/50" />
-                <span className="text-[#5a6242]">AI Creative</span>
-              </span>{" "}
-              Marketplaces
+              <span className="text-[#d3a373]">AI Creative</span>{" "}
+              Ambition
             </h1>
 
-            <p className="font-body text-sm sm:text-base md:text-lg text-[#50453b] leading-relaxed max-w-2xl mx-auto mt-5">
-              From Runway Gen-3 short films to ComfyUI batch pipelines, we connect visionary brands with verified AI creators. Guaranteed seed reproducibility, commercial IP warranties, and milestone escrow.
+            {/* Subheadline value proposition */}
+            <p className="font-body text-base sm:text-lg md:text-xl text-white/85 leading-relaxed max-w-2xl mt-5 font-normal">
+              Hire verified generative filmmakers, ComfyUI architects, and AI prompt directors who amplify your talent into high-impact campaigns. Guaranteed seed reproducibility, commercial IP warranties, and milestone escrow.
             </p>
 
-            {/* Clean Pill CTAs below Headline */}
-            <div className="flex flex-wrap items-center justify-center gap-3.5 mt-7">
+            {/* Intent Switcher (Segmented Toggle from image_e6ab44.png) */}
+            <div className="flex items-center gap-1 p-1 bg-white/10 backdrop-blur-md rounded-full border border-white/15 w-fit mt-7">
               <button
+                type="button"
+                onClick={() => setIntentRole("hire")}
+                className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 ${
+                  intentRole === "hire"
+                    ? "bg-white text-[#1b1c16] shadow-sm font-bold"
+                    : "text-white/80 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                I want to hire AI Creators
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIntentRole("work");
+                  const el = document.getElementById("brief-builder");
+                  el?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 ${
+                  intentRole === "work"
+                    ? "bg-white text-[#1b1c16] shadow-sm font-bold"
+                    : "text-white/80 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                I want to commission pipelines
+              </button>
+            </div>
+
+            {/* Translucent Glassmorphic Search Bar (Requested by user) */}
+            <div className="w-full max-w-2xl mt-5">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const el = document.getElementById("creators");
+                  el?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="relative flex items-center bg-white/90 hover:bg-white/95 backdrop-blur-md rounded-full p-2 pl-6 shadow-2xl border border-white/30 focus-within:ring-4 focus-within:ring-[#d3a373]/30 focus-within:bg-white transition-all duration-300"
+              >
+                <Search className="w-5 h-5 text-[#50453b]/80 shrink-0 mr-3" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search for AI content creator portfolio..."
+                  className="w-full bg-transparent text-[#1b1c16] placeholder:text-[#50453b]/75 font-body text-sm sm:text-base outline-none pr-4 font-medium"
+                />
+                <button
+                  type="submit"
+                  className="bg-[#1b1c16] hover:bg-[#2d2e26] text-white px-6 sm:px-7 py-3 rounded-full font-headline font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md hover:scale-105 active:scale-95 transition-all duration-200 shrink-0 border border-white/10"
+                >
+                  <Search className="w-3.5 h-3.5 text-[#d3a373]" />
+                  <span>Search</span>
+                </button>
+              </form>
+            </div>
+
+            {/* Suggested Category Chips (from image_e6ab44.png) */}
+            <div className="flex flex-wrap items-center gap-2.5 mt-5">
+              <span className="text-xs text-white/60 font-medium mr-1 hidden sm:inline">Popular:</span>
+              {[
+                { label: "Runway Gen-3 →", query: "Runway" },
+                { label: "Flux.1 Photorealism →", query: "Flux" },
+                { label: "ComfyUI Pipelines →", query: "ComfyUI" },
+                { label: "Brand LoRAs →", query: "LoRA" },
+              ].map((pill, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery(pill.query);
+                    const el = document.getElementById("creators");
+                    el?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-medium backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95"
+                >
+                  {pill.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Quick Action CTAs */}
+            <div className="flex flex-wrap items-center gap-3.5 mt-7">
+              <button
+                type="button"
                 onClick={() => {
                   const el = document.getElementById("brief-builder");
                   el?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] font-headline font-black text-xs sm:text-sm px-6 sm:px-7 py-3 rounded-full flex items-center gap-2 shadow-lg shadow-[#d3a373]/25 hover:scale-105 active:scale-95 transition-all duration-300"
+                className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] font-headline font-black text-xs sm:text-sm px-6 py-2.5 rounded-full flex items-center gap-2 shadow-lg shadow-[#d3a373]/25 hover:scale-105 active:scale-95 transition-all duration-200"
               >
                 <span>Launch AI Brief</span>
-                <div className="w-5 h-5 rounded-full bg-[#1b1c16] text-[#d3a373] flex items-center justify-center">
-                  <Sparkles className="w-3 h-3" />
-                </div>
+                <Sparkles className="w-3.5 h-3.5 text-[#1b1c16]" />
               </button>
-
               <button
+                type="button"
                 onClick={() => {
                   const el = document.getElementById("creators");
                   el?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="bg-[#1b1c16] hover:bg-[#30312b] text-[#fbfaf0] font-headline font-bold text-xs sm:text-sm px-6 py-3 rounded-full flex items-center gap-2 shadow-md transition-all hover:scale-105 active:scale-95"
+                className="bg-white/15 hover:bg-white/25 text-white border border-white/20 font-headline font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-full flex items-center gap-2 backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95"
               >
                 <span>Explore Portfolios</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  const el = document.getElementById("creators");
-                  el?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="px-5 py-3 rounded-full border border-[#1b1c16] text-xs font-bold uppercase tracking-wider text-[#1b1c16] hover:bg-[#1b1c16] hover:text-[#fbfaf0] transition-all duration-300 flex items-center gap-2"
-              >
-                <span>Discover AI Creators</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
+
           </div>
 
-          {/* WIDE EXPANSIVE VIDEO PLAYER (Clean, 100% Uncluttered, Pure Cinematic Footage) */}
-          <div className="w-full max-w-6xl mx-auto my-8">
-            <div className="w-full h-[360px] sm:h-[460px] md:h-[540px] rounded-[28px] sm:rounded-[38px] md:rounded-[46px] overflow-hidden shadow-2xl border-2 border-[#e4e3d9] bg-[#1b1c16] relative">
-              <video
-                src="/hero-video-lg.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover object-center"
-              />
+        </div>
+
+        {/* 3-Column Trust & Verification Row below card */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 max-w-7xl mx-auto">
+          
+          {/* 1. 5-Star Social Proof */}
+          <div className="flex flex-col items-start justify-center p-5 rounded-2xl bg-white border border-[#e4e3d9] shadow-sm">
+            <div className="flex items-center gap-1 mb-2">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-4 h-4 fill-[#d3a373] text-[#d3a373]" />
+              ))}
             </div>
+            <p className="font-headline font-black text-sm text-[#1b1c16]">4.98 / 5 Rating</p>
+            <p className="font-body text-xs text-[#50453b] mt-0.5">850+ Verified Brand Campaigns Delivered</p>
           </div>
 
-          {/* 3-Column Trust & Verification Row (From Screenshot 1) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2 border-t border-[#e4e3d9]/70 max-w-6xl mx-auto">
-            
-            {/* 1. 5-Star Social Proof */}
-            <div className="flex flex-col items-start justify-center p-4 rounded-2xl bg-[#efeee4]/50 border border-[#e4e3d9]">
-              <div className="flex items-center gap-1 mb-2">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-[#d3a373] text-[#d3a373]" />
-                ))}
-              </div>
-              <p className="font-headline font-black text-sm text-[#1b1c16]">4.98 / 5 Rating</p>
-              <p className="font-body text-xs text-[#50453b] mt-0.5">850+ Verified Brand Campaigns Delivered</p>
-            </div>
+          {/* 2. 100% Seed Reproducibility */}
+          <div className="flex flex-col items-start justify-center p-5 rounded-2xl bg-white border border-[#e4e3d9] shadow-sm">
+            <span className="font-headline font-black text-2xl text-[#1b1c16] tracking-tight">100%</span>
+            <span className="font-mono text-xs uppercase tracking-widest text-[#50453b] font-bold mt-0.5">Seed Reproducibility</span>
+            <p className="font-body text-xs text-[#50453b] mt-1">Deterministic prompt seeds, CFG parameters & model checkpoints.</p>
+          </div>
 
-            {/* 2. 100% Seed Reproducibility */}
-            <div className="flex flex-col items-start justify-center p-4 rounded-2xl bg-[#efeee4]/50 border border-[#e4e3d9]">
-              <span className="font-headline font-black text-2xl text-[#1b1c16] tracking-tight">100%</span>
-              <span className="font-mono text-xs uppercase tracking-widest text-[#50453b] font-bold mt-0.5">Seed Reproducibility</span>
-              <p className="font-body text-xs text-[#50453b] mt-1">Deterministic prompt seeds, CFG parameters & model checkpoints.</p>
+          {/* 3. Commercial IP Clearance */}
+          <div className="flex flex-col items-start justify-center p-5 rounded-2xl bg-white border border-[#e4e3d9] shadow-sm">
+            <div className="flex items-center gap-2 mb-1">
+              <ShieldCheck className="w-4 h-4 text-[#5a6242]" />
+              <p className="font-headline font-bold text-xs text-[#1b1c16]">Commercial IP Clearance</p>
             </div>
-
-            {/* 3. Commercial IP Clearance */}
-            <div className="flex flex-col items-start justify-center p-4 rounded-2xl bg-[#efeee4]/50 border border-[#e4e3d9]">
-              <div className="flex items-center gap-2 mb-1">
-                <ShieldCheck className="w-4 h-4 text-[#5a6242]" />
-                <p className="font-headline font-bold text-xs text-[#1b1c16]">Commercial IP Clearance</p>
-              </div>
-              <p className="font-body text-xs text-[#50453b] leading-relaxed">
-                Prompt seeds, negative embeddings, and model weights legally transferred upon escrow release.
-              </p>
-            </div>
-
+            <p className="font-body text-xs text-[#50453b] leading-relaxed">
+              Prompt seeds, negative embeddings, and model weights legally transferred upon escrow release.
+            </p>
           </div>
 
         </div>
