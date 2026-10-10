@@ -1610,15 +1610,15 @@ export default function GenWorksMarketplaceLandingPage() {
                 </div>
               </div>
 
-              {/* Centered Single Google Button (Apple Removed) */}
-              <div className="flex justify-center">
+              {/* Centered Single Google Button (Apple Removed from both Sign In and Register) */}
+              <div className="flex justify-center pt-1">
                 <button
                   type="button"
                   onClick={() => {
                     setAuthSuccess("Connecting Client Portal via Google...");
                     setTimeout(() => setAuthSuccess(null), 2500);
                   }}
-                  className="w-full max-w-sm py-2.5 px-6 rounded-full border border-[#e4e3d9] bg-[#faf9f5] hover:bg-neutral-100 font-headline font-bold text-xs text-[#1b1c16] flex items-center justify-center gap-2.5 transition-all shadow-sm hover:shadow active:scale-95"
+                  className="w-full max-w-sm py-3 px-6 rounded-full border border-[#e4e3d9] bg-[#faf9f5] hover:bg-white hover:border-[#d3a373] font-headline font-bold text-xs text-[#1b1c16] flex items-center justify-center gap-3 transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98]"
                 >
                   <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                     <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z" />
