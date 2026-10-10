@@ -362,6 +362,8 @@ export default function GenWorksMarketplaceLandingPage() {
       const msg = err instanceof Error ? err.message : "Failed to sign in with Google.";
       if (msg.includes("popup-closed-by-user") || msg.includes("cancelled-popup-request")) {
         setAuthError("Sign-in cancelled. Please click the Google button to try again.");
+      } else if (msg.includes("popup-blocked")) {
+        setAuthError("Browser blocked the Google login pop-up. Please enable pop-ups in your browser address bar (top-right of URL bar) or register using the email form above.");
       } else {
         setAuthError(msg);
       }
