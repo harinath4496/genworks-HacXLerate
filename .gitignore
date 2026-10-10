@@ -17,15 +17,30 @@
 # misc
 .DS_Store
 *.pem
+*.key
+*.cert
+*.crt
+id_rsa
+*.log
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*.local
+# local env files (ABSOLUTELY NO CREDENTIALS COMMITTED)
 .env
+.env*
+*.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.secret
+*.credentials
+credentials.json
+firebase-adminsdk*.json
 
 # vercel
 .vercel

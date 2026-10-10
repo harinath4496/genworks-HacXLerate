@@ -4,6 +4,11 @@ import React, { useState, useMemo, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import {
+  signInWithGoogle,
+  signInWithCredentials,
+  registerWithCredentials,
+} from "@/lib/firebase";
 import { GenWorksLogo, AnimatedLogo, SplashScreen } from "@/components/AnimatedLogo";
 import {
   Sparkles,
@@ -167,6 +172,7 @@ export default function GenWorksMarketplaceLandingPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [authSuccess, setAuthSuccess] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authName, setAuthName] = useState("");
@@ -285,38 +291,154 @@ export default function GenWorksMarketplaceLandingPage() {
     }, 1200);
   };
 
-  const handleAuthSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setAuthLoading(true);
-    setTimeout(() => {
-      setAuthLoading(false);
-      const categoryLabel =
-        clientCategory === "brand"
-          ? "Brand / Enterprise"
-          : clientCategory === "agency"
-          ? "Creative Agency"
-          : "Individual / Founder";
+  const handleGoogleSignIn = async () => {
+    try {
+      setAuthLoading(true);
+      setAuthError(null);
+      setAuthSuccess("Connecting to Google Auth...");
 
-      setAuthSuccess(
-        authMode === "signin"
-          ? "Welcome back to GenWorks Client Portal!"
-          : `Client workspace provisioned for ${categoryLabel}!`
-      );
+      const user = await signInWithGoogle();
+      if (!user) {
+        throw new Error("Google Sign-In returned an empty profile.");
+      }
+
+      const clientName = user.displayName || user.email?.split("@")[0] || "Client Partner";
+      const clientEmail = user.email || "";
+
+      // Synchronize with MongoDB Atlas clientora.User collection
+      try {
+        await fetch("/api/auth/google", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: clientEmail,
+            name: clientName,
+            firebaseUid: user.uid,
+            photoURL: user.photoURL,
+            category: clientCategory,
+          }),
+        });
+      } catch (dbErr) {
+        console.warn("MongoDB sync notice:", dbErr);
+      }
 
       if (typeof window !== "undefined") {
         try {
           localStorage.setItem(
             "genworks_client_user",
             JSON.stringify({
-              name: authName.trim() || "Hostlekid",
-              email: authEmail.trim() || "hostlekid629@gmail.com",
+              name: clientName,
+              email: clientEmail,
               role: "Client • Enterprise",
               category: clientCategory,
+              photoURL: user.photoURL || null,
             })
           );
-        } catch {
-          // ignore
+        } catch {}
+      }
+
+      setAuthSuccess(`Welcome, ${clientName}! Redirecting to dashboard...`);
+      setTimeout(() => {
+        setIsAuthOpen(false);
+        setAuthSuccess(null);
+        router.push("/dashboard");
+      }, 1000);
+    } catch (err: unknown) {
+      console.error("Google Auth error:", err);
+      const msg = err instanceof Error ? err.message : "Failed to sign in with Google.";
+      if (msg.includes("popup-closed-by-user") || msg.includes("cancelled-popup-request")) {
+        setAuthError("Sign-in cancelled. Please click the Google button to try again.");
+      } else {
+        setAuthError(msg);
+      }
+      setAuthSuccess(null);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthLoading(true);
+    setAuthError(null);
+
+    const categoryLabel =
+      clientCategory === "brand"
+        ? "Brand / Enterprise"
+        : clientCategory === "agency"
+        ? "Creative Agency"
+        : "Individual / Founder";
+
+    try {
+      if (authMode === "signup") {
+        if (!authEmail.trim() || !authPassword) {
+          throw new Error("Please provide your work email and password.");
         }
+        if (authPassword.length < 6) {
+          throw new Error("Password must be at least 6 characters.");
+        }
+
+        // Firebase Credentials Registration
+        const user = await registerWithCredentials(
+          authEmail.trim(),
+          authPassword,
+          authName.trim() || authEmail.split("@")[0]
+        );
+
+        // MongoDB Atlas Persistence
+        try {
+          await fetch("/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: authEmail.trim(),
+              name: authName.trim() || authEmail.split("@")[0],
+              category: clientCategory,
+              firebaseUid: user.uid,
+            }),
+          });
+        } catch (dbErr) {
+          console.warn("MongoDB registration notice:", dbErr);
+        }
+
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(
+              "genworks_client_user",
+              JSON.stringify({
+                name: authName.trim() || authEmail.split("@")[0],
+                email: authEmail.trim(),
+                role: "Client • Enterprise",
+                category: clientCategory,
+              })
+            );
+          } catch {}
+        }
+
+        setAuthSuccess(`Client workspace provisioned for ${categoryLabel}!`);
+      } else {
+        // Sign-in with credentials
+        if (!authEmail.trim() || !authPassword) {
+          throw new Error("Please enter your registered email and password.");
+        }
+
+        const user = await signInWithCredentials(authEmail.trim(), authPassword);
+
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(
+              "genworks_client_user",
+              JSON.stringify({
+                name: user.displayName || authEmail.split("@")[0],
+                email: authEmail.trim(),
+                role: "Client • Enterprise",
+                category: clientCategory,
+              })
+            );
+          } catch {}
+        }
+
+        setAuthSuccess("Welcome back to GenWorks Client Portal!");
       }
 
       setTimeout(() => {
@@ -324,7 +446,23 @@ export default function GenWorksMarketplaceLandingPage() {
         setAuthSuccess(null);
         router.push("/dashboard");
       }, 1000);
-    }, 800);
+    } catch (err: unknown) {
+      console.error("Auth submit error:", err);
+      const msg = err instanceof Error ? err.message : "Authentication failed.";
+      if (msg.includes("email-already-in-use")) {
+        setAuthError("This email is already registered. Please sign in instead.");
+      } else if (
+        msg.includes("invalid-credential") ||
+        msg.includes("wrong-password") ||
+        msg.includes("user-not-found")
+      ) {
+        setAuthError("Invalid credentials. Please verify your email and password.");
+      } else {
+        setAuthError(msg);
+      }
+    } finally {
+      setAuthLoading(false);
+    }
   };
 
   const handleSubscribe = (e: React.FormEvent) => {
@@ -1599,7 +1737,13 @@ export default function GenWorksMarketplaceLandingPage() {
                   </div>
                 )}
 
-                {/* Success notification */}
+                {/* Auth Notifications */}
+                {authError && (
+                  <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium flex items-center gap-2 animate-in fade-in">
+                    <X className="w-4 h-4 text-red-600 shrink-0 cursor-pointer" onClick={() => setAuthError(null)} />
+                    <span>{authError}</span>
+                  </div>
+                )}
                 {authSuccess && (
                   <div className="p-3 rounded-xl bg-[#dfe7bf] border border-[#c2caa4] text-[#5a6242] text-xs font-bold flex items-center gap-2 animate-in fade-in">
                     <CheckCircle2 className="w-4 h-4 text-[#5a6242] shrink-0" />
@@ -1611,13 +1755,18 @@ export default function GenWorksMarketplaceLandingPage() {
                 <button
                   type="submit"
                   disabled={authLoading}
-                  className="w-full mt-2 py-3.5 rounded-full bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] font-headline font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-md shadow-[#d3a373]/20 active:scale-95 disabled:opacity-50"
+                  className="w-full mt-2 py-3.5 rounded-full bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] font-headline font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-md shadow-[#d3a373]/20 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  {authLoading
-                    ? "Processing..."
-                    : authMode === "signin"
-                    ? "Sign In to Client Portal"
-                    : "Create Client Account"}
+                  {authLoading && (
+                    <div className="w-4 h-4 border-2 border-[#1b1c16] border-t-transparent rounded-full animate-spin" />
+                  )}
+                  <span>
+                    {authLoading
+                      ? "Verifying Credentials..."
+                      : authMode === "signin"
+                      ? "Sign In to Client Portal"
+                      : "Create Client Account"}
+                  </span>
                 </button>
 
                 {/* Mode switcher link below submit */}
@@ -1627,7 +1776,7 @@ export default function GenWorksMarketplaceLandingPage() {
                       Already have an account?{" "}
                       <button
                         type="button"
-                        onClick={() => { setAuthMode("signin"); setIsCategoryDropdownOpen(false); setAuthSuccess(null); }}
+                        onClick={() => { setAuthMode("signin"); setIsCategoryDropdownOpen(false); setAuthSuccess(null); setAuthError(null); }}
                         className="font-headline font-bold text-[#1b1c16] underline hover:text-[#d3a373] transition-colors"
                       >
                         Sign in
@@ -1638,7 +1787,7 @@ export default function GenWorksMarketplaceLandingPage() {
                       Don&apos;t have an account?{" "}
                       <button
                         type="button"
-                        onClick={() => { setAuthMode("signup"); setIsCategoryDropdownOpen(false); setAuthSuccess(null); }}
+                        onClick={() => { setAuthMode("signup"); setIsCategoryDropdownOpen(false); setAuthSuccess(null); setAuthError(null); }}
                         className="font-headline font-bold text-[#1b1c16] underline hover:text-[#d3a373] transition-colors"
                       >
                         Create a client account
@@ -1658,15 +1807,13 @@ export default function GenWorksMarketplaceLandingPage() {
                 </div>
               </div>
 
-              {/* Centered Single Google Button (Apple Removed from both Sign In and Register) */}
+              {/* Centered Single Google Button (Firebase Auth Integrated) */}
               <div className="flex justify-center pt-1">
                 <button
                   type="button"
-                  onClick={() => {
-                    setAuthSuccess("Connecting Client Portal via Google...");
-                    setTimeout(() => setAuthSuccess(null), 2500);
-                  }}
-                  className="w-full max-w-sm py-3 px-6 rounded-full border border-[#e4e3d9] bg-[#faf9f5] hover:bg-white hover:border-[#d3a373] font-headline font-bold text-xs text-[#1b1c16] flex items-center justify-center gap-3 transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98]"
+                  onClick={handleGoogleSignIn}
+                  disabled={authLoading}
+                  className="w-full max-w-sm py-3 px-6 rounded-full border border-[#e4e3d9] bg-[#faf9f5] hover:bg-white hover:border-[#d3a373] font-headline font-bold text-xs text-[#1b1c16] flex items-center justify-center gap-3 transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] disabled:opacity-50"
                 >
                   <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                     <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z" />
