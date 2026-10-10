@@ -31,11 +31,14 @@ import {
   Copy,
   User,
   Briefcase,
-  ArrowLeft
+  ArrowLeft,
+  ChevronDown,
+  Mail
 } from "lucide-react";
 
 type AuthMode = "signin" | "signup";
 type UserRole = "BRAND" | "CREATOR";
+type ClientCategory = "brand" | "agency" | "individual";
 
 interface CreatorWorkflow {
   positivePrompt: string;
@@ -154,7 +157,7 @@ function Reveal({
 export default function GenWorksMarketplaceLandingPage() {
   // Navigation & Interactive States
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [authStep, setAuthStep] = useState<"role-select" | "form">("role-select");
+  const [authStep, setAuthStep] = useState<"role-select" | "form">("form");
   const [authMode, setAuthMode] = useState<AuthMode>("signup");
   const [authRole, setAuthRole] = useState<UserRole>("BRAND");
   const [showPassword, setShowPassword] = useState(false);
@@ -163,6 +166,8 @@ export default function GenWorksMarketplaceLandingPage() {
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authName, setAuthName] = useState("");
+  const [clientCategory, setClientCategory] = useState<ClientCategory>("brand");
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [authRemember, setAuthRemember] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [navMounted, setNavMounted] = useState(false);
@@ -283,8 +288,14 @@ export default function GenWorksMarketplaceLandingPage() {
       setAuthLoading(false);
       setAuthSuccess(
         authMode === "signin"
-          ? "Welcome back to GenWorks!"
-          : `Studio workspace provisioned for ${authRole === "CREATOR" ? "AI Creator" : "Brand / Client"}!`
+          ? "Welcome back to GenWorks Client Portal!"
+          : `Client workspace provisioned for ${
+              clientCategory === "brand"
+                ? "Brand / Enterprise"
+                : clientCategory === "agency"
+                ? "Creative Agency"
+                : "Individual / Founder"
+            }!`
       );
       setTimeout(() => {
         setIsAuthOpen(false);
@@ -600,7 +611,7 @@ export default function GenWorksMarketplaceLandingPage() {
           {/* Right: CTA Button & Mobile Menu Toggle */}
           <div className="flex items-center gap-3 shrink-0">
             <button
-              onClick={() => { setAuthStep("role-select"); setAuthMode("signup"); setIsAuthOpen(true); }}
+              onClick={() => { setAuthRole("BRAND"); setAuthStep("form"); setAuthMode("signup"); setIsAuthOpen(true); }}
               className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-extrabold px-5 py-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shadow-sm shadow-[#d3a373]/20 hover:shadow-md hover:scale-[1.02] active:scale-95"
             >
               <User className="w-3.5 h-3.5 text-[#1b1c16] shrink-0" />
@@ -624,7 +635,7 @@ export default function GenWorksMarketplaceLandingPage() {
           <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">How GenWorks Works</a>
           <a href="#creators" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">AI Creators</a>
           <button
-            onClick={() => { setMobileMenuOpen(false); setAuthStep("role-select"); setAuthMode("signup"); setIsAuthOpen(true); }}
+            onClick={() => { setMobileMenuOpen(false); setAuthRole("BRAND"); setAuthStep("form"); setAuthMode("signup"); setIsAuthOpen(true); }}
             className="bg-[#d3a373] text-[#1b1c16] px-8 py-3.5 rounded-full text-base font-extrabold shadow-md flex items-center gap-2.5"
           >
             <User className="w-4 h-4 text-[#1b1c16]" />
@@ -687,7 +698,7 @@ export default function GenWorksMarketplaceLandingPage() {
                   onClick={() => {
                     setIntentRole("hire");
                     setAuthRole("BRAND");
-                    setAuthStep("role-select");
+                    setAuthStep("form");
                     setAuthMode("signup");
                     setIsAuthOpen(true);
                   }}
@@ -703,8 +714,8 @@ export default function GenWorksMarketplaceLandingPage() {
                   type="button"
                   onClick={() => {
                     setIntentRole("work");
-                    setAuthRole("CREATOR");
-                    setAuthStep("role-select");
+                    setAuthRole("BRAND");
+                    setAuthStep("form");
                     setAuthMode("signup");
                     setIsAuthOpen(true);
                   }}
@@ -725,7 +736,8 @@ export default function GenWorksMarketplaceLandingPage() {
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    setAuthStep("role-select");
+                    setAuthRole("BRAND");
+                    setAuthStep("form");
                     setAuthMode("signup");
                     setIsAuthOpen(true);
                   }}
@@ -886,10 +898,10 @@ export default function GenWorksMarketplaceLandingPage() {
             </div>
 
             <button
-              onClick={() => { setAuthMode("signup"); setAuthRole("CREATOR"); setIsAuthOpen(true); }}
+              onClick={() => { setAuthMode("signup"); setAuthRole("BRAND"); setAuthStep("form"); setIsAuthOpen(true); }}
               className="px-6 py-3 rounded-full border border-[#1b1c16] hover:bg-[#1b1c16] hover:text-[#fbfaf0] text-[#1b1c16] font-headline font-bold text-xs uppercase tracking-wider transition-all duration-300 self-start sm:self-auto flex items-center gap-2"
             >
-              <span>Apply as AI Creator</span>
+              <span>Commission AI Directors</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -1040,7 +1052,7 @@ export default function GenWorksMarketplaceLandingPage() {
                   <button
                     onClick={() => {
                       setAuthRole("BRAND");
-                      setAuthStep("role-select");
+                      setAuthStep("form");
                       setAuthMode("signup");
                       setIsAuthOpen(true);
                     }}
@@ -1053,7 +1065,7 @@ export default function GenWorksMarketplaceLandingPage() {
                   <button
                     onClick={() => {
                       setAuthRole("BRAND");
-                      setAuthStep("role-select");
+                      setAuthStep("form");
                       setAuthMode("signup");
                       setIsAuthOpen(true);
                     }}
@@ -1106,8 +1118,8 @@ export default function GenWorksMarketplaceLandingPage() {
                 <ul className="space-y-2 font-body text-xs text-[#efeee4]/80 font-medium">
                   <li><a href="#how-it-works" className="hover:text-white transition-colors">Milestone Escrow Protection</a></li>
                   <li><a href="#how-it-works" className="hover:text-white transition-colors">Deterministic Seed Review</a></li>
-                  <li><button onClick={() => { setAuthRole("BRAND"); setAuthStep("role-select"); setAuthMode("signup"); setIsAuthOpen(true); }} className="hover:text-white transition-colors text-left">Hire Top AI Directors</button></li>
-                  <li><button onClick={() => { setAuthRole("CREATOR"); setAuthStep("role-select"); setAuthMode("signup"); setIsAuthOpen(true); }} className="hover:text-white transition-colors text-left">Join as AI Creator</button></li>
+                  <li><button onClick={() => { setAuthRole("BRAND"); setAuthStep("form"); setAuthMode("signup"); setIsAuthOpen(true); }} className="hover:text-white transition-colors text-left">Hire Top AI Directors</button></li>
+                  <li><button onClick={() => { setAuthRole("BRAND"); setAuthStep("form"); setAuthMode("signup"); setIsAuthOpen(true); }} className="hover:text-white transition-colors text-left">Commission Pipelines</button></li>
                 </ul>
               </div>
 
@@ -1115,10 +1127,10 @@ export default function GenWorksMarketplaceLandingPage() {
               <div className="space-y-3">
                 <p className="font-headline font-black text-xs uppercase tracking-wider text-[#d3a373]">Get Started</p>
                 <p className="font-body text-xs text-[#efeee4]/80">
-                  Ready to commission AI creative assets or monetize your workflow?
+                  Ready to commission high-impact AI commercial video assets?
                 </p>
                 <button
-                  onClick={() => { setAuthStep("role-select"); setAuthMode("signin"); setIsAuthOpen(true); }}
+                  onClick={() => { setAuthRole("BRAND"); setAuthStep("form"); setAuthMode("signup"); setIsAuthOpen(true); }}
                   className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] font-headline font-bold text-xs px-5 py-2.5 rounded-full shadow transition-all"
                 >
                   Sign In / Join →
@@ -1294,430 +1306,338 @@ export default function GenWorksMarketplaceLandingPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-all duration-300 animate-fade-in">
           <div className="relative w-full max-w-lg bg-white text-[#1b1c16] rounded-3xl p-6 sm:p-8 shadow-2xl border border-[#e4e3d9] overflow-hidden transition-all duration-300 max-h-[92vh] overflow-y-auto animate-scale-in">
             
-            {/* Top Navigation Row */}
-            <div className="flex items-center justify-between mb-4">
-              {authStep === "form" ? (
-                <button
-                  type="button"
-                  onClick={() => { setAuthStep("role-select"); setAuthSuccess(null); }}
-                  className="text-xs font-semibold text-[#50453b] hover:text-[#1b1c16] flex items-center gap-1.5 transition-colors py-1 px-2 rounded-lg hover:bg-neutral-100"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>Back</span>
-                </button>
-              ) : (
-                <div />
-              )}
-              
+            {/* Top Close Button */}
+            <div className="flex items-center justify-end mb-1">
               <button
                 type="button"
-                onClick={() => { setIsAuthOpen(false); setAuthStep("role-select"); setAuthSuccess(null); }}
+                onClick={() => { setIsAuthOpen(false); setIsCategoryDropdownOpen(false); setAuthSuccess(null); }}
                 className="p-2 text-[#82756a] hover:text-[#1b1c16] rounded-full hover:bg-neutral-100 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* STEP 1: ROLE SELECTION (Matches image_897ba8.png) */}
-            {authStep === "role-select" && (
-              <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
-                {/* Header Crest */}
-                <div className="flex flex-col items-center text-center">
-                  <div className="mb-3">
-                    <GenWorksLogo size="md" animated={false} />
-                  </div>
-                  <h3 className="font-headline font-black text-2xl sm:text-3xl text-[#1b1c16] tracking-tight">
-                    Welcome to GenWorks
-                  </h3>
-                  <p className="font-body text-xs sm:text-sm text-[#50453b] mt-1">
-                    Which describes you best?
-                  </p>
+            <div className="space-y-5 animate-in fade-in zoom-in-95 duration-200">
+              {/* Header Crest */}
+              <div className="flex flex-col items-center text-center">
+                <div className="mb-2">
+                  <GenWorksLogo size="md" animated={false} />
                 </div>
-
-                {/* Role Choice Cards */}
-                <div className="space-y-3.5 pt-1">
-                  {/* Card 1: Client */}
-                  <div
-                    onClick={() => setAuthRole("BRAND")}
-                    className={`cursor-pointer p-4 sm:p-5 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-4 group ${
-                      authRole === "BRAND"
-                        ? "border-[#d3a373] bg-[#d3a373]/10 ring-2 ring-[#d3a373]/25 shadow-sm"
-                        : "border-[#e4e3d9] bg-[#faf9f5] hover:border-[#d3a373]/50 hover:bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3.5 sm:gap-4">
-                      <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#dfe7bf] text-[#1b1c16] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                        <Briefcase className="w-5 h-5 sm:w-6 sm:h-6 text-[#1b1c16]" />
-                      </div>
-                      <div>
-                        <h4 className="font-headline font-bold text-sm sm:text-base text-[#1b1c16]">
-                          I&apos;m a Client
-                        </h4>
-                        <p className="font-body text-xs text-[#50453b] mt-0.5 leading-snug">
-                          Looking to hire AI creators &amp; license AI-generated content
-                        </p>
-                      </div>
-                    </div>
-                    {/* Radio Indicator */}
-                    <div className="shrink-0">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                        authRole === "BRAND"
-                          ? "border-[#d3a373] bg-[#d3a373]"
-                          : "border-[#c4bfb7] bg-white"
-                      }`}>
-                        {authRole === "BRAND" && (
-                          <div className="w-2 h-2 rounded-full bg-white" />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card 2: Creator */}
-                  <div
-                    onClick={() => setAuthRole("CREATOR")}
-                    className={`cursor-pointer p-4 sm:p-5 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-4 group ${
-                      authRole === "CREATOR"
-                        ? "border-[#d3a373] bg-[#d3a373]/10 ring-2 ring-[#d3a373]/25 shadow-sm"
-                        : "border-[#e4e3d9] bg-[#faf9f5] hover:border-[#d3a373]/50 hover:bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3.5 sm:gap-4">
-                      <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#d3a373] text-[#1b1c16] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                        <Palette className="w-5 h-5 sm:w-6 sm:h-6 text-[#1b1c16]" />
-                      </div>
-                      <div>
-                        <h4 className="font-headline font-bold text-sm sm:text-base text-[#1b1c16]">
-                          I&apos;m a Creator
-                        </h4>
-                        <p className="font-body text-xs text-[#50453b] mt-0.5 leading-snug">
-                          Looking to showcase AI work, monetize workflows, &amp; find clients
-                        </p>
-                      </div>
-                    </div>
-                    {/* Radio Indicator */}
-                    <div className="shrink-0">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                        authRole === "CREATOR"
-                          ? "border-[#d3a373] bg-[#d3a373]"
-                          : "border-[#c4bfb7] bg-white"
-                      }`}>
-                        {authRole === "CREATOR" && (
-                          <div className="w-2 h-2 rounded-full bg-white" />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Continue CTA Button (Redirects to Register) */}
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => { setAuthMode("signup"); setAuthStep("form"); setAuthSuccess(null); }}
-                    className="w-full py-3.5 rounded-full bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] font-headline font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-md shadow-[#d3a373]/20 active:scale-95 flex items-center justify-center gap-2"
-                  >
-                    <span>Continue to Register</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Bottom Quick Switch */}
-                <p className="text-center font-body text-xs text-[#50453b]">
-                  Already have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => { setAuthMode("signin"); setAuthStep("form"); setAuthSuccess(null); }}
-                    className="font-headline font-bold text-[#1b1c16] underline hover:text-[#d3a373] transition-colors"
-                  >
-                    Sign in
-                  </button>
+                <h3 className="font-headline font-black text-2xl sm:text-3xl text-[#1b1c16] tracking-tight">
+                  {authMode === "signin"
+                    ? "Sign in as Client"
+                    : "Create Client Account"}
+                </h3>
+                <p className="font-body text-xs text-[#50453b] mt-1 max-w-sm">
+                  {authMode === "signin"
+                    ? "Access your creative briefs, escrow vault, and verified creator pipelines"
+                    : "Commission vetted generative AI directors with milestone escrow protection"}
                 </p>
               </div>
-            )}
 
-            {/* STEP 2: DEDICATED AUTH FORM (Matches image_bac78c.png) */}
-            {authStep === "form" && (
-              <div className="space-y-5 animate-in fade-in zoom-in-95 duration-200">
-                {/* Header */}
-                <div className="flex flex-col items-center text-center">
-                  <div className="mb-2">
-                    <GenWorksLogo size="md" animated={false} />
-                  </div>
-                  <h3 className="font-headline font-black text-2xl sm:text-3xl text-[#1b1c16] tracking-tight">
-                    {authMode === "signin"
-                      ? authRole === "BRAND"
-                        ? "Sign in as Client"
-                        : "Sign in as Creator"
-                      : authRole === "BRAND"
-                      ? "Create Client Account"
-                      : "Join as AI Creator"}
-                  </h3>
-                  <p className="font-body text-xs text-[#50453b] mt-1">
-                    {authRole === "BRAND"
-                      ? "Commission vetted generative AI directors with milestone escrow"
-                      : "Showcase your model pipelines and land commercial briefs"}
-                  </p>
-                </div>
-
-                {/* Dual Role Toggle Tabs (Client vs Creator) */}
-                <div className="grid grid-cols-2 p-1 bg-[#efeee4] rounded-2xl border border-[#e4e3d9]">
-                  <button
-                    type="button"
-                    onClick={() => { setAuthRole("BRAND"); setAuthSuccess(null); }}
-                    className={`py-2 rounded-xl font-headline font-bold text-xs flex items-center justify-center gap-2 transition-all ${
-                      authRole === "BRAND"
-                        ? "bg-white text-[#1b1c16] shadow-sm"
-                        : "text-[#50453b] hover:text-[#1b1c16]"
-                    }`}
-                  >
-                    <Briefcase className="w-3.5 h-3.5 text-[#5a6242]" />
-                    <span>Client</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { setAuthRole("CREATOR"); setAuthSuccess(null); }}
-                    className={`py-2 rounded-xl font-headline font-bold text-xs flex items-center justify-center gap-2 transition-all ${
-                      authRole === "CREATOR"
-                        ? "bg-white text-[#1b1c16] shadow-sm"
-                        : "text-[#50453b] hover:text-[#1b1c16]"
-                    }`}
-                  >
-                    <Palette className="w-3.5 h-3.5 text-[#d3a373]" />
-                    <span>Creator</span>
-                  </button>
-                </div>
-
-                {/* Mode Segmented Switcher (Sign In vs Register) */}
-                <div className="flex items-center justify-center gap-6 border-b border-[#e4e3d9] pb-3 text-xs font-headline font-bold">
-                  <button
-                    type="button"
-                    onClick={() => { setAuthMode("signin"); setAuthSuccess(null); }}
-                    className={`pb-1 transition-all relative ${
-                      authMode === "signin"
-                        ? "text-[#1b1c16] font-black"
-                        : "text-[#82756a] hover:text-[#1b1c16]"
-                    }`}
-                  >
-                    Sign In
-                    {authMode === "signin" && (
-                      <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#d3a373] rounded-full" />
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { setAuthMode("signup"); setAuthSuccess(null); }}
-                    className={`pb-1 transition-all relative ${
-                      authMode === "signup"
-                        ? "text-[#1b1c16] font-black"
-                        : "text-[#82756a] hover:text-[#1b1c16]"
-                    }`}
-                  >
-                    Register
-                    {authMode === "signup" && (
-                      <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#d3a373] rounded-full" />
-                    )}
-                  </button>
-                </div>
-
-                {/* Form Fields */}
-                <form onSubmit={handleAuthSubmit} className="space-y-3.5">
-                  
-                  {/* Name field (on signup) */}
+              {/* Mode Segmented Switcher (Sign In vs Register) */}
+              <div className="flex items-center justify-center gap-8 border-b border-[#e4e3d9] pb-3 text-xs font-headline font-bold">
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode("signin"); setIsCategoryDropdownOpen(false); setAuthSuccess(null); }}
+                  className={`pb-1 transition-all relative ${
+                    authMode === "signin"
+                      ? "text-[#1b1c16] font-black"
+                      : "text-[#82756a] hover:text-[#1b1c16]"
+                  }`}
+                >
+                  Sign In
+                  {authMode === "signin" && (
+                    <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#d3a373] rounded-full" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode("signup"); setIsCategoryDropdownOpen(false); setAuthSuccess(null); }}
+                  className={`pb-1 transition-all relative ${
+                    authMode === "signup"
+                      ? "text-[#1b1c16] font-black"
+                      : "text-[#82756a] hover:text-[#1b1c16]"
+                  }`}
+                >
+                  Register
                   {authMode === "signup" && (
-                    <div>
-                      <label className="block font-mono text-[11px] font-bold text-[#50453b] uppercase tracking-wider mb-1">
-                        {authRole === "BRAND" ? "Company or Brand Name" : "Full Name / Artist Alias"}
-                      </label>
+                    <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#d3a373] rounded-full" />
+                  )}
+                </button>
+              </div>
+
+              {/* Form Fields */}
+              <form onSubmit={handleAuthSubmit} className="space-y-3.5">
+                
+                {/* Full Name field (on signup) */}
+                {authMode === "signup" && (
+                  <div>
+                    <label className="block font-mono text-[11px] font-bold text-[#50453b] uppercase tracking-wider mb-1">
+                      Full Name
+                    </label>
+                    <div className="relative">
                       <input
                         type="text"
                         required
                         value={authName}
                         onChange={(e) => setAuthName(e.target.value)}
-                        placeholder={authRole === "BRAND" ? "e.g. Acme Media Corp" : "e.g. Elena Vance (@elanav)"}
-                        className="w-full bg-[#faf9f5] text-[#1b1c16] px-4 py-2.5 rounded-xl border border-[#e4e3d9] text-xs font-body focus:outline-none focus:border-[#d3a373]"
+                        placeholder="e.g. Alex Rivera"
+                        className="w-full bg-[#faf9f5] text-[#1b1c16] px-4 py-2.5 rounded-xl border border-[#e4e3d9] text-xs font-body focus:outline-none focus:border-[#d3a373] focus:bg-white transition-all pl-10"
                       />
+                      <User className="w-4 h-4 text-[#82756a] absolute left-3.5 top-3" />
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {/* Email field */}
-                  <div>
-                    <label className="block font-mono text-[11px] font-bold text-[#50453b] uppercase tracking-wider mb-1">
-                      {authRole === "BRAND" ? "Work Email Address" : "Creator Email Address"}
-                    </label>
+                {/* Work Email field */}
+                <div>
+                  <label className="block font-mono text-[11px] font-bold text-[#50453b] uppercase tracking-wider mb-1">
+                    Work Email Address
+                  </label>
+                  <div className="relative">
                     <input
                       type="email"
                       required
                       value={authEmail}
                       onChange={(e) => setAuthEmail(e.target.value)}
-                      placeholder={authRole === "BRAND" ? "director@brand.com" : "creator@studio.ai"}
-                      className="w-full bg-[#faf9f5] text-[#1b1c16] px-4 py-2.5 rounded-xl border border-[#e4e3d9] text-xs font-body focus:outline-none focus:border-[#d3a373]"
+                      placeholder="alex@company.com"
+                      className="w-full bg-[#faf9f5] text-[#1b1c16] px-4 py-2.5 rounded-xl border border-[#e4e3d9] text-xs font-body focus:outline-none focus:border-[#d3a373] focus:bg-white transition-all pl-10"
                     />
+                    <Mail className="w-4 h-4 text-[#82756a] absolute left-3.5 top-3" />
                   </div>
+                </div>
 
-                  {/* Password field */}
-                  <div>
+                {/* Client Category Dropdown (on signup) */}
+                {authMode === "signup" && (
+                  <div className="relative">
                     <label className="block font-mono text-[11px] font-bold text-[#50453b] uppercase tracking-wider mb-1">
-                      Password
+                      Client Category / Type
                     </label>
-                    <div className="relative">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        required
-                        value={authPassword}
-                        onChange={(e) => setAuthPassword(e.target.value)}
-                        placeholder="••••••••••••"
-                        className="w-full bg-[#faf9f5] text-[#1b1c16] px-4 py-2.5 rounded-xl border border-[#e4e3d9] text-xs font-body focus:outline-none focus:border-[#d3a373] pr-10"
+                    
+                    {/* Dropdown Trigger Button */}
+                    <button
+                      type="button"
+                      onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+                      className="w-full bg-[#faf9f5] hover:bg-white text-[#1b1c16] px-3.5 py-2.5 rounded-xl border border-[#e4e3d9] text-xs font-body flex items-center justify-between transition-all focus:outline-none focus:border-[#d3a373] shadow-sm"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-6 h-6 rounded-lg bg-[#dfe7bf] text-[#1b1c16] flex items-center justify-center shrink-0">
+                          {clientCategory === "brand" && <Building2 className="w-3.5 h-3.5" />}
+                          {clientCategory === "agency" && <Layers className="w-3.5 h-3.5" />}
+                          {clientCategory === "individual" && <User className="w-3.5 h-3.5" />}
+                        </div>
+                        <span className="font-headline font-bold text-xs text-[#1b1c16]">
+                          {clientCategory === "brand" && "Brand / Enterprise"}
+                          {clientCategory === "agency" && "Creative Agency"}
+                          {clientCategory === "individual" && "Individual / Founder"}
+                        </span>
+                      </div>
+                      <ChevronDown
+                        className={`w-4 h-4 text-[#82756a] transition-transform duration-200 ${
+                          isCategoryDropdownOpen ? "rotate-180" : ""
+                        }`}
                       />
+                    </button>
+
+                    {/* 3 Interactive Category Options */}
+                    {isCategoryDropdownOpen && (
+                      <div className="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-2xl border border-[#e4e3d9] shadow-xl p-1.5 z-30 space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                        {[
+                          {
+                            id: "brand" as const,
+                            label: "Brand / Enterprise",
+                            desc: "Direct brand marketing team, retail, or enterprise client",
+                            icon: Building2
+                          },
+                          {
+                            id: "agency" as const,
+                            label: "Creative Agency",
+                            desc: "Advertising, digital production, or creative agency",
+                            icon: Layers
+                          },
+                          {
+                            id: "individual" as const,
+                            label: "Individual / Founder",
+                            desc: "Independent commissioner, creator, or solopreneur",
+                            icon: User
+                          }
+                        ].map((opt) => {
+                          const Icon = opt.icon;
+                          const isSelected = clientCategory === opt.id;
+                          return (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => {
+                                setClientCategory(opt.id);
+                                setIsCategoryDropdownOpen(false);
+                              }}
+                              className={`w-full p-2.5 rounded-xl text-left transition-all flex items-center justify-between gap-3 ${
+                                isSelected
+                                  ? "bg-[#dfe7bf]/40 border border-[#c2caa4]/60 text-[#1b1c16]"
+                                  : "hover:bg-[#faf9f5] text-[#50453b] hover:text-[#1b1c16]"
+                              }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <div
+                                  className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                                    isSelected
+                                      ? "bg-[#d3a373] text-[#1b1c16]"
+                                      : "bg-[#efeee4] text-[#50453b]"
+                                  }`}
+                                >
+                                  <Icon className="w-4 h-4" />
+                                </div>
+                                <div>
+                                  <p className="font-headline font-bold text-xs text-[#1b1c16] leading-tight">
+                                    {opt.label}
+                                  </p>
+                                  <p className="font-body text-[11px] text-[#82756a] leading-tight mt-0.5">
+                                    {opt.desc}
+                                  </p>
+                                </div>
+                              </div>
+                              {isSelected && (
+                                <Check className="w-4 h-4 text-[#5a6242] shrink-0" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Password field */}
+                <div>
+                  <label className="block font-mono text-[11px] font-bold text-[#50453b] uppercase tracking-wider mb-1">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required
+                      value={authPassword}
+                      onChange={(e) => setAuthPassword(e.target.value)}
+                      placeholder="••••••••••••"
+                      className="w-full bg-[#faf9f5] text-[#1b1c16] px-4 py-2.5 rounded-xl border border-[#e4e3d9] text-xs font-body focus:outline-none focus:border-[#d3a373] focus:bg-white transition-all pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-2.5 text-[#82756a] hover:text-[#1b1c16]"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Remember me & Forgot Password Row (on signin) */}
+                {authMode === "signin" && (
+                  <div className="flex items-center justify-between text-xs pt-1">
+                    <label className="flex items-center gap-2 cursor-pointer font-body text-[#50453b]">
+                      <input
+                        type="checkbox"
+                        checked={authRemember}
+                        onChange={(e) => setAuthRemember(e.target.checked)}
+                        className="rounded border-[#e4e3d9] text-[#d3a373] focus:ring-[#d3a373]"
+                      />
+                      <span>Remember me</span>
+                    </label>
+                    <a href="#" className="font-headline font-semibold text-[#50453b] hover:text-[#1b1c16] transition-colors">
+                      Forgot Password?
+                    </a>
+                  </div>
+                )}
+
+                {/* Success notification */}
+                {authSuccess && (
+                  <div className="p-3 rounded-xl bg-[#dfe7bf] border border-[#c2caa4] text-[#5a6242] text-xs font-bold flex items-center gap-2 animate-in fade-in">
+                    <CheckCircle2 className="w-4 h-4 text-[#5a6242] shrink-0" />
+                    <span>{authSuccess}</span>
+                  </div>
+                )}
+
+                {/* Submit CTA Button */}
+                <button
+                  type="submit"
+                  disabled={authLoading}
+                  className="w-full mt-2 py-3.5 rounded-full bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] font-headline font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-md shadow-[#d3a373]/20 active:scale-95 disabled:opacity-50"
+                >
+                  {authLoading
+                    ? "Processing..."
+                    : authMode === "signin"
+                    ? "Sign In to Client Portal"
+                    : "Create Client Account"}
+                </button>
+
+                {/* Mode switcher link below submit */}
+                <p className="text-center font-body text-xs text-[#50453b] pt-1">
+                  {authMode === "signup" ? (
+                    <>
+                      Already have an account?{" "}
                       <button
                         type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-2.5 text-[#82756a] hover:text-[#1b1c16]"
+                        onClick={() => { setAuthMode("signin"); setIsCategoryDropdownOpen(false); setAuthSuccess(null); }}
+                        className="font-headline font-bold text-[#1b1c16] underline hover:text-[#d3a373] transition-colors"
                       >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        Sign in
                       </button>
-                    </div>
-                  </div>
-
-                  {/* Creator-specific Specialty on Signup */}
-                  {authMode === "signup" && authRole === "CREATOR" && (
-                    <div>
-                      <label className="block font-mono text-[11px] font-bold text-[#50453b] uppercase tracking-wider mb-1">
-                        Primary AI Toolchain
-                      </label>
-                      <select className="w-full bg-[#faf9f5] text-[#1b1c16] px-4 py-2.5 rounded-xl border border-[#e4e3d9] text-xs font-body focus:outline-none focus:border-[#d3a373]">
-                        <option>Runway Gen-3 Alpha &amp; ComfyUI</option>
-                        <option>Flux.1 Pro Photorealism</option>
-                        <option>Midjourney v6 &amp; Character LoRAs</option>
-                        <option>Luma Dream Machine &amp; Kling AI</option>
-                        <option>Custom Multi-Model Node Architectures</option>
-                      </select>
-                    </div>
+                    </>
+                  ) : (
+                    <>
+                      Don&apos;t have an account?{" "}
+                      <button
+                        type="button"
+                        onClick={() => { setAuthMode("signup"); setIsCategoryDropdownOpen(false); setAuthSuccess(null); }}
+                        className="font-headline font-bold text-[#1b1c16] underline hover:text-[#d3a373] transition-colors"
+                      >
+                        Create a client account
+                      </button>
+                    </>
                   )}
-
-                  {/* Remember me & Forgot Password Row (on signin) */}
-                  {authMode === "signin" && (
-                    <div className="flex items-center justify-between text-xs pt-1">
-                      <label className="flex items-center gap-2 cursor-pointer font-body text-[#50453b]">
-                        <input
-                          type="checkbox"
-                          checked={authRemember}
-                          onChange={(e) => setAuthRemember(e.target.checked)}
-                          className="rounded border-[#e4e3d9] text-[#d3a373] focus:ring-[#d3a373]"
-                        />
-                        <span>Remember me</span>
-                      </label>
-                      <a href="#" className="font-headline font-semibold text-[#50453b] hover:text-[#1b1c16] transition-colors">
-                        Forgot Password?
-                      </a>
-                    </div>
-                  )}
-
-                  {/* Success notification */}
-                  {authSuccess && (
-                    <div className="p-3 rounded-xl bg-[#dfe7bf] border border-[#c2caa4] text-[#5a6242] text-xs font-bold flex items-center gap-2 animate-in fade-in">
-                      <CheckCircle2 className="w-4 h-4 text-[#5a6242] shrink-0" />
-                      <span>{authSuccess}</span>
-                    </div>
-                  )}
-
-                  {/* Submit CTA Button */}
-                  <button
-                    type="submit"
-                    disabled={authLoading}
-                    className="w-full mt-2 py-3.5 rounded-full bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] font-headline font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-md shadow-[#d3a373]/20 active:scale-95 disabled:opacity-50"
-                  >
-                    {authLoading
-                      ? "Processing..."
-                      : authMode === "signin"
-                      ? authRole === "BRAND"
-                        ? "Sign In as Client"
-                        : "Sign In as Creator"
-                      : authRole === "BRAND"
-                      ? "Create Client Account"
-                      : "Join as AI Creator"}
-                  </button>
-
-                  {/* Mode switcher link below submit */}
-                  <p className="text-center font-body text-xs text-[#50453b] pt-1">
-                    {authMode === "signup" ? (
-                      <>
-                        Already have an account?{" "}
-                        <button
-                          type="button"
-                          onClick={() => { setAuthMode("signin"); setAuthSuccess(null); }}
-                          className="font-headline font-bold text-[#1b1c16] underline hover:text-[#d3a373] transition-colors"
-                        >
-                          Sign in
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        Don&apos;t have an account?{" "}
-                        <button
-                          type="button"
-                          onClick={() => { setAuthMode("signup"); setAuthSuccess(null); }}
-                          className="font-headline font-bold text-[#1b1c16] underline hover:text-[#d3a373] transition-colors"
-                        >
-                          Create an account
-                        </button>
-                      </>
-                    )}
-                  </p>
-                </form>
-
-                {/* Social Sign-in Divider (per image_bac78c.png) */}
-                <div className="relative my-4">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-[#e4e3d9]" />
-                  </div>
-                  <div className="relative flex justify-center text-[11px] font-mono uppercase tracking-wider text-[#82756a]">
-                    <span className="bg-white px-3">or continue with</span>
-                  </div>
-                </div>
-
-                {/* Social Auth Buttons */}
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAuthSuccess(`Connecting ${authRole === "BRAND" ? "Client" : "Creator"} via Google...`);
-                      setTimeout(() => setAuthSuccess(null), 2500);
-                    }}
-                    className="py-2.5 px-4 rounded-xl border border-[#e4e3d9] bg-[#faf9f5] hover:bg-neutral-100 font-headline font-bold text-xs text-[#1b1c16] flex items-center justify-center gap-2 transition-all"
-                  >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24">
-                      <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z" />
-                      <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.2 2.8-2.5 3.6l3.7 2.9c2.2-2 3.8-5 3.8-8.7z" />
-                      <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12 0 12s.7 2.3 1.9 4.7l3.7-2.9z" />
-                      <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3.1l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.3C3.7 20.4 7.5 23 12 23z" />
-                    </svg>
-                    <span>Google</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAuthSuccess(`Connecting ${authRole === "BRAND" ? "Client" : "Creator"} via Apple ID...`);
-                      setTimeout(() => setAuthSuccess(null), 2500);
-                    }}
-                    className="py-2.5 px-4 rounded-xl border border-[#e4e3d9] bg-[#faf9f5] hover:bg-neutral-100 font-headline font-bold text-xs text-[#1b1c16] flex items-center justify-center gap-2 transition-all"
-                  >
-                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.93-2.85-.9.04-2 .6-2.65 1.35-.58.66-1.09 1.73-.95 2.76 1.01.08 2.05-.51 2.67-1.26z" />
-                    </svg>
-                    <span>Apple</span>
-                  </button>
-                </div>
-
-                {/* Footer Legal Terms */}
-                <p className="text-[11px] font-body text-[#82756a] text-center leading-relaxed pt-2 border-t border-[#e4e3d9]/60">
-                  By continuing, you agree to GenWorks{" "}
-                  <a href="#" className="underline hover:text-[#1b1c16]">Terms of Service</a>{" "}
-                  and{" "}
-                  <a href="#" className="underline hover:text-[#1b1c16]">Privacy Policy</a>.
                 </p>
+              </form>
+
+              {/* Social Sign-in Divider */}
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-[#e4e3d9]" />
+                </div>
+                <div className="relative flex justify-center text-[11px] font-mono uppercase tracking-wider text-[#82756a]">
+                  <span className="bg-white px-3">or continue with</span>
+                </div>
               </div>
-            )}
+
+              {/* Centered Single Google Button (Apple Removed) */}
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthSuccess("Connecting Client Portal via Google...");
+                    setTimeout(() => setAuthSuccess(null), 2500);
+                  }}
+                  className="w-full max-w-sm py-2.5 px-6 rounded-full border border-[#e4e3d9] bg-[#faf9f5] hover:bg-neutral-100 font-headline font-bold text-xs text-[#1b1c16] flex items-center justify-center gap-2.5 transition-all shadow-sm hover:shadow active:scale-95"
+                >
+                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                    <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z" />
+                    <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.2 2.8-2.5 3.6l3.7 2.9c2.2-2 3.8-5 3.8-8.7z" />
+                    <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12 0 12s.7 2.3 1.9 4.7l3.7-2.9z" />
+                    <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3.1l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.3C3.7 20.4 7.5 23 12 23z" />
+                  </svg>
+                  <span>Continue with Google</span>
+                </button>
+              </div>
+
+              {/* Footer Legal Terms */}
+              <p className="text-[11px] font-body text-[#82756a] text-center leading-relaxed pt-2 border-t border-[#e4e3d9]/60">
+                By continuing, you agree to GenWorks{" "}
+                <a href="#" className="underline hover:text-[#1b1c16]">Client Terms of Service</a>{" "}
+                and{" "}
+                <a href="#" className="underline hover:text-[#1b1c16]">Escrow Agreement</a>.
+              </p>
+            </div>
 
           </div>
         </div>
