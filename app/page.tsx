@@ -10,7 +10,7 @@ import {
   registerWithCredentials,
   checkRedirectAuth,
 } from "@/lib/firebase";
-import { GenWorksLogo, AnimatedLogo, SplashScreen } from "@/components/AnimatedLogo";
+import { GenWorksLogo, AnimatedLogo, SplashScreen, GenWorksBrandLoader } from "@/components/AnimatedLogo";
 import {
   Sparkles,
   ArrowRight,
@@ -425,27 +425,38 @@ export default function GenWorksMarketplaceLandingPage() {
           throw new Error("Password must be at least 6 characters.");
         }
 
-        // Firebase Credentials Registration
-        const user = await registerWithCredentials(
-          authEmail.trim(),
-          authPassword,
-          authName.trim() || authEmail.split("@")[0]
-        );
-
-        // MongoDB Atlas Persistence
+        // 1. Firebase Credentials Registration
+        let firebaseUid = `client_${Date.now()}`;
         try {
-          await fetch("/api/auth/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: authEmail.trim(),
-              name: authName.trim() || authEmail.split("@")[0],
-              category: clientCategory,
-              firebaseUid: user.uid,
-            }),
-          });
-        } catch (dbErr) {
-          console.warn("MongoDB registration notice:", dbErr);
+          const user = await registerWithCredentials(
+            authEmail.trim(),
+            authPassword,
+            authName.trim() || authEmail.split("@")[0]
+          );
+          firebaseUid = user.uid;
+        } catch (fbErr: unknown) {
+          const msg = fbErr instanceof Error ? fbErr.message : "";
+          if (msg.includes("email-already-in-use")) {
+            throw new Error("This email is already registered. Please sign in instead.");
+          }
+          console.warn("Firebase credential registration notice:", fbErr);
+        }
+
+        // 2. MongoDB Atlas Persistence & Session Cookie
+        const regRes = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: authEmail.trim(),
+            name: authName.trim() || authEmail.split("@")[0],
+            category: clientCategory,
+            firebaseUid,
+          }),
+        });
+
+        if (!regRes.ok) {
+          const errData = await regRes.json().catch(() => ({}));
+          throw new Error(errData.error || "Failed to establish secure session.");
         }
 
         if (typeof window !== "undefined") {
@@ -469,22 +480,39 @@ export default function GenWorksMarketplaceLandingPage() {
           throw new Error("Please enter your registered email and password.");
         }
 
-        const user = await signInWithCredentials(authEmail.trim(), authPassword);
+        let firebaseUid = "";
+        let displayName = authName.trim() || authEmail.split("@")[0];
+        try {
+          const user = await signInWithCredentials(authEmail.trim(), authPassword);
+          firebaseUid = user.uid;
+          if (user.displayName) displayName = user.displayName;
+        } catch (fbErr: unknown) {
+          console.warn("Firebase credential sign-in notice:", fbErr);
+          const msg = fbErr instanceof Error ? fbErr.message : "";
+          if (
+            msg.includes("invalid-credential") ||
+            msg.includes("wrong-password") ||
+            msg.includes("user-not-found")
+          ) {
+            throw new Error("Invalid credentials. Please verify your email and password.");
+          }
+        }
 
         // Issue server session cookie for credentials sign-in
-        try {
-          await fetch("/api/auth/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: authEmail.trim(),
-              name: user.displayName || authEmail.split("@")[0],
-              category: clientCategory,
-              firebaseUid: user.uid,
-            }),
-          });
-        } catch (syncErr) {
-          console.warn("Session sync notice:", syncErr);
+        const syncRes = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: authEmail.trim(),
+            name: displayName,
+            category: clientCategory,
+            firebaseUid,
+          }),
+        });
+
+        if (!syncRes.ok) {
+          const errData = await syncRes.json().catch(() => ({}));
+          throw new Error(errData.error || "Failed to establish secure session.");
         }
 
         if (typeof window !== "undefined") {
@@ -492,7 +520,7 @@ export default function GenWorksMarketplaceLandingPage() {
             localStorage.setItem(
               "genworks_client_user",
               JSON.stringify({
-                name: user.displayName || authEmail.split("@")[0],
+                name: displayName,
                 email: authEmail.trim(),
                 role: "Client • Enterprise",
                 category: clientCategory,
@@ -1522,6 +1550,21 @@ export default function GenWorksMarketplaceLandingPage() {
         </div>
       )}
 
+
+      {/* ─────────────────────────────────────────────────────────
+          LUXURY GENWORKS BRAND LOADER (from WhatsApp Video 2026-10-10 at 9.33.07 PM.mp4)
+      ───────────────────────────────────────────────────────── */}
+      {authLoading && (
+        <GenWorksBrandLoader
+          statusText={
+            authMode === "signup"
+              ? "PROVISIONING CLIENT WORKSPACE"
+              : "AUTHENTICATING CLIENT SESSION"
+          }
+          subText="Securing workspace & escrow vault with Web Crypto HMAC guard"
+          fullscreen={true}
+        />
+      )}
 
       {/* ─────────────────────────────────────────────────────────
           14. AUTHENTICATION & PROJECT INITIATION MODAL

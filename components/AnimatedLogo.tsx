@@ -137,15 +137,136 @@ export function GenWorksLogo({
 }
 
 /**
+ * GenWorksBrandLoader Component
+ * Direct implementation from WhatsApp Video 2026-10-10 at 9.33.07 PM.mp4:
+ * - Horizontal luxury brand layout with the 4-squircle kinetic blooming & orbiting icon
+ * - 4 Squircles with rounded corners:
+ *   • Top-Left: Caramel Amber (#D3A373) leading squircle
+ *   • Remaining 3: Deep Charcoal (#1B1C16, #2D2E26)
+ *   • Motion: Smooth 3D radial bloom, elastic expansion, slight +/-6deg fanning tilt, and clockwise 4-quadrant cycling orbit
+ * - Wordmark: "GenWorks" (ExtraBold "Gen" + Medium "Works")
+ * - Minimalist status progress bar with warm amber fill
+ * - Dynamic status and sub-caption text
+ */
+export function GenWorksBrandLoader({
+  statusText = "AUTHENTICATING CLIENT SESSION",
+  subText = "Securing workspace & escrow vault...",
+  fullscreen = true,
+}: {
+  statusText?: string;
+  subText?: string;
+  fullscreen?: boolean;
+}) {
+  return (
+    <div
+      className={
+        fullscreen
+          ? "fixed inset-0 z-[9999] bg-[#fbfaf0] flex flex-col items-center justify-center p-6 text-[#1b1c16] select-none"
+          : "w-full py-12 flex flex-col items-center justify-center p-6 text-[#1b1c16] select-none"
+      }
+    >
+      <style jsx>{`
+        @keyframes squircle-kinetic-loop {
+          0% {
+            transform: translate(0px, 0px) rotate(0deg) scale(1);
+          }
+          12.5% {
+            transform: translate(14px, -3.5px) rotate(-6deg) scale(1.08);
+          }
+          25% {
+            transform: translate(28px, 0px) rotate(0deg) scale(1);
+          }
+          37.5% {
+            transform: translate(31.5px, 14px) rotate(6deg) scale(1.08);
+          }
+          50% {
+            transform: translate(28px, 28px) rotate(0deg) scale(1);
+          }
+          62.5% {
+            transform: translate(14px, 31.5px) rotate(-6deg) scale(1.08);
+          }
+          75% {
+            transform: translate(0px, 28px) rotate(0deg) scale(1);
+          }
+          87.5% {
+            transform: translate(-3.5px, 14px) rotate(6deg) scale(1.08);
+          }
+          100% {
+            transform: translate(0px, 0px) rotate(0deg) scale(1);
+          }
+        }
+
+        .kinetic-tile {
+          animation: squircle-kinetic-loop 2.4s cubic-bezier(0.45, 0.05, 0.25, 0.95) infinite;
+        }
+
+        .tile-caramel {
+          animation-delay: 0s;
+        }
+
+        .tile-charcoal-1 {
+          animation-delay: -0.6s;
+        }
+
+        .tile-charcoal-2 {
+          animation-delay: -1.2s;
+        }
+
+        .tile-charcoal-3 {
+          animation-delay: -1.8s;
+        }
+      `}</style>
+
+      <div className="flex flex-col items-center animate-in fade-in duration-500">
+        {/* Horizontal Brand Identity: Kinetic Squircles + Wordmark */}
+        <div className="flex items-center gap-4">
+          {/* Kinetic Icon Container (approx 50x50 box) */}
+          <div className="relative w-[50px] h-[50px] shrink-0">
+            {/* Tile 1: Caramel Accent */}
+            <div className="kinetic-tile tile-caramel absolute top-0 left-0 w-[22px] h-[22px] rounded-[6px] bg-[#d3a373] shadow-[0_2px_8px_rgba(211,163,115,0.4)]" />
+            {/* Tile 2: Deep Charcoal */}
+            <div className="kinetic-tile tile-charcoal-1 absolute top-0 left-0 w-[22px] h-[22px] rounded-[6px] bg-[#1b1c16]" />
+            {/* Tile 3: Muted Charcoal */}
+            <div className="kinetic-tile tile-charcoal-2 absolute top-0 left-0 w-[22px] h-[22px] rounded-[6px] bg-[#2d2e26]" />
+            {/* Tile 4: Deep Charcoal */}
+            <div className="kinetic-tile tile-charcoal-3 absolute top-0 left-0 w-[22px] h-[22px] rounded-[6px] bg-[#1b1c16]" />
+          </div>
+
+          {/* Wordmark: GenWorks (Matches video typography) */}
+          <div className="text-[34px] tracking-tight text-[#1b1c16] leading-none select-none font-headline">
+            <strong className="font-extrabold tracking-tight">Gen</strong>
+            <span className="font-medium tracking-tight">Works</span>
+          </div>
+        </div>
+
+        {/* Minimalist Progress Indicator */}
+        <div className="w-44 h-1 bg-[#efeee4] rounded-full overflow-hidden mt-6">
+          <div className="w-full h-full bg-[#d3a373] rounded-full origin-left animate-pulse" />
+        </div>
+
+        {/* Status Text */}
+        <p className="font-mono text-[11px] tracking-widest uppercase text-[#50453b] mt-3 font-semibold text-center">
+          {statusText}
+        </p>
+
+        {subText && (
+          <p className="text-xs text-[#82756a] mt-1 text-center font-sans">
+            {subText}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
  * GenWorks Full-Screen Splash Screen
- * Automatically displays on first load and smoothly fades out after 1.8 seconds
  */
 export function SplashScreen({ onFinish }: { onFinish?: () => void }) {
   const [visible, setVisible] = React.useState(true);
   const [fading, setFading] = React.useState(false);
 
   React.useEffect(() => {
-    // Hold splash for 1.8 seconds, then initiate smooth fade out
     const timer = setTimeout(() => {
       setFading(true);
       const closeTimer = setTimeout(() => {
@@ -166,19 +287,11 @@ export function SplashScreen({ onFinish }: { onFinish?: () => void }) {
         fading ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >
-      <div className="flex flex-col items-center animate-in fade-in zoom-in-95 duration-500">
-        {/* Exact Animated Logo from GenWorks_Animated_Logo.zip */}
-        <AnimatedLogo />
-
-        {/* Minimalist Progress Indicator */}
-        <div className="w-40 h-1 bg-[#efeee4] rounded-full overflow-hidden mt-6">
-          <div className="w-full h-full bg-[#d3a373] rounded-full origin-left animate-pulse" />
-        </div>
-
-        <p className="font-mono text-[11px] tracking-widest uppercase text-[#50453b] mt-3 font-semibold">
-          CURATED AI CREATIVE STUDIO
-        </p>
-      </div>
+      <GenWorksBrandLoader
+        statusText="CURATED AI CREATIVE STUDIO"
+        subText="Verifying cryptographic integrity & escrow protocol"
+        fullscreen={false}
+      />
     </div>
   );
 }

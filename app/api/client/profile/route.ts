@@ -26,18 +26,21 @@ export async function GET(req: NextRequest) {
       return applySecurityHeaders(res);
     }
 
+    const userPayload = {
+      id: user._id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      category: user.category,
+      avatarUrl: user.avatarUrl,
+      createdAt: user.createdAt,
+      lastLoginAt: user.lastLoginAt,
+    };
+
     const res = NextResponse.json({
       success: true,
-      profile: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        category: user.category,
-        avatarUrl: user.avatarUrl,
-        createdAt: user.createdAt,
-        lastLoginAt: user.lastLoginAt,
-      },
+      user: userPayload,
+      profile: userPayload,
     });
 
     return applySecurityHeaders(res);

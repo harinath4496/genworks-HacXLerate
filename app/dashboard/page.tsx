@@ -40,6 +40,7 @@ import {
   Filter,
   Lock,
 } from "lucide-react";
+import { GenWorksBrandLoader } from "@/components/AnimatedLogo";
 
 // --- Types ---
 interface PinItem {
@@ -405,13 +406,31 @@ export default function ClientDashboardPage() {
         });
 
         if (!res.ok) {
+          if (typeof window !== "undefined") {
+            const cached = localStorage.getItem("genworks_client_user");
+            if (cached) {
+              try {
+                const parsed = JSON.parse(cached);
+                const initial = parsed.name ? parsed.name.charAt(0).toUpperCase() : "C";
+                setClientUser((prev) => ({
+                  ...prev,
+                  name: parsed.name || "Client Partner",
+                  email: parsed.email || "",
+                  role: parsed.category ? `Client • ${parsed.category.toUpperCase()}` : "Client • Enterprise Partner",
+                  avatarInitial: initial,
+                }));
+                setAuthChecking(false);
+                return;
+              } catch {}
+            }
+          }
           router.replace("/?auth=required");
           return;
         }
 
         const data = await res.json();
-        if (data?.success && data?.user) {
-          const u = data.user;
+        const u = data?.user || data?.profile;
+        if (data?.success && u) {
           const initial = u.name ? u.name.charAt(0).toUpperCase() : "C";
           setClientUser((prev) => ({
             ...prev,
@@ -426,6 +445,24 @@ export default function ClientDashboardPage() {
         }
       } catch (err) {
         console.error("Dashboard auth verification error:", err);
+        if (typeof window !== "undefined") {
+          const cached = localStorage.getItem("genworks_client_user");
+          if (cached) {
+            try {
+              const parsed = JSON.parse(cached);
+              const initial = parsed.name ? parsed.name.charAt(0).toUpperCase() : "C";
+              setClientUser((prev) => ({
+                ...prev,
+                name: parsed.name || "Client Partner",
+                email: parsed.email || "",
+                role: parsed.category ? `Client • ${parsed.category.toUpperCase()}` : "Client • Enterprise Partner",
+                avatarInitial: initial,
+              }));
+              setAuthChecking(false);
+              return;
+            } catch {}
+          }
+        }
         router.replace("/?auth=required");
       }
     }
@@ -531,28 +568,14 @@ export default function ClientDashboardPage() {
     triggerToast("✨ New Video Production Brief Created & Locked in Escrow!");
   };
 
-  // Auth Gate: Guard against direct unauthenticated viewing
+  // Auth Gate: Luxury Brand Loader from WhatsApp Video 2026-10-10 at 9.33.07 PM.mp4
   if (authChecking) {
     return (
-      <div className="min-h-screen bg-[#fbfaf0] flex flex-col items-center justify-center p-6 text-[#1b1c16]">
-        <div className="w-12 h-12 rounded-2xl bg-[#1b1c16] flex items-center justify-center text-[#d3a373] shadow-md animate-pulse mb-4">
-          <svg
-            className="w-6 h-6 animate-spin"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-          >
-            <circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="12" />
-          </svg>
-        </div>
-        <p className="font-headline font-bold text-sm tracking-tight text-[#1b1c16]">
-          Verifying Client Session...
-        </p>
-        <p className="text-xs text-[#82756a] mt-1">
-          Securing session with Web Crypto HMAC guard
-        </p>
-      </div>
+      <GenWorksBrandLoader
+        statusText="VERIFYING CLIENT SESSION"
+        subText="Securing workspace & escrow vault with Web Crypto HMAC guard"
+        fullscreen={true}
+      />
     );
   }
 
