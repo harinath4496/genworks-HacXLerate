@@ -144,7 +144,7 @@ export default function GenWorksMarketplaceLandingPage() {
   // Navigation & Interactive States
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authStep, setAuthStep] = useState<"role-select" | "form">("role-select");
-  const [authMode, setAuthMode] = useState<AuthMode>("signin");
+  const [authMode, setAuthMode] = useState<AuthMode>("signup");
   const [authRole, setAuthRole] = useState<UserRole>("BRAND");
   const [showPassword, setShowPassword] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
@@ -589,7 +589,7 @@ export default function GenWorksMarketplaceLandingPage() {
           {/* Right: CTA Button & Mobile Menu Toggle */}
           <div className="flex items-center gap-3 shrink-0">
             <button
-              onClick={() => { setAuthStep("role-select"); setAuthMode("signin"); setIsAuthOpen(true); }}
+              onClick={() => { setAuthStep("role-select"); setAuthMode("signup"); setIsAuthOpen(true); }}
               className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-extrabold px-5 py-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shadow-sm shadow-[#d3a373]/20 hover:shadow-md hover:scale-[1.02] active:scale-95"
             >
               <User className="w-3.5 h-3.5 text-[#1b1c16] shrink-0" />
@@ -613,7 +613,7 @@ export default function GenWorksMarketplaceLandingPage() {
           <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">How GenWorks Works</a>
           <a href="#creators" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">AI Creators</a>
           <button
-            onClick={() => { setMobileMenuOpen(false); setAuthStep("role-select"); setAuthMode("signin"); setIsAuthOpen(true); }}
+            onClick={() => { setMobileMenuOpen(false); setAuthStep("role-select"); setAuthMode("signup"); setIsAuthOpen(true); }}
             className="bg-[#d3a373] text-[#1b1c16] px-8 py-3.5 rounded-full text-base font-extrabold shadow-md flex items-center gap-2.5"
           >
             <User className="w-4 h-4 text-[#1b1c16]" />
@@ -677,7 +677,7 @@ export default function GenWorksMarketplaceLandingPage() {
                     setIntentRole("hire");
                     setAuthRole("BRAND");
                     setAuthStep("role-select");
-                    setAuthMode("signin");
+                    setAuthMode("signup");
                     setIsAuthOpen(true);
                   }}
                   className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 ${
@@ -694,7 +694,7 @@ export default function GenWorksMarketplaceLandingPage() {
                     setIntentRole("work");
                     setAuthRole("CREATOR");
                     setAuthStep("role-select");
-                    setAuthMode("signin");
+                    setAuthMode("signup");
                     setIsAuthOpen(true);
                   }}
                   className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 ${
@@ -715,7 +715,7 @@ export default function GenWorksMarketplaceLandingPage() {
                   onSubmit={(e) => {
                     e.preventDefault();
                     setAuthStep("role-select");
-                    setAuthMode("signin");
+                    setAuthMode("signup");
                     setIsAuthOpen(true);
                   }}
                   className="relative flex items-center bg-white/95 hover:bg-white sm:backdrop-blur-md rounded-full p-2 pl-5 sm:pl-7 shadow-2xl border border-white/40 focus-within:ring-4 focus-within:ring-[#d3a373]/30 transition-all duration-300"
@@ -1033,7 +1033,7 @@ export default function GenWorksMarketplaceLandingPage() {
                     onClick={() => {
                       setAuthRole("BRAND");
                       setAuthStep("role-select");
-                      setAuthMode("signin");
+                      setAuthMode("signup");
                       setIsAuthOpen(true);
                     }}
                     className="flex-1 py-2.5 px-3 rounded-full bg-[#efeee4] hover:bg-[#e4e3d9] text-[#1b1c16] text-xs font-headline font-bold flex items-center justify-center gap-1.5 transition-colors"
@@ -1046,7 +1046,7 @@ export default function GenWorksMarketplaceLandingPage() {
                     onClick={() => {
                       setAuthRole("BRAND");
                       setAuthStep("role-select");
-                      setAuthMode("signin");
+                      setAuthMode("signup");
                       setIsAuthOpen(true);
                     }}
                     className="py-2.5 px-4 rounded-full bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-headline font-bold flex items-center justify-center gap-1 transition-all"
@@ -1401,14 +1401,14 @@ export default function GenWorksMarketplaceLandingPage() {
                   </div>
                 </div>
 
-                {/* Continue CTA Button */}
+                {/* Continue CTA Button (Redirects to Register) */}
                 <div className="pt-2">
                   <button
                     type="button"
-                    onClick={() => { setAuthStep("form"); setAuthSuccess(null); }}
+                    onClick={() => { setAuthMode("signup"); setAuthStep("form"); setAuthSuccess(null); }}
                     className="w-full py-3.5 rounded-full bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] font-headline font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-md shadow-[#d3a373]/20 active:scale-95 flex items-center justify-center gap-2"
                   >
-                    <span>Continue</span>
+                    <span>Continue to Register</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -1628,6 +1628,33 @@ export default function GenWorksMarketplaceLandingPage() {
                       ? "Create Client Account"
                       : "Join as AI Creator"}
                   </button>
+
+                  {/* Mode switcher link below submit */}
+                  <p className="text-center font-body text-xs text-[#50453b] pt-1">
+                    {authMode === "signup" ? (
+                      <>
+                        Already have an account?{" "}
+                        <button
+                          type="button"
+                          onClick={() => { setAuthMode("signin"); setAuthSuccess(null); }}
+                          className="font-headline font-bold text-[#1b1c16] underline hover:text-[#d3a373] transition-colors"
+                        >
+                          Sign in
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        Don&apos;t have an account?{" "}
+                        <button
+                          type="button"
+                          onClick={() => { setAuthMode("signup"); setAuthSuccess(null); }}
+                          className="font-headline font-bold text-[#1b1c16] underline hover:text-[#d3a373] transition-colors"
+                        >
+                          Create an account
+                        </button>
+                      </>
+                    )}
+                  </p>
                 </form>
 
                 {/* Social Sign-in Divider (per image_bac78c.png) */}
