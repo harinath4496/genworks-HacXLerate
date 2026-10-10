@@ -82,42 +82,15 @@ export default function GenWorksMarketplaceLandingPage() {
   const [authRemember, setAuthRemember] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
-  // Hero Video & Scroll Interaction State (image_e6ab44.png & smooth fade-in)
-  const [heroTextVisible, setHeroTextVisible] = useState(false);
-  const [videoVisible, setVideoVisible] = useState(false);
+  // Hero Video & Interactive Controls State
   const [intentRole, setIntentRole] = useState<"hire" | "work">("hire");
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    // 1. Text fades in smoothly on mount / load
-    const textTimer = setTimeout(() => {
-      setHeroTextVisible(true);
-    }, 200);
-
-    // 2. Video fades in smoothly on load with luxurious cinematic transition
-    const videoTimer = setTimeout(() => {
-      setVideoVisible(true);
-    }, 400);
-
-    const handleScroll = () => {
-      if (window.scrollY > 5) {
-        setVideoVisible(true);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      clearTimeout(textTimer);
-      clearTimeout(videoTimer);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (videoVisible && videoRef.current) {
+    if (videoRef.current) {
       videoRef.current.play().catch(() => {});
     }
-  }, [videoVisible]);
+  }, []);
 
   // Interactive Services Showcase active index
   const [activeService, setActiveService] = useState(0);
@@ -539,9 +512,7 @@ export default function GenWorksMarketplaceLandingPage() {
           loop
           muted
           playsInline
-          className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-out z-0 ${
-            videoVisible ? "opacity-60 sm:opacity-75" : "opacity-0"
-          }`}
+          className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-70 sm:opacity-85"
         />
 
         {/* Cinematic Scrim Gradient Overlays: Ensure flawless legibility & mood */}
@@ -551,14 +522,8 @@ export default function GenWorksMarketplaceLandingPage() {
         {/* Content Container */}
         <div className="relative z-20 max-w-7xl mx-auto w-full flex flex-col justify-center">
           
-          {/* Foreground Text & Interactive Controls — Fades in smoothly on load */}
-          <div
-            className={`max-w-3xl transition-all duration-1000 ease-out transform ${
-              heroTextVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-8"
-            }`}
-          >
+          {/* Foreground Text & Interactive Controls */}
+          <div className="max-w-3xl opacity-100 transition-all duration-500 ease-out">
             {/* Display Headline matching image_e6ab44.png hierarchy */}
             <h1 className="font-headline font-black text-4xl sm:text-5xl md:text-6xl lg:text-[68px] tracking-tight leading-[1.05] text-white">
               Empowering Brands Through{" "}
