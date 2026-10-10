@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #fbfaf0;
+    color: #1b1c16;
+    font-family: 'Manrope', sans-serif;
+  }
+  
+  body {
+    overscroll-behavior: none;
+  }
+
+  ::selection {
+    background-color: #dfe7bf;
+    color: #5a6242;
+  }
+}
+
+/* Custom scrollbar hiding */
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
