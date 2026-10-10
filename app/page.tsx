@@ -612,29 +612,161 @@ export default function GenWorksMarketplaceLandingPage() {
 
 
       {/* ─────────────────────────────────────────────────────────
-          3. KEY CREDIBILITY METRICS BAR (WARM EDITORIAL CANVAS)
+          3. INTELLIGENT REQUIREMENT-TO-PORTFOLIO MATCHING SYSTEM
+          (Replaces generic mock statistics with company-grade value engine)
       ───────────────────────────────────────────────────────── */}
-      <section className="py-12 border-y border-[#e4e3d9] bg-[#efeee4]/60 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 rounded-3xl my-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center sm:text-left">
+      <section className="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-gradient-to-br from-white via-[#fbfaf0] to-[#efeee4]/70 border border-[#e4e3d9] rounded-[32px] sm:rounded-[40px] p-8 sm:p-12 lg:p-14 shadow-lg shadow-[#1b1c16]/5 relative overflow-hidden">
           
-          <div className="space-y-1 sm:border-r border-[#e4e3d9] sm:pr-6">
-            <span className="font-headline font-black text-4xl sm:text-5xl text-[#1b1c16] tracking-tight">4,200+</span>
-            <p className="font-mono text-xs uppercase tracking-wider text-[#50453b]">Vetted AI Directors</p>
-          </div>
+          {/* Subtle Ambient Decorative Gradients */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#d3a373]/10 rounded-full blur-[90px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#dfe7bf]/30 rounded-full blur-[80px] pointer-events-none" />
 
-          <div className="space-y-1 sm:border-r border-[#e4e3d9] sm:pr-6">
-            <span className="font-headline font-black text-4xl sm:text-5xl text-[#1b1c16] tracking-tight">94.8%</span>
-            <p className="font-mono text-xs uppercase tracking-wider text-[#50453b]">Temporal Seed Consistency</p>
-          </div>
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+            
+            {/* Left Column: Core Value Proposition */}
+            <div className="lg:col-span-7 space-y-6">
+              
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#dfe7bf] text-[#5a6242] font-mono text-xs font-bold uppercase tracking-wider border border-[#c2caa4]">
+                <Sparkles className="w-3.5 h-3.5 text-[#5a6242]" />
+                <span>Intelligent Requirement Matcher</span>
+              </div>
 
-          <div className="space-y-1 sm:border-r border-[#e4e3d9] sm:pr-6">
-            <span className="font-headline font-black text-4xl sm:text-5xl text-[#1b1c16] tracking-tight">&lt;48h</span>
-            <p className="font-mono text-xs uppercase tracking-wider text-[#50453b]">Brief-to-First Generation</p>
-          </div>
+              <h2 className="font-headline font-black text-3xl sm:text-4xl lg:text-[44px] text-[#1b1c16] tracking-tight leading-[1.12]">
+                Our system finds the best{" "}
+                <span className="bg-[#dfe7bf] text-[#1b1c16] px-3 py-0.5 rounded-xl inline-block border border-[#c2caa4]">
+                  verified portfolios
+                </span>{" "}
+                tailored directly to your requirements.
+              </h2>
 
-          <div className="space-y-1">
-            <span className="font-headline font-black text-4xl sm:text-5xl text-[#5a6242] tracking-tight">$12M+</span>
-            <p className="font-mono text-xs uppercase tracking-wider text-[#50453b]">Escrow Contracts Fulfilled</p>
+              <p className="font-body text-[#50453b] text-base sm:text-lg leading-relaxed max-w-2xl font-normal">
+                Never guess creator capabilities or risk unverified AI prompts. Tell us your creative format, target visual aesthetic, and model stack — our deterministic engine instantly filters verified AI directors whose reproducible pipelines match your exact campaign specifications.
+              </p>
+
+              {/* Requirement Feature Pillars */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/80 border border-[#e4e3d9]">
+                  <BadgeCheck className="w-5 h-5 text-[#d3a373] shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-headline font-bold text-xs text-[#1b1c16]">Proven Workflows</h4>
+                    <p className="font-body text-[11px] text-[#50453b] mt-0.5">Every portfolio item is seed-certified and reproducible.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/80 border border-[#e4e3d9]">
+                  <Layers className="w-5 h-5 text-[#5a6242] shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-headline font-bold text-xs text-[#1b1c16]">Toolchain Stacks</h4>
+                    <p className="font-body text-[11px] text-[#50453b] mt-0.5">Matched by Runway, Flux, ComfyUI, or custom LoRAs.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/80 border border-[#e4e3d9]">
+                  <ShieldCheck className="w-5 h-5 text-[#1b1c16] shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-headline font-bold text-xs text-[#1b1c16]">Milestone Escrow</h4>
+                    <p className="font-body text-[11px] text-[#50453b] mt-0.5">Funds protected until deliverables meet your brief.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Trigger Buttons */}
+              <div className="flex flex-wrap items-center gap-4 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthRole("BRAND");
+                    setAuthStep("role-select");
+                    setAuthMode("signin");
+                    setIsAuthOpen(true);
+                  }}
+                  className="bg-[#1b1c16] hover:bg-[#2d2e26] text-white px-6 py-3.5 rounded-full font-headline font-bold text-xs uppercase tracking-wider shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                >
+                  <span>Submit Creative Requirements</span>
+                  <ArrowRight className="w-4 h-4 text-[#d3a373]" />
+                </button>
+
+                <a
+                  href="#creators"
+                  className="text-xs font-headline font-bold text-[#50453b] hover:text-[#1b1c16] underline underline-offset-4 transition-colors px-2 py-1"
+                >
+                  Browse all verified creators ↓
+                </a>
+              </div>
+
+            </div>
+
+            {/* Right Column: Live Matching Simulation Card */}
+            <div className="lg:col-span-5">
+              <div className="bg-[#1b1c16] text-[#efeee4] rounded-3xl p-6 sm:p-7 shadow-2xl border border-white/10 relative">
+                
+                {/* Header of Simulated Engine */}
+                <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-5">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="font-mono text-xs uppercase tracking-wider text-white font-bold">Matching Engine Active</span>
+                  </div>
+                  <span className="font-mono text-[11px] text-[#d3a373] bg-[#d3a373]/15 px-2.5 py-1 rounded-full border border-[#d3a373]/30">Auto-Curated</span>
+                </div>
+
+                {/* Input Criteria Block */}
+                <div className="bg-white/5 rounded-2xl p-4 border border-white/10 mb-5 space-y-2">
+                  <p className="font-mono text-[10px] uppercase tracking-wider text-[#efeee4]/60">Client Requirement Input:</p>
+                  <p className="font-body text-xs text-white font-medium leading-relaxed">
+                    &ldquo;Need 9:16 luxury product reels with consistent lighting, DaVinci color grading, and commercial buyout.&rdquo;
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    <span className="bg-white/10 text-[#d3a373] px-2 py-0.5 rounded-md font-mono text-[10px]">Runway Gen-3</span>
+                    <span className="bg-white/10 text-[#dfe7bf] px-2 py-0.5 rounded-md font-mono text-[10px]">Flux.1 Pro</span>
+                    <span className="bg-white/10 text-white/80 px-2 py-0.5 rounded-md font-mono text-[10px]">Escrow Protected</span>
+                  </div>
+                </div>
+
+                {/* Matched Verified Portfolio Card */}
+                <div className="bg-white/10 rounded-2xl p-4 border border-white/15 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[10px] uppercase tracking-wider text-emerald-400 font-bold flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                      99.6% Match Found
+                    </span>
+                    <span className="font-mono text-[10px] text-[#efeee4]/60">Top Ranked</span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[#d3a373] text-[#1b1c16] flex items-center justify-center font-headline font-black text-sm shrink-0">
+                      EV
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <h5 className="font-headline font-bold text-sm text-white">Elena Vance</h5>
+                        <BadgeCheck className="w-3.5 h-3.5 text-[#d3a373]" />
+                      </div>
+                      <p className="font-body text-[11px] text-[#efeee4]/70">Cinematic 9:16 Commercials • 42 Verified Campaigns</p>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs">
+                    <span className="font-mono text-[11px] text-[#dfe7bf]">Reproducible Node Seed: #89421</span>
+                    <a
+                      href="#creators"
+                      className="text-[#d3a373] hover:text-[#e4b585] font-headline font-bold text-[11px] flex items-center gap-1 transition-colors"
+                    >
+                      <span>View Portfolio</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Footer Status */}
+                <div className="mt-4 pt-3 flex items-center justify-between font-mono text-[10px] text-[#efeee4]/60">
+                  <span>Portfolios Scanned: 100% Verified</span>
+                  <span className="text-[#dfe7bf]">Zero Synthetic Fakes</span>
+                </div>
+
+              </div>
+            </div>
+
           </div>
 
         </div>
