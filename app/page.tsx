@@ -167,7 +167,7 @@ export default function ClientoraMarketplaceLandingPage() {
     setTimeout(() => setCopiedSeed(false), 2000);
   };
 
-  // Services Directory Data (Aligned with byteXL AI Creator Marketplace)
+  // Services Directory Data (Curated AI Creator Marketplace)
   const servicesList = [
     {
       id: "01",
@@ -497,23 +497,6 @@ export default function ClientoraMarketplaceLandingPage() {
         {/* Giant Rounded Stark White Structural Card in Warm Editorial Framing */}
         <div className="bg-white text-[#1b1c16] rounded-[32px] sm:rounded-[44px] md:rounded-[54px] p-6 sm:p-10 md:p-12 lg:p-14 relative overflow-hidden shadow-xl border border-[#e4e3d9]">
           
-          {/* Decorative Top Elements: Starburst & Challenge Badge */}
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div className="flex items-center gap-2">
-              <svg viewBox="0 0 24 24" fill="#d3a373" className="w-6 h-6 filter drop-shadow">
-                <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" />
-              </svg>
-              <span className="text-[11px] font-mono uppercase tracking-widest text-[#50453b] font-bold">
-                AI CONTENT CREATOR MARKETPLACE · BYTEXL CHALLENGE 2
-              </span>
-            </div>
-            
-            <div className="flex items-center gap-2 bg-[#dfe7bf] px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#5a6242] border border-[#c2caa4]">
-              <span className="w-2 h-2 rounded-full bg-[#5a6242] animate-pulse" />
-              <span>Venture Thesis: Kampus.VC Applied AI Studio</span>
-            </div>
-          </div>
-
           {/* Centered Grand Display Headline with Sage Highlighting */}
           <div className="text-center max-w-4xl mx-auto mb-6">
             <h1 className="font-headline font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tight leading-[1.05] text-[#1b1c16]">
@@ -1502,7 +1485,7 @@ export default function ClientoraMarketplaceLandingPage() {
                 </div>
               </div>
               <p className="font-body text-xs sm:text-sm text-[#efeee4]/75 max-w-sm leading-relaxed">
-                The curated marketplace connecting brands and creative agencies with verified generative filmmakers, ComfyUI architects, and AI directors. Built for byteXL HacXLerate Challenge 2.
+                The curated marketplace connecting brands and creative agencies with verified generative filmmakers, ComfyUI architects, and AI directors. Production-grade escrow and deterministic pipeline delivery.
               </p>
             </div>
 
@@ -1546,7 +1529,7 @@ export default function ClientoraMarketplaceLandingPage() {
 
           {/* Bottom Bar: Copyright & Social Links */}
           <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-[#efeee4]/60">
-            <p>© 2026 Clientora. Built for byteXL HacXLerate Challenge 2. All rights reserved.</p>
+            <p>© 2026 Clientora Inc. All rights reserved.</p>
             
             <div className="flex items-center gap-6 font-bold text-[#efeee4]/80">
               <a href="#" className="hover:text-[#d3a373] transition-colors">Twitter / X</a>
@@ -1727,7 +1710,7 @@ export default function ClientoraMarketplaceLandingPage() {
               </div>
               <h3 className="font-headline font-black text-2xl tracking-tight text-[#1b1c16]">Clientora</h3>
               <p className="font-body text-xs text-[#50453b] mt-1">
-                AI Content Creator Marketplace · byteXL Challenge 2
+                AI Content Creator Marketplace · Enterprise Production
               </p>
             </div>
 
