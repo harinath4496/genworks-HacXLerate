@@ -391,6 +391,48 @@ export default function ClientDashboardPage() {
   const [newBriefDetails, setNewBriefDetails] = useState("");
   const [newBriefDirector, setNewBriefDirector] = useState("Elena Vance");
 
+  // Real User Session Authentication Guard
+  const [authChecking, setAuthChecking] = useState<boolean>(true);
+
+  // Authenticate user session from backend on mount
+  useEffect(() => {
+    async function checkAuthSession() {
+      try {
+        const res = await fetch("/api/client/profile", {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          router.replace("/?auth=required");
+          return;
+        }
+
+        const data = await res.json();
+        if (data?.success && data?.user) {
+          const u = data.user;
+          const initial = u.name ? u.name.charAt(0).toUpperCase() : "C";
+          setClientUser((prev) => ({
+            ...prev,
+            name: u.name || "Client Partner",
+            email: u.email || "",
+            role: u.category ? `Client • ${u.category.toUpperCase()}` : "Client • Enterprise Partner",
+            avatarInitial: initial,
+          }));
+          setAuthChecking(false);
+        } else {
+          router.replace("/?auth=required");
+        }
+      } catch (err) {
+        console.error("Dashboard auth verification error:", err);
+        router.replace("/?auth=required");
+      }
+    }
+
+    checkAuthSession();
+  }, [router]);
+
   // Close profile dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -489,14 +531,40 @@ export default function ClientDashboardPage() {
     triggerToast("✨ New Video Production Brief Created & Locked in Escrow!");
   };
 
+  // Auth Gate: Guard against direct unauthenticated viewing
+  if (authChecking) {
+    return (
+      <div className="min-h-screen bg-[#fbfaf0] flex flex-col items-center justify-center p-6 text-[#1b1c16]">
+        <div className="w-12 h-12 rounded-2xl bg-[#1b1c16] flex items-center justify-center text-[#d3a373] shadow-md animate-pulse mb-4">
+          <svg
+            className="w-6 h-6 animate-spin"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
+            <circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="12" />
+          </svg>
+        </div>
+        <p className="font-headline font-bold text-sm tracking-tight text-[#1b1c16]">
+          Verifying Client Session...
+        </p>
+        <p className="text-xs text-[#82756a] mt-1">
+          Securing session with Web Crypto HMAC guard
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#fbfaf0] text-[#1b1c16] font-body flex flex-col md:flex-row antialiased selection:bg-[#d3a373]/30">
       {/* ========================================================
-          LEFT FIXED NAVIGATION RAIL (Pinterest Dock Style)
+          DESKTOP FIXED NAVIGATION RAIL (Pinterest Dock Style)
+          Hidden on mobile (<md), replaced by Mobile Bottom Nav
       ======================================================== */}
-      <aside className="w-full md:w-20 md:min-w-[80px] md:h-screen md:sticky md:top-0 bg-[#f5f4ea] border-r border-[#e4e3d9] flex md:flex-col items-center justify-between p-3 md:py-6 z-30 shadow-[1px_0_12px_rgba(0,0,0,0.02)]">
+      <aside className="hidden md:flex md:w-20 md:min-w-[80px] md:h-screen md:sticky md:top-0 bg-[#f5f4ea] border-r border-[#e4e3d9] flex-col items-center justify-between py-6 z-30 shadow-[1px_0_12px_rgba(0,0,0,0.02)]">
         {/* Brand Monogram / Logo at Top Left */}
-        <div className="flex md:flex-col items-center gap-3">
+        <div className="flex flex-col items-center gap-3">
           <Link
             href="/"
             title="GenWorks — Back to Home"
@@ -524,7 +592,7 @@ export default function ClientDashboardPage() {
         </div>
 
         {/* Center Navigation Dock Items */}
-        <nav className="flex md:flex-col items-center gap-2 md:gap-3.5 my-auto">
+        <nav className="flex flex-col items-center gap-3.5 my-auto">
           {/* Home / Feed */}
           <button
             onClick={() => {
@@ -637,7 +705,7 @@ export default function ClientDashboardPage() {
         </nav>
 
         {/* Bottom Rail / Settings */}
-        <div className="flex md:flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2">
           <button
             onClick={() => setProfileMenuOpen(!profileMenuOpen)}
             title="Settings & Workspace"
@@ -654,87 +722,129 @@ export default function ClientDashboardPage() {
       {/* ========================================================
           MAIN VIEWPORT (Header + Filters + Waterfall Canvas)
       ======================================================== */}
-      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
-        {/* --- STICKY TOP APPLICATION HEADER --- */}
-        <header className="sticky top-0 z-20 bg-[#fbfaf0]/90 backdrop-blur-md px-4 sm:px-8 py-3.5 border-b border-[#e4e3d9]/80 flex items-center justify-between gap-4">
-          {/* Left: Brand Identity & Portal Pill */}
-          <div className="flex items-center gap-3 shrink-0">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <span className="font-headline font-black text-xl tracking-tight text-[#1b1c16]">
-                GenWorks
-              </span>
-              <span className="hidden sm:inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-extrabold px-2.5 py-0.5 rounded-full bg-[#1b1c16] text-[#d3a373] shadow-xs">
-                Client Portal
-              </span>
-            </Link>
-          </div>
+      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto pb-24 md:pb-6">
+        {/* --- STICKY TOP APPLICATION HEADER (Responsive for Mobile & Desktop) --- */}
+        <header className="sticky top-0 z-20 bg-[#fbfaf0]/95 backdrop-blur-md px-4 sm:px-8 py-3 border-b border-[#e4e3d9]/80">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            {/* Top Row: Brand Monogram + Title + Mobile Quick Icons */}
+            <div className="flex items-center justify-between gap-3">
+              <Link href="/" className="flex items-center gap-2.5 group">
+                <div className="w-9 h-9 rounded-xl bg-[#1b1c16] flex items-center justify-center text-[#d3a373] shadow-sm">
+                  <svg
+                    className="w-5 h-5 transform group-hover:rotate-12 transition-transform duration-300"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                    <polyline points="2 17 12 22 22 17" />
+                    <polyline points="2 12 12 17 22 12" />
+                  </svg>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-headline font-black text-xl tracking-tight text-[#1b1c16]">
+                    GenWorks
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-extrabold px-2.5 py-0.5 rounded-full bg-[#1b1c16] text-[#d3a373] shadow-xs">
+                    Client
+                  </span>
+                </div>
+              </Link>
 
-          {/* Center: Pinterest Universal Pill Search Bar */}
-          <div className="flex-1 max-w-3xl relative">
-            <div className="relative flex items-center">
-              <Search className="w-4 h-4 text-[#82756a] absolute left-4.5 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search AI directors, prompt styles, LoRA pipelines, seed numbers..."
-                className="w-full bg-[#efeee4] hover:bg-[#eae8df] focus:bg-white text-[#1b1c16] placeholder-[#82756a] text-sm font-medium rounded-full pl-11 pr-24 py-2.5 border border-transparent focus:border-[#d3a373] focus:outline-none focus:ring-2 focus:ring-[#d3a373]/20 transition-all shadow-inner"
-              />
-              {/* Visual Search (Lens) & Voice Search Icons */}
-              <div className="absolute right-3.5 flex items-center gap-1.5 text-[#82756a]">
+              {/* Mobile Quick Action Strip (Notifications + Profile Avatar) */}
+              <div className="flex sm:hidden items-center gap-2">
                 <button
-                  type="button"
-                  title="Search by Reference Visual / Seed"
-                  onClick={() => triggerToast("Upload reference moodboard image to match AI Directors")}
-                  className="p-1.5 hover:text-[#1b1c16] hover:bg-[#e4e3d9] rounded-full transition-colors"
+                  onClick={() => triggerToast("2 New Reel Deliverables Ready for Inspection")}
+                  className="w-9 h-9 rounded-full bg-[#efeee4] flex items-center justify-center text-[#50453b] relative"
                 >
-                  <Camera className="w-4 h-4" />
+                  <Bell className="w-4 h-4" />
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
                 </button>
+
                 <button
-                  type="button"
-                  title="Voice Search"
-                  onClick={() => triggerToast("Listening for creative brief intent...")}
-                  className="p-1.5 hover:text-[#1b1c16] hover:bg-[#e4e3d9] rounded-full transition-colors"
+                  onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                  className="flex items-center gap-1 p-0.5 rounded-full focus:outline-none"
+                  title="Account"
                 >
-                  <Mic className="w-4 h-4" />
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#9d2466] to-[#d83b89] text-white flex items-center justify-center font-headline font-black text-xs shadow-sm ring-1 ring-white">
+                    {clientUser.avatarInitial}
+                  </div>
                 </button>
               </div>
             </div>
-          </div>
 
-          {/* Right: Quick Action & User Profile Trigger (Pinterest Popover Anchor) */}
-          <div className="flex items-center gap-2.5 shrink-0 relative" ref={profileMenuRef}>
-            {/* Create Brief Quick CTA */}
-            <button
-              onClick={() => setCreateBriefModalOpen(true)}
-              className="hidden lg:flex items-center gap-1.5 bg-[#1b1c16] hover:bg-[#30312b] text-[#fbfaf0] text-xs font-bold py-2.5 px-4 rounded-full transition-all shadow-sm active:scale-95"
-            >
-              <Plus className="w-3.5 h-3.5 text-[#d3a373]" />
-              <span>Commission Brief</span>
-            </button>
-
-            {/* User Profile Avatar with Initial 'H' and Chevron (image_3d56aa.png) */}
-            <button
-              onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-              className="flex items-center gap-1.5 p-1 rounded-full hover:bg-[#efeee4] transition-colors focus:outline-none"
-              title="Open Client Account Menu"
-            >
-              {/* Magenta / Bronze Avatar Initial 'H' */}
-              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#9d2466] to-[#d83b89] text-white flex items-center justify-center font-headline font-black text-sm shadow-sm ring-2 ring-white">
-                {clientUser.avatarInitial}
+            {/* Middle: Pinterest Universal Pill Search Bar */}
+            <div className="flex-1 max-w-3xl relative">
+              <div className="relative flex items-center">
+                <Search className="w-4 h-4 text-[#82756a] absolute left-4 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search AI directors, prompt styles, LoRA pipelines, seed numbers..."
+                  className="w-full bg-[#efeee4] hover:bg-[#eae8df] focus:bg-white text-[#1b1c16] placeholder-[#82756a] text-xs sm:text-sm font-medium rounded-full pl-10 sm:pl-11 pr-20 sm:pr-24 py-2 sm:py-2.5 border border-transparent focus:border-[#d3a373] focus:outline-none focus:ring-2 focus:ring-[#d3a373]/20 transition-all shadow-inner"
+                />
+                {/* Visual Search (Lens) & Voice Search Icons */}
+                <div className="absolute right-3 flex items-center gap-1 text-[#82756a]">
+                  <button
+                    type="button"
+                    title="Search by Reference Visual / Seed"
+                    onClick={() => triggerToast("Upload reference moodboard image to match AI Directors")}
+                    className="p-1 sm:p-1.5 hover:text-[#1b1c16] hover:bg-[#e4e3d9] rounded-full transition-colors"
+                  >
+                    <Camera className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    title="Voice Search"
+                    onClick={() => triggerToast("Listening for creative brief intent...")}
+                    className="p-1 sm:p-1.5 hover:text-[#1b1c16] hover:bg-[#e4e3d9] rounded-full transition-colors"
+                  >
+                    <Mic className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                  </button>
+                </div>
               </div>
-              <ChevronDown
-                className={`w-4 h-4 text-[#50453b] transition-transform duration-200 ${
-                  profileMenuOpen ? "rotate-180" : ""
-                }`}
-              />
-            </button>
+            </div>
+
+            {/* Desktop Right: Quick Action & User Profile Trigger */}
+            <div className="hidden sm:flex items-center gap-2.5 shrink-0">
+              {/* Create Brief Quick CTA */}
+              <button
+                onClick={() => setCreateBriefModalOpen(true)}
+                className="flex items-center gap-1.5 bg-[#1b1c16] hover:bg-[#30312b] text-[#fbfaf0] text-xs font-bold py-2.5 px-4 rounded-full transition-all shadow-sm active:scale-95"
+              >
+                <Plus className="w-3.5 h-3.5 text-[#d3a373]" />
+                <span>Commission Brief</span>
+              </button>
+
+              {/* User Profile Avatar with Initial 'H' and Chevron */}
+              <button
+                onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                className="flex items-center gap-1.5 p-1 rounded-full hover:bg-[#efeee4] transition-colors focus:outline-none"
+                title="Open Client Account Menu"
+              >
+                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#9d2466] to-[#d83b89] text-white flex items-center justify-center font-headline font-black text-sm shadow-sm ring-2 ring-white">
+                  {clientUser.avatarInitial}
+                </div>
+                <ChevronDown
+                  className={`w-4 h-4 text-[#50453b] transition-transform duration-200 ${
+                    profileMenuOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+            </div>
 
             {/* ========================================================
-                USER PROFILE DROPDOWN MENU (Exact Pinterest Style Match)
+                USER PROFILE DROPDOWN MENU (Universal for Mobile & Desktop)
             ======================================================== */}
             {profileMenuOpen && (
-              <div className="absolute right-0 top-12 w-80 bg-white rounded-3xl shadow-2xl border border-[#e4e3d9] p-4 text-[#1b1c16] animate-scale-in z-50">
+              <div
+                ref={profileMenuRef}
+                className="absolute right-4 top-14 sm:top-16 w-[calc(100vw-32px)] sm:w-80 max-w-sm bg-white rounded-3xl shadow-2xl border border-[#e4e3d9] p-4 text-[#1b1c16] animate-scale-in z-50"
+              >
                 {/* Section Header */}
                 <div className="text-[11px] font-bold text-[#82756a] uppercase tracking-wider mb-2 px-1">
                   Currently in
@@ -1268,6 +1378,129 @@ export default function ClientDashboardPage() {
           </div>
         )}
       </main>
+
+      {/* ========================================================
+          MOBILE BOTTOM NAVIGATION DOCK (Luxury iOS / Pinterest Style)
+          Fixed to bottom on mobile (<md), hidden on desktop (md+)
+      ======================================================== */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#fbfaf0]/95 backdrop-blur-xl border-t border-[#e4e3d9] px-3 py-2 shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">
+        <div className="flex items-center justify-around relative max-w-lg mx-auto">
+          {/* Home Tab */}
+          <button
+            onClick={() => {
+              setActiveNav("home");
+              setSelectedFilter("all");
+            }}
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-2xl transition-all ${
+              activeNav === "home" ? "text-[#1b1c16]" : "text-[#82756a]"
+            }`}
+          >
+            <div
+              className={`p-1.5 rounded-xl transition-all ${
+                activeNav === "home" ? "bg-[#1b1c16] text-[#fbfaf0] shadow-sm" : ""
+              }`}
+            >
+              <Home className="w-5 h-5" />
+            </div>
+            <span
+              className={`text-[10px] ${
+                activeNav === "home" ? "font-bold text-[#1b1c16]" : "font-medium"
+              }`}
+            >
+              Home
+            </span>
+          </button>
+
+          {/* Explore Reels Tab */}
+          <button
+            onClick={() => {
+              setActiveNav("explore");
+              setSelectedFilter("viral");
+            }}
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-2xl transition-all ${
+              activeNav === "explore" ? "text-[#1b1c16]" : "text-[#82756a]"
+            }`}
+          >
+            <div
+              className={`p-1.5 rounded-xl transition-all ${
+                activeNav === "explore" ? "bg-[#1b1c16] text-[#fbfaf0] shadow-sm" : ""
+              }`}
+            >
+              <Compass className="w-5 h-5" />
+            </div>
+            <span
+              className={`text-[10px] ${
+                activeNav === "explore" ? "font-bold text-[#1b1c16]" : "font-medium"
+              }`}
+            >
+              Explore
+            </span>
+          </button>
+
+          {/* Floating Center Commission Brief Action (+) */}
+          <button
+            onClick={() => setCreateBriefModalOpen(true)}
+            className="flex flex-col items-center -mt-6 group"
+            title="Commission New Brief"
+          >
+            <div className="w-13 h-13 rounded-2xl bg-gradient-to-tr from-[#d3a373] to-[#e4b585] text-[#1b1c16] shadow-xl shadow-[#d3a373]/50 flex items-center justify-center border-4 border-[#fbfaf0] active:scale-90 hover:scale-105 transition-all">
+              <Plus className="w-6 h-6 stroke-[2.8]" />
+            </div>
+            <span className="text-[10px] font-extrabold text-[#1b1c16] mt-0.5">
+              Brief
+            </span>
+          </button>
+
+          {/* Saved Boards Tab */}
+          <button
+            onClick={() => {
+              setActiveNav("boards");
+              setSelectedFilter("saved");
+            }}
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-2xl transition-all ${
+              activeNav === "boards" ? "text-[#1b1c16]" : "text-[#82756a]"
+            }`}
+          >
+            <div
+              className={`p-1.5 rounded-xl transition-all ${
+                activeNav === "boards" ? "bg-[#1b1c16] text-[#fbfaf0] shadow-sm" : ""
+              }`}
+            >
+              <Bookmark className="w-5 h-5" />
+            </div>
+            <span
+              className={`text-[10px] ${
+                activeNav === "boards" ? "font-bold text-[#1b1c16]" : "font-medium"
+              }`}
+            >
+              Saved
+            </span>
+          </button>
+
+          {/* Escrow Vault Tab */}
+          <button
+            onClick={() => setActiveNav("escrow")}
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-2xl transition-all ${
+              activeNav === "escrow" ? "text-[#1b1c16]" : "text-[#82756a]"
+            }`}
+          >
+            <div
+              className={`p-1.5 rounded-xl transition-all ${
+                activeNav === "escrow" ? "bg-[#1b1c16] text-[#fbfaf0] shadow-sm" : ""
+              }`}
+            >
+              <ShieldCheck className="w-5 h-5 text-[#7d562d]" />
+            </div>
+            <span
+              className={`text-[10px] ${
+                activeNav === "escrow" ? "font-bold text-[#1b1c16]" : "font-medium"
+              }`}
+            >
+              Escrow
+            </span>
+          </button>
+        </div>
+      </nav>
 
       {/* ========================================================
           MODAL 1: REEL SEED & PIPELINE INSPECTION MODAL

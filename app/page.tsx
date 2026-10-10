@@ -40,8 +40,7 @@ import {
   Briefcase,
   ArrowLeft,
   ChevronDown,
-  Mail,
-  LayoutDashboard
+  Mail
 } from "lucide-react";
 
 type AuthMode = "signin" | "signup";
@@ -198,6 +197,20 @@ export default function GenWorksMarketplaceLandingPage() {
       clearTimeout(timer);
       window.removeEventListener("scroll", handleScroll);
     };
+  }, []);
+
+  // Detect ?auth=required parameter from protected middleware / dashboard
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("auth") === "required") {
+        setAuthRole("BRAND");
+        setAuthStep("form");
+        setAuthMode("signin");
+        setAuthError("Authentication required: Please sign in with Google or register to access the Client Portal.");
+        setIsAuthOpen(true);
+      }
+    }
   }, []);
   
   // Hero Video & Mobile Optimization State
@@ -764,30 +777,13 @@ export default function GenWorksMarketplaceLandingPage() {
           </a>
 
           {/* Center: Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold tracking-wide text-[#50453b]">
+          <nav className="hidden md:flex items-center gap-8 text-xs font-semibold tracking-wide text-[#50453b]">
             <a href="#how-it-works" className="hover:text-[#1b1c16] transition-colors">How GenWorks Works</a>
             <a href="#creators" className="hover:text-[#1b1c16] transition-colors">AI Creators</a>
-            <Link
-              href="/dashboard"
-              className="text-[#7d562d] hover:text-[#1b1c16] font-bold flex items-center gap-1.5 transition-colors group"
-            >
-              <span>Client Dashboard</span>
-              <span className="text-[10px] bg-[#d3a373]/20 text-[#7d562d] group-hover:bg-[#d3a373] group-hover:text-[#1b1c16] px-1.5 py-0.5 rounded-full transition-colors">
-                Live
-              </span>
-            </Link>
           </nav>
 
           {/* Right: CTA Button & Mobile Menu Toggle */}
           <div className="flex items-center gap-3 shrink-0">
-            <Link
-              href="/dashboard"
-              className="hidden lg:inline-flex items-center gap-1.5 text-xs font-bold text-[#1b1c16] bg-[#faf9f5] hover:bg-white border border-[#e4e3d9] px-4 py-2 rounded-full transition-all"
-            >
-              <LayoutDashboard className="w-3.5 h-3.5 text-[#d3a373]" />
-              <span>Portal</span>
-            </Link>
-
             <button
               onClick={() => { setAuthRole("BRAND"); setAuthStep("form"); setAuthMode("signup"); setIsAuthOpen(true); }}
               className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-extrabold px-5 py-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shadow-sm shadow-[#d3a373]/20 hover:shadow-md hover:scale-[1.02] active:scale-95"
@@ -812,14 +808,6 @@ export default function GenWorksMarketplaceLandingPage() {
         <div className="fixed inset-0 z-40 bg-[#fbfaf0]/98 backdrop-blur-2xl flex flex-col items-center justify-center gap-8 text-xl font-bold md:hidden text-[#1b1c16]">
           <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">How GenWorks Works</a>
           <a href="#creators" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">AI Creators</a>
-          <Link
-            href="/dashboard"
-            onClick={() => setMobileMenuOpen(false)}
-            className="text-[#7d562d] hover:text-[#1b1c16] flex items-center gap-2"
-          >
-            <LayoutDashboard className="w-5 h-5 text-[#d3a373]" />
-            <span>Client Dashboard</span>
-          </Link>
           <button
             onClick={() => { setMobileMenuOpen(false); setAuthRole("BRAND"); setAuthStep("form"); setAuthMode("signup"); setIsAuthOpen(true); }}
             className="bg-[#d3a373] text-[#1b1c16] px-8 py-3.5 rounded-full text-base font-extrabold shadow-md flex items-center gap-2.5"
