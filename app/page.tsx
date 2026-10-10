@@ -28,7 +28,8 @@ import {
   Clock,
   Layers,
   Sparkle,
-  Copy
+  Copy,
+  LogIn
 } from "lucide-react";
 
 type AuthMode = "signin" | "signup";
@@ -490,11 +491,11 @@ export default function GenWorksMarketplaceLandingPage() {
           {/* Right: CTA Button & Mobile Menu Toggle */}
           <div className="flex items-center gap-3 shrink-0">
             <button
-              onClick={() => { setAuthMode("signup"); setIsAuthOpen(true); }}
+              onClick={() => { setAuthMode("signin"); setIsAuthOpen(true); }}
               className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-extrabold px-4.5 py-2 rounded-full transition-all duration-300 flex items-center gap-1.5 shadow-md shadow-[#d3a373]/20 active:scale-95"
             >
-              <span>Post a Brief</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <LogIn className="w-3.5 h-3.5 text-[#1b1c16]" />
+              <span>Sign In</span>
             </button>
 
             {/* Mobile Hamburger */}
@@ -516,10 +517,11 @@ export default function GenWorksMarketplaceLandingPage() {
           <a href="#creators" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">AI Creators</a>
           <a href="#brief-builder" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">Brief Builder</a>
           <button
-            onClick={() => { setMobileMenuOpen(false); setIsAuthOpen(true); }}
-            className="bg-[#d3a373] text-[#1b1c16] px-8 py-3 rounded-full text-base font-extrabold shadow-md"
+            onClick={() => { setMobileMenuOpen(false); setAuthMode("signin"); setIsAuthOpen(true); }}
+            className="bg-[#d3a373] text-[#1b1c16] px-8 py-3 rounded-full text-base font-extrabold shadow-md flex items-center gap-2"
           >
-            Post a Brief →
+            <LogIn className="w-4 h-4 text-[#1b1c16]" />
+            <span>Sign In</span>
           </button>
         </div>
       )}
@@ -604,8 +606,8 @@ export default function GenWorksMarketplaceLandingPage() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  const el = document.getElementById("creators");
-                  el?.scrollIntoView({ behavior: "smooth" });
+                  setAuthMode("signin");
+                  setIsAuthOpen(true);
                 }}
                 className="relative flex items-center bg-white/90 hover:bg-white/95 backdrop-blur-md rounded-full p-2 pl-4 sm:pl-6 shadow-2xl border border-white/30 focus-within:ring-4 focus-within:ring-[#d3a373]/30 focus-within:bg-white transition-all duration-300"
               >
@@ -619,10 +621,10 @@ export default function GenWorksMarketplaceLandingPage() {
                 />
                 <button
                   type="submit"
-                  className="bg-[#1b1c16] hover:bg-[#2d2e26] text-white px-4.5 sm:px-7 py-2 sm:py-3 rounded-full font-headline font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 shadow-md hover:scale-105 active:scale-95 transition-all duration-200 shrink-0 border border-white/10"
+                  aria-label="Search"
+                  className="bg-[#1b1c16] hover:bg-[#2d2e26] text-white w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all duration-200 shrink-0 border border-white/10"
                 >
-                  <Search className="w-3.5 h-3.5 text-[#d3a373]" />
-                  <span>Search</span>
+                  <Search className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#d3a373]" />
                 </button>
               </form>
             </div>
