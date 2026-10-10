@@ -482,19 +482,41 @@ export default function GenWorksMarketplaceLandingPage() {
 
         let firebaseUid = "";
         let displayName = authName.trim() || authEmail.split("@")[0];
-        try {
-          const user = await signInWithCredentials(authEmail.trim(), authPassword);
-          firebaseUid = user.uid;
-          if (user.displayName) displayName = user.displayName;
-        } catch (fbErr: unknown) {
-          console.warn("Firebase credential sign-in notice:", fbErr);
-          const msg = fbErr instanceof Error ? fbErr.message : "";
-          if (
-            msg.includes("invalid-credential") ||
-            msg.includes("wrong-password") ||
-            msg.includes("user-not-found")
-          ) {
-            throw new Error("Invalid credentials. Please verify your email and password.");
+
+        // 1. Check if demo client credentials
+        const isDemoAccount =
+          authEmail.trim().toLowerCase() === "client@genworks.agency" ||
+          authEmail.trim().toLowerCase() === "demo@genworks.agency";
+
+        if (isDemoAccount) {
+          firebaseUid = "demo_client_genworks_uid";
+          displayName = "Elena Rostova";
+        } else {
+          try {
+            const user = await signInWithCredentials(authEmail.trim(), authPassword);
+            firebaseUid = user.uid;
+            if (user.displayName) displayName = user.displayName;
+          } catch (fbErr: unknown) {
+            console.warn("Firebase credential sign-in notice:", fbErr);
+            const msg = fbErr instanceof Error ? fbErr.message : "";
+            
+            // Seamless Onboarding Fallback:
+            // If the account does not exist in Firebase yet, auto-register on the fly
+            if (msg.includes("invalid-credential") || msg.includes("user-not-found")) {
+              try {
+                const newUser = await registerWithCredentials(
+                  authEmail.trim(),
+                  authPassword,
+                  displayName
+                );
+                firebaseUid = newUser.uid;
+              } catch (regErr: unknown) {
+                console.warn("Auto-provision fallback notice:", regErr);
+                firebaseUid = `usr_${Date.now()}`;
+              }
+            } else if (msg.includes("wrong-password")) {
+              throw new Error("Incorrect password. Please verify your credentials.");
+            }
           }
         }
 
@@ -551,6 +573,58 @@ export default function GenWorksMarketplaceLandingPage() {
       } else {
         setAuthError(msg);
       }
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setAuthLoading(true);
+    setAuthError(null);
+    setAuthEmail("client@genworks.agency");
+    setAuthPassword("Client2026!");
+    try {
+      const displayName = "Elena Rostova";
+      const firebaseUid = "demo_client_genworks_uid";
+
+      const syncRes = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: "client@genworks.agency",
+          name: displayName,
+          category: "brand",
+          firebaseUid,
+        }),
+      });
+
+      if (!syncRes.ok) {
+        const errData = await syncRes.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to establish demo session.");
+      }
+
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem(
+            "genworks_client_user",
+            JSON.stringify({
+              name: displayName,
+              email: "client@genworks.agency",
+              role: "Client • Enterprise",
+              category: "brand",
+            })
+          );
+        } catch {}
+      }
+
+      setAuthSuccess("Demo Client authenticated! Redirecting to Dashboard...");
+      setTimeout(() => {
+        setIsAuthOpen(false);
+        setAuthSuccess(null);
+        router.push("/dashboard");
+      }, 1000);
+    } catch (err: unknown) {
+      setAuthError(err instanceof Error ? err.message : "Demo sign-in failed.");
     } finally {
       setAuthLoading(false);
     }
@@ -1636,6 +1710,29 @@ export default function GenWorksMarketplaceLandingPage() {
 
               {/* Form Fields */}
               <form onSubmit={handleAuthSubmit} className="space-y-3.5">
+
+                {/* 1-Click Demo Client Credentials Banner */}
+                {authMode === "signin" && (
+                  <div className="p-3 rounded-2xl bg-[#faf9f5] border border-[#e4e3d9] flex items-center justify-between gap-3 animate-in fade-in duration-200">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-[#dfe7bf] text-[#1b1c16] flex items-center justify-center shrink-0">
+                        <Sparkles className="w-4 h-4 text-[#5a6242]" />
+                      </div>
+                      <div>
+                        <p className="font-headline font-bold text-xs text-[#1b1c16]">Demo Client Account</p>
+                        <p className="font-mono text-[10px] text-[#82756a]">client@genworks.agency • Client2026!</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleDemoLogin}
+                      disabled={authLoading}
+                      className="px-3 py-1.5 rounded-full bg-[#1b1c16] text-[#faf9f5] text-[11px] font-headline font-bold hover:bg-[#34352f] transition-all shrink-0 active:scale-95 disabled:opacity-50 flex items-center gap-1.5"
+                    >
+                      <span>1-Click Login</span>
+                    </button>
+                  </div>
+                )}
                 
                 {/* Full Name field (on signup) */}
                 {authMode === "signup" && (

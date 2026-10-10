@@ -165,58 +165,7 @@ export function GenWorksBrandLoader({
           : "w-full py-12 flex flex-col items-center justify-center p-6 text-[#1b1c16] select-none"
       }
     >
-      <style jsx>{`
-        @keyframes squircle-kinetic-loop {
-          0% {
-            transform: translate(0px, 0px) rotate(0deg) scale(1);
-          }
-          12.5% {
-            transform: translate(14px, -3.5px) rotate(-6deg) scale(1.08);
-          }
-          25% {
-            transform: translate(28px, 0px) rotate(0deg) scale(1);
-          }
-          37.5% {
-            transform: translate(31.5px, 14px) rotate(6deg) scale(1.08);
-          }
-          50% {
-            transform: translate(28px, 28px) rotate(0deg) scale(1);
-          }
-          62.5% {
-            transform: translate(14px, 31.5px) rotate(-6deg) scale(1.08);
-          }
-          75% {
-            transform: translate(0px, 28px) rotate(0deg) scale(1);
-          }
-          87.5% {
-            transform: translate(-3.5px, 14px) rotate(6deg) scale(1.08);
-          }
-          100% {
-            transform: translate(0px, 0px) rotate(0deg) scale(1);
-          }
-        }
-
-        .kinetic-tile {
-          animation: squircle-kinetic-loop 2.4s cubic-bezier(0.45, 0.05, 0.25, 0.95) infinite;
-        }
-
-        .tile-caramel {
-          animation-delay: 0s;
-        }
-
-        .tile-charcoal-1 {
-          animation-delay: -0.6s;
-        }
-
-        .tile-charcoal-2 {
-          animation-delay: -1.2s;
-        }
-
-        .tile-charcoal-3 {
-          animation-delay: -1.8s;
-        }
-      `}</style>
-
+      {/* Kinetic Brand Animation styled in globals.css */}
       <div className="flex flex-col items-center animate-in fade-in duration-500">
         {/* Horizontal Brand Identity: Kinetic Squircles + Wordmark */}
         <div className="flex items-center gap-4">
