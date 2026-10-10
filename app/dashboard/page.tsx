@@ -38,6 +38,7 @@ import {
   FileCheck,
   ArrowRight,
   Filter,
+  Lock,
 } from "lucide-react";
 
 // --- Types ---
@@ -69,6 +70,13 @@ interface PinItem {
   saved: boolean;
 }
 
+interface MilestoneStep {
+  name: string;
+  phase: string;
+  status: "completed" | "current" | "pending";
+  amount: string;
+}
+
 interface ClientBrief {
   id: string;
   title: string;
@@ -76,20 +84,23 @@ interface ClientBrief {
   budget: string;
   status: "Active Escrow" | "In Review" | "Delivered";
   assignedDirector: string;
+  assignedAvatar?: string;
+  assignedHandle?: string;
   deliverable: string;
   deadline: string;
   escrowLocked: number;
+  milestones: MilestoneStep[];
 }
 
 // --- Initial Mock Pins Data (Diverse aspect ratios for authentic Masonry waterfall) ---
 const INITIAL_PINS: PinItem[] = [
   {
     id: "pin-1",
-    title: "9:16 Cinematic Perfume Ad — Ethereal Water Drops",
+    title: "9:16 Cinematic Floral Perfume Ad — Elegant Rose Petals & Bloom",
     aspectRatio: "9:16",
     category: "viral",
     categoryLabel: "9:16 Viral Ad",
-    previewImg: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&auto=format&fit=crop&q=80",
+    previewImg: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=800&auto=format&fit=crop&q=80",
     director: {
       name: "Elena Vance",
       handle: "@elena_cinema",
@@ -105,7 +116,7 @@ const INITIAL_PINS: PinItem[] = [
       cfgScale: 7.5,
       steps: 50,
       sampler: "Euler a (Motion Vector 8.4)",
-      positivePrompt: "Cinematic commercial 9:16, luxury perfume bottle floating in slow-motion water droplets, bioluminescent flora, anamorphic lens flare, 8k resolution, shot on Arri Alexa 35 --ar 9:16",
+      positivePrompt: "Cinematic luxury perfume bottle nestled on a bed of soft blush rose petals, soft diffused morning studio illumination, macro depth of field, 8k resolution, shot on Arri Alexa 35 --ar 9:16",
     },
     likes: 342,
     saved: true,
@@ -116,7 +127,7 @@ const INITIAL_PINS: PinItem[] = [
     aspectRatio: "16:9",
     category: "pipeline",
     categoryLabel: "ComfyUI Pipeline",
-    previewImg: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80",
+    previewImg: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&auto=format&fit=crop&q=80",
     director: {
       name: "Kai Chen",
       handle: "@kaichen_nodes",
@@ -143,7 +154,7 @@ const INITIAL_PINS: PinItem[] = [
     aspectRatio: "9:16",
     category: "human",
     categoryLabel: "AI Human & Dubbing",
-    previewImg: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=800&auto=format&fit=crop&q=80",
+    previewImg: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80",
     director: {
       name: "Zara Al-Mansoor",
       handle: "@zara_virtual",
@@ -170,7 +181,7 @@ const INITIAL_PINS: PinItem[] = [
     aspectRatio: "1:1",
     category: "commercial",
     categoryLabel: "Product Motion",
-    previewImg: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80",
+    previewImg: "https://images.unsplash.com/photo-1547887537-6158d64c35b3?w=800&auto=format&fit=crop&q=80",
     director: {
       name: "Marcus Sterling",
       handle: "@marcus_visuals",
@@ -193,11 +204,11 @@ const INITIAL_PINS: PinItem[] = [
   },
   {
     id: "pin-5",
-    title: "Cyberpunk High-Speed Coastal Chase — Sci-Fi Master Shot",
+    title: "Cinematic Urban Canyon Hyperlapse — Anamorphic Dusk Traffic",
     aspectRatio: "16:9",
     category: "cinematic",
-    categoryLabel: "Cinematic Trailer",
-    previewImg: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800&auto=format&fit=crop&q=80",
+    categoryLabel: "Urban Cinematic",
+    previewImg: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&auto=format&fit=crop&q=80",
     director: {
       name: "Aria Thorne",
       handle: "@aria_cinematics",
@@ -213,17 +224,17 @@ const INITIAL_PINS: PinItem[] = [
       cfgScale: 8.0,
       steps: 60,
       sampler: "Euler a (Speed 1.0x)",
-      positivePrompt: "16:9 cinematic master shot, futuristic electric vehicle driving along coastal highway at dusk, golden hour rays hitting chrome body, realistic asphalt reflection, drone follow angle, film grain",
+      positivePrompt: "16:9 cinematic master shot, looking down a canyon of iconic skyscrapers and city traffic during golden hour dusk, anamorphic lens flare, motion blur, Arri Alexa 35 8k",
     },
     likes: 620,
     saved: true,
   },
   {
     id: "pin-6",
-    title: "Zero-Latency Lip-Sync Multilingual Dubbing — 28 Languages",
-    aspectRatio: "9:16",
+    title: "Zero-Latency AI Voice Dubbing — Neural Studio Acoustics",
+    aspectRatio: "16:9",
     category: "human",
-    categoryLabel: "AI Human & Dubbing",
+    categoryLabel: "Neural Voice Sync",
     previewImg: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&auto=format&fit=crop&q=80",
     director: {
       name: "Liam O'Connor",
@@ -239,26 +250,26 @@ const INITIAL_PINS: PinItem[] = [
       seed: "9018471203",
       cfgScale: 0.75,
       steps: 1,
-      sampler: "Neural Vocoder + Video Warp",
-      positivePrompt: "Master multilingual video dubbing pipeline, synchronized emotional speech across European and Asian language pairs, natural vocal acoustics matching original video environment",
+      sampler: "Neural Vocoder + Acoustic Match",
+      positivePrompt: "Master multilingual studio dubbing pipeline, synchronized emotional speech across European and Asian language pairs, natural vocal acoustics matching original acoustic profile",
     },
     likes: 189,
     saved: false,
   },
   {
     id: "pin-7",
-    title: "Futuristic Sneaker Reveal — Particle Morphing & Motion Physics",
+    title: "High-Top Streetwear Sneaker Showcase — Dynamic Studio Lighting",
     aspectRatio: "1:1",
     category: "commercial",
     categoryLabel: "Product Motion",
     previewImg: "https://images.unsplash.com/photo-1552346154-21d32810aba3?w=800&auto=format&fit=crop&q=80",
     director: {
-      name: "Elena Vance",
-      handle: "@elena_cinema",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      completed: 52,
-      rate: "$95/hr",
+      name: "Devon Miller",
+      handle: "@devon_motion",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80",
+      rating: 4.97,
+      completed: 37,
+      rate: "$90/hr",
     },
     tools: ["Runway Gen-3", "ComfyUI", "Blender"],
     workflow: {
@@ -267,7 +278,7 @@ const INITIAL_PINS: PinItem[] = [
       cfgScale: 7.0,
       steps: 45,
       sampler: "Euler a",
-      positivePrompt: "Hyper-detailed 3D athletic sneaker deconstructing into glowing aerodynamic energy particles and reassembling in mid-air, studio dark backdrop, neon orange ambient backlight",
+      positivePrompt: "Commercial 1:1 footwear showcase, iconic retro high-top basketball sneakers resting on asphalt court under dramatic angled studio spotlights, photorealistic textures, 4k ultra-detail",
     },
     likes: 384,
     saved: true,
@@ -309,9 +320,16 @@ const INITIAL_BRIEFS: ClientBrief[] = [
     budget: "$2,400",
     status: "Active Escrow",
     assignedDirector: "Elena Vance",
-    deliverable: "3x 15s 4K Reels (.mp4) + Seed Parameters",
+    assignedAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
+    assignedHandle: "@elena_cinema",
+    deliverable: "3x 15s 4K Reels (.mp4) + Seed Parameters & ComfyUI Graph",
     deadline: "Oct 18, 2026",
     escrowLocked: 2400,
+    milestones: [
+      { phase: "Milestone 1", name: "Styleframes & Prompt Seed Lock", status: "completed", amount: "$800" },
+      { phase: "Milestone 2", name: "3x 15s 4K Motion Passes & Color Grade", status: "current", amount: "$1,100" },
+      { phase: "Milestone 3", name: "Final IP Transfer & Node Archive", status: "pending", amount: "$500" },
+    ],
   },
   {
     id: "brief-102",
@@ -320,9 +338,16 @@ const INITIAL_BRIEFS: ClientBrief[] = [
     budget: "$1,850",
     status: "In Review",
     assignedDirector: "Zara Al-Mansoor",
-    deliverable: "2x 60s Localized Product Demos",
+    assignedAvatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300&auto=format&fit=crop&q=80",
+    assignedHandle: "@zara_virtual",
+    deliverable: "2x 60s Localized Product Demos + Custom Voice LoRA",
     deadline: "Oct 22, 2026",
     escrowLocked: 1850,
+    milestones: [
+      { phase: "Milestone 1", name: "Multilingual Script & Voice Training", status: "completed", amount: "$600" },
+      { phase: "Milestone 2", name: "LivePortrait Lip-Sync (ES & DE Versions)", status: "current", amount: "$850" },
+      { phase: "Milestone 3", name: "Master 4K Video Exports & Seed Locks", status: "pending", amount: "$400" },
+    ],
   },
 ];
 
@@ -440,9 +465,16 @@ export default function ClientDashboardPage() {
       budget: newBriefBudget,
       status: "Active Escrow",
       assignedDirector: newBriefDirector,
+      assignedAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
+      assignedHandle: `@${newBriefDirector.toLowerCase().replace(/\s+/g, "_")}`,
       deliverable: "Custom 4K AI Video Master & Verified JSON Workflow",
       deadline: "7 Days from Approval",
       escrowLocked: parseInt(newBriefBudget.replace(/[^0-9]/g, "")) || 2000,
+      milestones: [
+        { phase: "Milestone 1", name: "Prompt Seed & Styleframe Approval", status: "current", amount: "$750" },
+        { phase: "Milestone 2", name: "Motion Render Pass & Upscale", status: "pending", amount: "$1,000" },
+        { phase: "Milestone 3", name: "Master IP Delivery & Asset Archive", status: "pending", amount: "$750" },
+      ],
     };
 
     setBriefs([newBrief, ...briefs]);
@@ -861,63 +893,219 @@ export default function ClientDashboardPage() {
             VIEW: ESCROW CONTRACTS & BRIEFS
         ======================================================== */}
         {activeNav === "escrow" ? (
-          <div className="p-4 sm:p-8 max-w-5xl mx-auto w-full">
-            <div className="mb-6 flex items-center justify-between">
+          <div className="p-4 sm:p-8 max-w-5xl mx-auto w-full space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-headline font-black text-[#1b1c16]">
-                  Milestone Escrow Vault
-                </h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-2xl font-headline font-black text-[#1b1c16]">
+                    Milestone Escrow Vault
+                  </h1>
+                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                    Vault Protected
+                  </span>
+                </div>
                 <p className="text-xs text-[#82756a] font-medium mt-1">
-                  100% Client Protected: Creator funds are held in escrow and only released when you approve reproducible pipeline deliverables.
+                  100% Client Protected: Creator funds are held in cryptographic milestone escrow and only released when you approve reproducible pipeline deliverables.
                 </p>
               </div>
               <button
                 onClick={() => setCreateBriefModalOpen(true)}
-                className="bg-[#d3a373] text-[#1b1c16] text-xs font-bold py-2.5 px-4 rounded-full flex items-center gap-2 hover:bg-[#c29263] transition-all shadow-sm"
+                className="bg-[#d3a373] text-[#1b1c16] text-xs font-bold py-2.5 px-4 rounded-full flex items-center gap-2 hover:bg-[#c29263] transition-all shadow-sm shrink-0"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>New Escrow Brief</span>
               </button>
             </div>
 
-            {/* Escrow Briefs Cards */}
+            {/* Financial Aggregate Metric Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+              <div className="bg-white rounded-2xl p-4 border border-[#e4e3d9] shadow-xs">
+                <div className="flex items-center justify-between text-[#82756a] text-[11px] font-bold uppercase mb-1">
+                  <span>Locked In Escrow</span>
+                  <DollarSign className="w-3.5 h-3.5 text-[#d3a373]" />
+                </div>
+                <div className="text-xl font-headline font-black text-[#1b1c16]">
+                  $4,250<span className="text-xs text-[#82756a] font-medium">.00</span>
+                </div>
+                <div className="text-[10px] text-emerald-700 font-semibold mt-1">
+                  2 active milestone briefs
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl p-4 border border-[#e4e3d9] shadow-xs">
+                <div className="flex items-center justify-between text-[#82756a] text-[11px] font-bold uppercase mb-1">
+                  <span>Released to Date</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                </div>
+                <div className="text-xl font-headline font-black text-[#1b1c16]">
+                  $18,600<span className="text-xs text-[#82756a] font-medium">.00</span>
+                </div>
+                <div className="text-[10px] text-[#82756a] font-semibold mt-1">
+                  8 completed pipelines
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl p-4 border border-[#e4e3d9] shadow-xs">
+                <div className="flex items-center justify-between text-[#82756a] text-[11px] font-bold uppercase mb-1">
+                  <span>Escrow Protection</span>
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                </div>
+                <div className="text-xl font-headline font-black text-[#1b1c16]">
+                  100%
+                </div>
+                <div className="text-[10px] text-blue-700 font-semibold mt-1">
+                  Seed-verified guarantee
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl p-4 border border-[#e4e3d9] shadow-xs">
+                <div className="flex items-center justify-between text-[#82756a] text-[11px] font-bold uppercase mb-1">
+                  <span>Avg Delivery SLA</span>
+                  <Clock className="w-3.5 h-3.5 text-amber-600" />
+                </div>
+                <div className="text-xl font-headline font-black text-[#1b1c16]">
+                  &lt;48 Hours
+                </div>
+                <div className="text-[10px] text-[#82756a] font-semibold mt-1">
+                  On-schedule rate 99.2%
+                </div>
+              </div>
+            </div>
+
+            {/* Escrow Briefs Cards with Detailed Milestone Trackers */}
             <div className="space-y-4">
               {briefs.map((b) => (
                 <div
                   key={b.id}
-                  className="bg-white rounded-3xl p-5 border border-[#e4e3d9] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  className="bg-white rounded-3xl p-6 border border-[#e4e3d9] shadow-xs space-y-5"
                 >
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">
-                        {b.status}
-                      </span>
-                      <span className="text-xs font-semibold text-[#82756a]">
-                        ID: {b.id}
-                      </span>
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#f0eee4]">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-md ${
+                          b.status === "Active Escrow"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : "bg-amber-100 text-amber-800"
+                        }`}>
+                          {b.status}
+                        </span>
+                        <span className="text-xs font-semibold text-[#82756a]">
+                          ID: {b.id}
+                        </span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#f4f2e9] text-[#50453b]">
+                          {b.category}
+                        </span>
+                      </div>
+                      <h3 className="font-headline font-bold text-lg text-[#1b1c16]">
+                        {b.title}
+                      </h3>
+                      <p className="text-xs text-[#50453b]">
+                        Deliverable: <strong className="text-[#1b1c16]">{b.deliverable}</strong> • Due: <strong className="text-[#1b1c16]">{b.deadline}</strong>
+                      </p>
                     </div>
-                    <h3 className="font-headline font-bold text-base text-[#1b1c16]">
-                      {b.title}
-                    </h3>
-                    <p className="text-xs text-[#50453b]">
-                      Director: <strong className="text-[#1b1c16]">{b.assignedDirector}</strong> • Deliverable: {b.deliverable}
-                    </p>
+
+                    <div className="flex items-center gap-4">
+                      {b.assignedAvatar && (
+                        <div className="flex items-center gap-3 pr-4 border-r border-[#e4e3d9]/70">
+                          <img
+                            src={b.assignedAvatar}
+                            alt={b.assignedDirector}
+                            className="w-10 h-10 rounded-full object-cover ring-2 ring-[#d3a373]/40"
+                          />
+                          <div>
+                            <div className="text-xs font-bold text-[#1b1c16]">{b.assignedDirector}</div>
+                            <div className="text-[10px] text-[#82756a]">{b.assignedHandle}</div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="text-right">
+                        <div className="text-[10px] font-bold text-[#82756a] uppercase">
+                          Locked in Vault
+                        </div>
+                        <div className="text-xl font-headline font-black text-[#1b1c16]">
+                          {b.budget}
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-4 border-t md:border-t-0 pt-3 md:pt-0">
-                    <div className="text-right">
-                      <div className="text-[10px] font-bold text-[#82756a] uppercase">
-                        Locked Amount
-                      </div>
-                      <div className="text-lg font-headline font-black text-[#1b1c16]">
-                        {b.budget}
-                      </div>
+                  {/* Milestone Linear Stepper */}
+                  <div className="space-y-2">
+                    <div className="text-xs font-bold text-[#1b1c16] flex items-center justify-between">
+                      <span>Milestone Execution Timeline</span>
+                      <span className="text-[11px] text-[#82756a] font-normal">
+                        Funds release step-by-step upon your verification
+                      </span>
                     </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                      {b.milestones.map((ms, idx) => (
+                        <div
+                          key={idx}
+                          className={`p-3.5 rounded-2xl border transition-all ${
+                            ms.status === "completed"
+                              ? "bg-emerald-50/60 border-emerald-200"
+                              : ms.status === "current"
+                              ? "bg-[#fbf8f2] border-[#d3a373] ring-1 ring-[#d3a373]/30"
+                              : "bg-[#faf9f5] border-[#e4e3d9]"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="text-[10px] font-bold text-[#82756a] uppercase">
+                              {ms.phase}
+                            </span>
+                            {ms.status === "completed" ? (
+                              <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-700">
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                Approved
+                              </span>
+                            ) : ms.status === "current" ? (
+                              <span className="flex items-center gap-1 text-[10px] font-bold text-amber-700 animate-pulse">
+                                <Zap className="w-3.5 h-3.5 text-amber-600" />
+                                In Progress
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-[10px] font-bold text-[#82756a]">
+                                <Lock className="w-3 h-3" />
+                                Locked
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs font-bold text-[#1b1c16] leading-snug line-clamp-1">
+                            {ms.name}
+                          </div>
+                          <div className="mt-2 pt-2 border-t border-black/5 flex items-center justify-between text-[11px]">
+                            <span className="text-[#82756a]">Milestone Fee</span>
+                            <span className="font-extrabold text-[#1b1c16]">{ms.amount}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Action Bar */}
+                  <div className="flex items-center justify-end gap-3 pt-2">
                     <button
-                      onClick={() => triggerToast(`Inspecting deliverable assets for ${b.id}`)}
-                      className="bg-[#1b1c16] hover:bg-[#30312b] text-[#fbfaf0] text-xs font-bold py-2.5 px-4 rounded-full transition-all"
+                      onClick={() => triggerToast(`Opening communication thread with ${b.assignedDirector}`)}
+                      className="px-4 py-2 rounded-full border border-[#e4e3d9] text-xs font-bold text-[#1b1c16] hover:bg-[#f5f4ed] transition-all flex items-center gap-1.5"
                     >
-                      Inspect Deliverables
+                      <MessageSquare className="w-3.5 h-3.5 text-[#82756a]" />
+                      <span>Chat Director</span>
+                    </button>
+                    <button
+                      onClick={() => triggerToast(`Reviewing and releasing milestone for ${b.id}`)}
+                      className="px-4 py-2 rounded-full bg-[#d3a373] hover:bg-[#c29263] text-xs font-bold text-[#1b1c16] transition-all flex items-center gap-1.5 shadow-xs"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Approve Milestone</span>
+                    </button>
+                    <button
+                      onClick={() => triggerToast(`Inspecting deliverable pipeline files for ${b.id}`)}
+                      className="bg-[#1b1c16] hover:bg-[#30312b] text-[#fbfaf0] text-xs font-bold py-2 px-4 rounded-full transition-all flex items-center gap-1.5 shadow-xs"
+                    >
+                      <span>Inspect Deliverables</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
@@ -973,8 +1161,9 @@ export default function ClientDashboardPage() {
                             <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[#fbfaf0] shadow-sm">
                               {pin.categoryLabel}
                             </span>
-                            <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-[#1b1c16]/80 text-[#d3a373] backdrop-blur-md">
-                              {pin.aspectRatio}
+                            <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md bg-[#1b1c16]/85 text-[#d3a373] backdrop-blur-md flex items-center gap-1.5 shadow-sm">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                              {pin.aspectRatio === "9:16" ? "9:16 • 15s" : pin.aspectRatio === "16:9" ? "16:9 • 30s" : "1:1 • Loop"}
                             </span>
                           </div>
 
