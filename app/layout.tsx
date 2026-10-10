@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Clientora — Curated AI Content Creator Marketplace",
+  title: "GenWorks — Curated AI Content Creator Marketplace",
   description:
     "Commission world-class AI creators, prompt engineers, and generative directors for high-impact brand campaigns. 100% verified workflows, escrow protection, and commercial IP transfer.",
 };

@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
-import { AnimatedLogo, SplashScreen } from "@/components/AnimatedLogo";
+import { GenWorksLogo, AnimatedLogo, SplashScreen } from "@/components/AnimatedLogo";
 import {
   Sparkles,
   ArrowRight,
@@ -64,7 +64,7 @@ interface Creator {
   workflow: CreatorWorkflow;
 }
 
-export default function ClientoraMarketplaceLandingPage() {
+export default function GenWorksMarketplaceLandingPage() {
   // Navigation & Interactive States
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>("signin");
@@ -141,7 +141,7 @@ export default function ClientoraMarketplaceLandingPage() {
       setAuthLoading(false);
       setAuthSuccess(
         authMode === "signin"
-          ? "Welcome back to Clientora!"
+          ? "Welcome back to GenWorks!"
           : `Studio workspace provisioned for ${authRole === "CREATOR" ? "AI Creator" : "Brand / Client"}!`
       );
       setTimeout(() => {
@@ -400,7 +400,7 @@ export default function ClientoraMarketplaceLandingPage() {
   // Testimonials Data
   const testimonials = [
     {
-      quote: "Clientora transformed our seasonal launch. What used to take our traditional agency 8 weeks and $90,000 was delivered in 4 days by Elena Vance with breathtaking visual consistency and 340% higher TikTok ROAS.",
+      quote: "GenWorks transformed our seasonal launch. What used to take our traditional agency 8 weeks and $90,000 was delivered in 4 days by Elena Vance with breathtaking visual consistency and 340% higher TikTok ROAS.",
       author: "Sarah Jenkins",
       title: "VP of Brand & Growth, Aura Energy",
       avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80"
@@ -431,29 +431,26 @@ export default function ClientoraMarketplaceLandingPage() {
       <div className="absolute top-[2800px] left-0 w-[600px] h-[600px] bg-[#dfe7bf]/30 rounded-full blur-[140px] pointer-events-none -z-10" />
 
       {/* ─────────────────────────────────────────────────────────
-          1. FLOATING CAPSULE NAVIGATION BAR
+          1. FLOATING CAPSULE NAVIGATION BAR (Matches image_32c1e9.png & image_48eb78.png)
       ───────────────────────────────────────────────────────── */}
       <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
-        <header className="pointer-events-auto bg-[#ffffff]/90 backdrop-blur-xl border border-[#e4e3d9] px-6 py-3 rounded-full flex items-center justify-between gap-8 max-w-4xl w-full shadow-lg shadow-[#1b1c16]/5 transition-all">
+        <header className="pointer-events-auto bg-[#ffffff]/90 backdrop-blur-xl border border-[#e4e3d9] px-6 py-3 rounded-full flex items-center justify-between gap-6 max-w-4xl w-full shadow-lg shadow-[#1b1c16]/5 transition-all">
           
-          {/* Left Nav Links */}
-          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold tracking-wide text-[#50453b]">
-            <a href="#about" className="hover:text-[#1b1c16] transition-colors">Why Clientora</a>
-            <a href="#services" className="hover:text-[#1b1c16] transition-colors">AI Disciplines</a>
-          </nav>
-
-          {/* Center Brand Logo with MNC 2x2 Animated Grid */}
-          <a href="#" className="flex items-center group">
-            <AnimatedLogo size="sm" />
+          {/* Left: GenWorks Official Modular Cube Logo */}
+          <a href="#" className="flex items-center group shrink-0">
+            <GenWorksLogo size="sm" animated={false} />
           </a>
 
-          {/* Right Nav Links & CTA */}
-          <div className="flex items-center gap-6">
-            <nav className="hidden md:flex items-center gap-6 text-xs font-semibold tracking-wide text-[#50453b]">
-              <a href="#creators" className="hover:text-[#1b1c16] transition-colors">AI Creators</a>
-              <a href="#brief-builder" className="hover:text-[#1b1c16] transition-colors">Brief Builder</a>
-            </nav>
+          {/* Center: Navigation Links */}
+          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold tracking-wide text-[#50453b]">
+            <a href="#about" className="hover:text-[#1b1c16] transition-colors">Why GenWorks</a>
+            <a href="#services" className="hover:text-[#1b1c16] transition-colors">AI Disciplines</a>
+            <a href="#creators" className="hover:text-[#1b1c16] transition-colors">AI Creators</a>
+            <a href="#brief-builder" className="hover:text-[#1b1c16] transition-colors">Brief Builder</a>
+          </nav>
 
+          {/* Right: CTA Button & Mobile Menu Toggle */}
+          <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={() => { setAuthMode("signup"); setIsAuthOpen(true); }}
               className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-extrabold px-4.5 py-2 rounded-full transition-all duration-300 flex items-center gap-1.5 shadow-md shadow-[#d3a373]/20 active:scale-95"
@@ -476,7 +473,7 @@ export default function ClientoraMarketplaceLandingPage() {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-[#fbfaf0]/98 backdrop-blur-2xl flex flex-col items-center justify-center gap-8 text-xl font-bold md:hidden text-[#1b1c16]">
-          <a href="#about" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">Why Clientora</a>
+          <a href="#about" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">Why GenWorks</a>
           <a href="#services" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">AI Disciplines</a>
           <a href="#creators" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">AI Creators</a>
           <a href="#brief-builder" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">Brief Builder</a>
@@ -657,7 +654,7 @@ export default function ClientoraMarketplaceLandingPage() {
               Traditional freelance sites fail at generative AI. Brands struggle to separate random prompt luck from true production directors, verify node pipelines, or secure commercial copyright indemnity.
             </p>
             <p className="text-[#82756a] text-xs sm:text-sm">
-              Clientora bridges foundation models with enterprise campaigns. By pairing verified prompt directors with deterministic ComfyUI workflows, we turn rough creative concepts into reproducible 9:16 reels, 4K stills, and persistent brand LoRAs.
+              GenWorks bridges foundation models with enterprise campaigns. By pairing verified prompt directors with deterministic ComfyUI workflows, we turn rough creative concepts into reproducible 9:16 reels, 4K stills, and persistent brand LoRAs.
             </p>
           </div>
         </div>
@@ -1470,20 +1467,9 @@ export default function ClientoraMarketplaceLandingPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
             
-            {/* Top Left: Clientora Wordmark with MNC 2x2 Grid */}
+            {/* Top Left: GenWorks Wordmark with Modular 2x2 Cubes */}
             <div className="lg:col-span-2 space-y-4">
-              <div className="flex items-center gap-2.5">
-                <div className="grid grid-cols-2 gap-1 w-7 h-7">
-                  <div className="bg-white rounded-sm" />
-                  <div className="bg-white rounded-sm" />
-                  <div className="bg-white rounded-sm" />
-                  <div className="bg-[#d3a373] rounded-sm shadow-sm" />
-                </div>
-                <div className="text-2xl tracking-tight text-white leading-none">
-                  <strong className="font-extrabold font-headline">Client</strong>
-                  <span className="font-medium font-headline">ora</span>
-                </div>
-              </div>
+              <GenWorksLogo size="md" inverted={true} animated={false} />
               <p className="font-body text-xs sm:text-sm text-[#efeee4]/75 max-w-sm leading-relaxed">
                 The curated marketplace connecting brands and creative agencies with verified generative filmmakers, ComfyUI architects, and AI directors. Production-grade escrow and deterministic pipeline delivery.
               </p>
@@ -1493,7 +1479,7 @@ export default function ClientoraMarketplaceLandingPage() {
             <div className="space-y-3">
               <p className="font-headline font-black text-xs uppercase tracking-wider text-[#d3a373]">Platform</p>
               <ul className="space-y-2 font-body text-xs text-[#efeee4]/80 font-medium">
-                <li><a href="#about" className="hover:text-white transition-colors">Why Clientora</a></li>
+                <li><a href="#about" className="hover:text-white transition-colors">Why GenWorks</a></li>
                 <li><a href="#creators" className="hover:text-white transition-colors">Verified Creators</a></li>
                 <li><a href="#brief-builder" className="hover:text-white transition-colors">Brief Builder</a></li>
                 <li><a href="#reviews" className="hover:text-white transition-colors">Brand Reviews</a></li>
@@ -1529,7 +1515,7 @@ export default function ClientoraMarketplaceLandingPage() {
 
           {/* Bottom Bar: Copyright & Social Links */}
           <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-[#efeee4]/60">
-            <p>© 2026 Clientora Inc. All rights reserved.</p>
+            <p>© 2026 GenWorks Inc. All rights reserved.</p>
             
             <div className="flex items-center gap-6 font-bold text-[#efeee4]/80">
               <a href="#" className="hover:text-[#d3a373] transition-colors">Twitter / X</a>
@@ -1701,14 +1687,11 @@ export default function ClientoraMarketplaceLandingPage() {
               <X className="w-5 h-5" />
             </button>
 
-            {/* Header Crest */}
+            {/* Header Crest with GenWorks Cube Logo */}
             <div className="flex flex-col items-center text-center mb-6">
-              <div className="w-12 h-12 rounded-full bg-[#d3a373] flex items-center justify-center text-[#1b1c16] mb-3 shadow-lg shadow-[#d3a373]/20">
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                  <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" />
-                </svg>
+              <div className="mb-2">
+                <GenWorksLogo size="md" animated={false} />
               </div>
-              <h3 className="font-headline font-black text-2xl tracking-tight text-[#1b1c16]">Clientora</h3>
               <p className="font-body text-xs text-[#50453b] mt-1">
                 AI Content Creator Marketplace · Enterprise Production
               </p>
@@ -1840,7 +1823,7 @@ export default function ClientoraMarketplaceLandingPage() {
                 {authLoading
                   ? "Processing..."
                   : authMode === "signin"
-                  ? "Sign In to Clientora"
+                  ? "Sign In to GenWorks"
                   : `Launch ${authRole === "CREATOR" ? "Creator" : "Brand"} Studio`}
               </button>
 
