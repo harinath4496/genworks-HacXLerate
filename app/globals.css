@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   html, body {
     margin: 0;
     padding: 0;
@@ -19,6 +25,15 @@
     background-color: #d3a373;
     color: #1b1c16;
   }
+}
+
+/* Smooth flow transitions */
+.smooth-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.smooth-hover:hover {
+  transform: translateY(-2px);
 }
 
 /* Custom scrollbar hiding */

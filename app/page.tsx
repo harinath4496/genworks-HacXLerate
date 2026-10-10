@@ -523,7 +523,7 @@ export default function GenWorksMarketplaceLandingPage() {
         <div className="relative z-20 max-w-7xl mx-auto w-full flex flex-col justify-center">
           
           {/* Foreground Text & Interactive Controls */}
-          <div className="max-w-3xl opacity-100 transition-all duration-500 ease-out">
+          <div className="max-w-3xl opacity-100 transition-all duration-500 ease-out animate-fade-in-up">
             {/* Display Headline matching image_e6ab44.png hierarchy */}
             <h1 className="font-headline font-black text-4xl sm:text-5xl md:text-6xl lg:text-[68px] tracking-tight leading-[1.05] text-white">
               Empowering Brands Through{" "}
@@ -616,155 +616,80 @@ export default function GenWorksMarketplaceLandingPage() {
           (Replaces generic mock statistics with company-grade value engine)
       ───────────────────────────────────────────────────────── */}
       <section className="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-white via-[#fbfaf0] to-[#efeee4]/70 border border-[#e4e3d9] rounded-[32px] sm:rounded-[40px] p-8 sm:p-12 lg:p-14 shadow-lg shadow-[#1b1c16]/5 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-white via-[#fbfaf0] to-[#efeee4]/70 border border-[#e4e3d9] rounded-[32px] sm:rounded-[40px] p-8 sm:p-12 lg:p-14 shadow-lg shadow-[#1b1c16]/5 relative overflow-hidden transition-all duration-500 animate-fade-in-up">
           
           {/* Subtle Ambient Decorative Gradients */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#d3a373]/10 rounded-full blur-[90px] pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#dfe7bf]/30 rounded-full blur-[80px] pointer-events-none" />
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          <div className="relative z-10 max-w-4xl mx-auto space-y-7">
             
-            {/* Left Column: Core Value Proposition */}
-            <div className="lg:col-span-7 space-y-6">
-              
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#dfe7bf] text-[#5a6242] font-mono text-xs font-bold uppercase tracking-wider border border-[#c2caa4]">
-                <Sparkles className="w-3.5 h-3.5 text-[#5a6242]" />
-                <span>Intelligent Requirement Matcher</span>
-              </div>
-
-              <h2 className="font-headline font-black text-3xl sm:text-4xl lg:text-[44px] text-[#1b1c16] tracking-tight leading-[1.12]">
-                Our system finds the best{" "}
-                <span className="bg-[#dfe7bf] text-[#1b1c16] px-3 py-0.5 rounded-xl inline-block border border-[#c2caa4]">
-                  verified portfolios
-                </span>{" "}
-                tailored directly to your requirements.
-              </h2>
-
-              <p className="font-body text-[#50453b] text-base sm:text-lg leading-relaxed max-w-2xl font-normal">
-                Never guess creator capabilities or risk unverified AI prompts. Tell us your creative format, target visual aesthetic, and model stack — our deterministic engine instantly filters verified AI directors whose reproducible pipelines match your exact campaign specifications.
-              </p>
-
-              {/* Requirement Feature Pillars */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/80 border border-[#e4e3d9]">
-                  <BadgeCheck className="w-5 h-5 text-[#d3a373] shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-headline font-bold text-xs text-[#1b1c16]">Proven Workflows</h4>
-                    <p className="font-body text-[11px] text-[#50453b] mt-0.5">Every portfolio item is seed-certified and reproducible.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/80 border border-[#e4e3d9]">
-                  <Layers className="w-5 h-5 text-[#5a6242] shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-headline font-bold text-xs text-[#1b1c16]">Toolchain Stacks</h4>
-                    <p className="font-body text-[11px] text-[#50453b] mt-0.5">Matched by Runway, Flux, ComfyUI, or custom LoRAs.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/80 border border-[#e4e3d9]">
-                  <ShieldCheck className="w-5 h-5 text-[#1b1c16] shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-headline font-bold text-xs text-[#1b1c16]">Milestone Escrow</h4>
-                    <p className="font-body text-[11px] text-[#50453b] mt-0.5">Funds protected until deliverables meet your brief.</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Trigger Buttons */}
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAuthRole("BRAND");
-                    setAuthStep("role-select");
-                    setAuthMode("signin");
-                    setIsAuthOpen(true);
-                  }}
-                  className="bg-[#1b1c16] hover:bg-[#2d2e26] text-white px-6 py-3.5 rounded-full font-headline font-bold text-xs uppercase tracking-wider shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
-                >
-                  <span>Submit Creative Requirements</span>
-                  <ArrowRight className="w-4 h-4 text-[#d3a373]" />
-                </button>
-
-                <a
-                  href="#creators"
-                  className="text-xs font-headline font-bold text-[#50453b] hover:text-[#1b1c16] underline underline-offset-4 transition-colors px-2 py-1"
-                >
-                  Browse all verified creators ↓
-                </a>
-              </div>
-
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#dfe7bf] text-[#5a6242] font-mono text-xs font-bold uppercase tracking-wider border border-[#c2caa4]">
+              <Sparkles className="w-3.5 h-3.5 text-[#5a6242]" />
+              <span>Intelligent Requirement Matcher</span>
             </div>
 
-            {/* Right Column: Live Matching Simulation Card */}
-            <div className="lg:col-span-5">
-              <div className="bg-[#1b1c16] text-[#efeee4] rounded-3xl p-6 sm:p-7 shadow-2xl border border-white/10 relative">
-                
-                {/* Header of Simulated Engine */}
-                <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="font-mono text-xs uppercase tracking-wider text-white font-bold">Matching Engine Active</span>
-                  </div>
-                  <span className="font-mono text-[11px] text-[#d3a373] bg-[#d3a373]/15 px-2.5 py-1 rounded-full border border-[#d3a373]/30">Auto-Curated</span>
+            <h2 className="font-headline font-black text-3xl sm:text-4xl lg:text-[44px] text-[#1b1c16] tracking-tight leading-[1.15]">
+              Our system finds the best{" "}
+              <span className="bg-[#dfe7bf] text-[#1b1c16] px-3.5 py-0.5 rounded-xl inline-block border border-[#c2caa4]">
+                verified portfolios
+              </span>{" "}
+              tailored directly to your requirements.
+            </h2>
+
+            <p className="font-body text-[#50453b] text-base sm:text-lg leading-relaxed max-w-3xl font-normal">
+              Never guess creator capabilities or risk unverified AI prompts. Tell us your creative format, target visual aesthetic, and model stack — our deterministic engine instantly filters verified AI directors whose reproducible pipelines match your exact campaign specifications.
+            </p>
+
+            {/* Requirement Feature Pillars */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white/85 border border-[#e4e3d9] shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+                <BadgeCheck className="w-5 h-5 text-[#d3a373] shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-headline font-bold text-sm text-[#1b1c16]">Proven Workflows</h4>
+                  <p className="font-body text-xs text-[#50453b] mt-1 leading-relaxed">Every portfolio item is seed-certified and reproducible.</p>
                 </div>
-
-                {/* Input Criteria Block */}
-                <div className="bg-white/5 rounded-2xl p-4 border border-white/10 mb-5 space-y-2">
-                  <p className="font-mono text-[10px] uppercase tracking-wider text-[#efeee4]/60">Client Requirement Input:</p>
-                  <p className="font-body text-xs text-white font-medium leading-relaxed">
-                    &ldquo;Need 9:16 luxury product reels with consistent lighting, DaVinci color grading, and commercial buyout.&rdquo;
-                  </p>
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    <span className="bg-white/10 text-[#d3a373] px-2 py-0.5 rounded-md font-mono text-[10px]">Runway Gen-3</span>
-                    <span className="bg-white/10 text-[#dfe7bf] px-2 py-0.5 rounded-md font-mono text-[10px]">Flux.1 Pro</span>
-                    <span className="bg-white/10 text-white/80 px-2 py-0.5 rounded-md font-mono text-[10px]">Escrow Protected</span>
-                  </div>
-                </div>
-
-                {/* Matched Verified Portfolio Card */}
-                <div className="bg-white/10 rounded-2xl p-4 border border-white/15 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-emerald-400 font-bold flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                      99.6% Match Found
-                    </span>
-                    <span className="font-mono text-[10px] text-[#efeee4]/60">Top Ranked</span>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#d3a373] text-[#1b1c16] flex items-center justify-center font-headline font-black text-sm shrink-0">
-                      EV
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-1.5">
-                        <h5 className="font-headline font-bold text-sm text-white">Elena Vance</h5>
-                        <BadgeCheck className="w-3.5 h-3.5 text-[#d3a373]" />
-                      </div>
-                      <p className="font-body text-[11px] text-[#efeee4]/70">Cinematic 9:16 Commercials • 42 Verified Campaigns</p>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs">
-                    <span className="font-mono text-[11px] text-[#dfe7bf]">Reproducible Node Seed: #89421</span>
-                    <a
-                      href="#creators"
-                      className="text-[#d3a373] hover:text-[#e4b585] font-headline font-bold text-[11px] flex items-center gap-1 transition-colors"
-                    >
-                      <span>View Portfolio</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </a>
-                  </div>
-                </div>
-
-                {/* Footer Status */}
-                <div className="mt-4 pt-3 flex items-center justify-between font-mono text-[10px] text-[#efeee4]/60">
-                  <span>Portfolios Scanned: 100% Verified</span>
-                  <span className="text-[#dfe7bf]">Zero Synthetic Fakes</span>
-                </div>
-
               </div>
+
+              <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white/85 border border-[#e4e3d9] shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+                <Layers className="w-5 h-5 text-[#5a6242] shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-headline font-bold text-sm text-[#1b1c16]">Toolchain Stacks</h4>
+                  <p className="font-body text-xs text-[#50453b] mt-1 leading-relaxed">Matched by Runway, Flux, ComfyUI, or custom LoRAs.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white/85 border border-[#e4e3d9] shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+                <ShieldCheck className="w-5 h-5 text-[#1b1c16] shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-headline font-bold text-sm text-[#1b1c16]">Milestone Escrow</h4>
+                  <p className="font-body text-xs text-[#50453b] mt-1 leading-relaxed">Funds protected until deliverables meet your brief.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Trigger Buttons */}
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthRole("BRAND");
+                  setAuthStep("role-select");
+                  setAuthMode("signin");
+                  setIsAuthOpen(true);
+                }}
+                className="bg-[#1b1c16] hover:bg-[#2d2e26] text-white px-7 py-3.5 rounded-full font-headline font-bold text-xs uppercase tracking-wider shadow-md hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-2"
+              >
+                <span>Submit Creative Requirements</span>
+                <ArrowRight className="w-4 h-4 text-[#d3a373]" />
+              </button>
+
+              <a
+                href="#creators"
+                className="text-xs font-headline font-bold text-[#50453b] hover:text-[#1b1c16] underline underline-offset-4 transition-colors px-2 py-1"
+              >
+                Browse all verified creators ↓
+              </a>
             </div>
 
           </div>
@@ -796,7 +721,7 @@ export default function GenWorksMarketplaceLandingPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Step 1 */}
-          <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+          <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
             <div>
               <div className="w-12 h-12 rounded-2xl bg-[#dfe7bf] text-[#1b1c16] flex items-center justify-center font-mono font-black text-base mb-6 group-hover:scale-105 transition-transform">
                 01
@@ -815,7 +740,7 @@ export default function GenWorksMarketplaceLandingPage() {
           </div>
 
           {/* Step 2 */}
-          <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+          <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
             <div>
               <div className="w-12 h-12 rounded-2xl bg-[#d3a373] text-[#1b1c16] flex items-center justify-center font-mono font-black text-base mb-6 group-hover:scale-105 transition-transform">
                 02
@@ -834,7 +759,7 @@ export default function GenWorksMarketplaceLandingPage() {
           </div>
 
           {/* Step 3 */}
-          <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+          <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
             <div>
               <div className="w-12 h-12 rounded-2xl bg-[#efeee4] text-[#1b1c16] flex items-center justify-center font-mono font-black text-base mb-6 group-hover:scale-105 transition-transform">
                 03
@@ -853,7 +778,7 @@ export default function GenWorksMarketplaceLandingPage() {
           </div>
 
           {/* Step 4 */}
-          <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+          <div className="bg-white p-7 rounded-3xl border border-[#e4e3d9] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
             <div>
               <div className="w-12 h-12 rounded-2xl bg-[#1b1c16] text-[#dfe7bf] flex items-center justify-center font-mono font-black text-base mb-6 group-hover:scale-105 transition-transform">
                 04
@@ -1286,8 +1211,8 @@ export default function GenWorksMarketplaceLandingPage() {
           14. AUTHENTICATION & PROJECT INITIATION MODAL
       ───────────────────────────────────────────────────────── */}
       {isAuthOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-all duration-300">
-          <div className="relative w-full max-w-lg bg-white text-[#1b1c16] rounded-3xl p-6 sm:p-8 shadow-2xl border border-[#e4e3d9] overflow-hidden transition-all duration-300 max-h-[92vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-all duration-300 animate-fade-in">
+          <div className="relative w-full max-w-lg bg-white text-[#1b1c16] rounded-3xl p-6 sm:p-8 shadow-2xl border border-[#e4e3d9] overflow-hidden transition-all duration-300 max-h-[92vh] overflow-y-auto animate-scale-in">
             
             {/* Top Navigation Row */}
             <div className="flex items-center justify-between mb-4">
