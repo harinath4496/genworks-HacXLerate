@@ -87,7 +87,7 @@ const config: Config = {
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "fade-in-down": {
-          "0%": { opacity: "0", transform: "translateY(-12px)" },
+          "0%": { opacity: "0", transform: "translateY(-16px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "scale-in": {
@@ -100,7 +100,7 @@ const config: Config = {
         "pulse-sequence": "pulse-sequence 1.5s infinite ease-in-out",
         "fade-in": "fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         "fade-in-up": "fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-        "fade-in-down": "fade-in-down 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "fade-in-down": "fade-in-down 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         "scale-in": "scale-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards",
       },
     },

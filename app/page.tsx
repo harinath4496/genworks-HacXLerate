@@ -154,6 +154,25 @@ export default function GenWorksMarketplaceLandingPage() {
   const [authName, setAuthName] = useState("");
   const [authRemember, setAuthRemember] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [navMounted, setNavMounted] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    // Silky entrance transition for floating navbar on mount (low transparency to fully visible)
+    const timer = setTimeout(() => {
+      setNavMounted(true);
+    }, 40);
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 30);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   
   // Hero Video & Mobile Optimization State
   const [intentRole, setIntentRole] = useState<"hire" | "work">("hire");
@@ -540,10 +559,21 @@ export default function GenWorksMarketplaceLandingPage() {
       <div className="absolute top-[2800px] left-0 w-[600px] h-[600px] bg-[#dfe7bf]/30 rounded-full blur-[140px] pointer-events-none -z-10" />
 
       {/* ─────────────────────────────────────────────────────────
-          1. FLOATING CAPSULE NAVIGATION BAR (Matches image_32c1e9.png & image_48eb78.png)
+          1. FLOATING CAPSULE NAVIGATION BAR (Matches image_32c1e9.png, image_48eb78.png & image_a20bd1.png)
+          (Silky smooth transition from low transparency / opacity to fully visible)
       ───────────────────────────────────────────────────────── */}
       <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
-        <header className="pointer-events-auto bg-[#ffffff]/90 backdrop-blur-xl border border-[#e4e3d9] px-6 py-3 rounded-full flex items-center justify-between gap-6 max-w-4xl w-full shadow-lg shadow-[#1b1c16]/5 transition-all">
+        <header
+          className={`pointer-events-auto border px-6 py-3 rounded-full flex items-center justify-between gap-6 max-w-4xl w-full transition-all duration-700 ease-out transform ${
+            navMounted
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 -translate-y-4 pointer-events-none"
+          } ${
+            isScrolled
+              ? "bg-[#ffffff]/95 backdrop-blur-xl border-[#e4e3d9] shadow-lg shadow-[#1b1c16]/5"
+              : "bg-[#ffffff]/80 backdrop-blur-md border-[#e4e3d9]/70 shadow-md shadow-[#1b1c16]/5"
+          }`}
+        >
           
           {/* Left: GenWorks Official Modular Cube Logo */}
           <a href="#" className="flex items-center group shrink-0">
@@ -1000,7 +1030,12 @@ export default function GenWorksMarketplaceLandingPage() {
                 {/* Bottom Card Actions: Inspect Workflow + Hire */}
                 <div className="p-6 pt-0 border-t border-[#e4e3d9]/60 flex items-center justify-between gap-3">
                   <button
-                    onClick={() => setActiveWorkflowModal(creator)}
+                    onClick={() => {
+                      setAuthRole("BRAND");
+                      setAuthStep("role-select");
+                      setAuthMode("signin");
+                      setIsAuthOpen(true);
+                    }}
                     className="flex-1 py-2.5 px-3 rounded-full bg-[#efeee4] hover:bg-[#e4e3d9] text-[#1b1c16] text-xs font-headline font-bold flex items-center justify-center gap-1.5 transition-colors"
                   >
                     <FileText className="w-3.5 h-3.5 text-[#5a6242]" />
@@ -1009,7 +1044,9 @@ export default function GenWorksMarketplaceLandingPage() {
 
                   <button
                     onClick={() => {
-                      setAuthMode("signup");
+                      setAuthRole("BRAND");
+                      setAuthStep("role-select");
+                      setAuthMode("signin");
                       setIsAuthOpen(true);
                     }}
                     className="py-2.5 px-4 rounded-full bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-headline font-bold flex items-center justify-center gap-1 transition-all"
