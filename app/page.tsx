@@ -618,9 +618,8 @@ export default function GenWorksMarketplaceLandingPage() {
                   setAuthMode("signin");
                   setIsAuthOpen(true);
                 }}
-                className="relative flex items-center bg-white/90 hover:bg-white/95 backdrop-blur-md rounded-full p-2 pl-4 sm:pl-6 shadow-2xl border border-white/30 focus-within:ring-4 focus-within:ring-[#d3a373]/30 focus-within:bg-white transition-all duration-300"
+                className="relative flex items-center bg-white/90 hover:bg-white/95 backdrop-blur-md rounded-full p-2 pl-5 sm:pl-7 shadow-2xl border border-white/30 focus-within:ring-4 focus-within:ring-[#d3a373]/30 focus-within:bg-white transition-all duration-300"
               >
-                <Search className="w-4 h-4 sm:w-5 sm:h-5 text-[#50453b]/80 shrink-0 mr-2 sm:mr-3" />
                 <input
                   type="text"
                   value={searchQuery}
