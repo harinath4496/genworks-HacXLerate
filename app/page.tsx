@@ -86,20 +86,27 @@ function Reveal({
   const domRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Safety fallback: Guarantees content transitions to visible and is never trapped in opacity-0
+    const safetyTimer = setTimeout(() => {
+      setIsVisible(true);
+    }, 450);
+
     const el = domRef.current;
-    if (!el) return;
+    if (!el) return () => clearTimeout(safetyTimer);
 
     // Immediately trigger for elements in or near initial viewport on page load
     const rect = el.getBoundingClientRect();
     const viewportHeight = window.innerHeight || (typeof document !== "undefined" ? document.documentElement.clientHeight : 800);
-    if (rect.top <= viewportHeight + 100) {
+    if (rect.top <= viewportHeight + 150) {
       setIsVisible(true);
-      return;
+      clearTimeout(safetyTimer);
+      return () => clearTimeout(safetyTimer);
     }
 
     if (typeof IntersectionObserver === "undefined") {
       setIsVisible(true);
-      return;
+      clearTimeout(safetyTimer);
+      return () => clearTimeout(safetyTimer);
     }
 
     const observer = new IntersectionObserver(
@@ -107,16 +114,20 @@ function Reveal({
         if (entry.isIntersecting) {
           setIsVisible(true);
           observer.unobserve(el);
+          clearTimeout(safetyTimer);
         }
       },
       {
         threshold: 0.01,
-        rootMargin: "120px 0px -20px 0px",
+        rootMargin: "150px 0px 50px 0px",
       }
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      clearTimeout(safetyTimer);
+    };
   }, []);
 
   const translateClasses = !isVisible
@@ -311,11 +322,11 @@ export default function GenWorksMarketplaceLandingPage() {
     },
     {
       id: "02",
-      name: "Synthetic Product Photography",
-      desc: "Zero-studio luxury catalogs and commercial packaging renders powered by Flux.1 Pro and Midjourney v6. Consistent macro lighting, flawless brand packaging, and 4K print resolution.",
-      tag: "E-Commerce Stills",
-      aspect: "1:1 & 4:5 Stills",
-      models: ["Flux.1 Pro", "Midjourney v6", "Photoshop"],
+      name: "Commercial AI Product Video Ads",
+      desc: "Studio-grade commercial product videos and high-impact 3D camera orbits powered by Runway Gen-3 and Kling 1.5. Dynamic fluid motion, cinematic macro lighting, and 4K UHD video deliverables.",
+      tag: "Product Video Ads",
+      aspect: "16:9 & 9:16 Video",
+      models: ["Runway Gen-3", "Kling AI", "Luma Ray 2"],
       previewImg: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80"
     },
     {
@@ -407,54 +418,54 @@ export default function GenWorksMarketplaceLandingPage() {
       id: "c3",
       name: "Zara Al-Mansoor",
       handle: "@zara_virtual",
-      role: "Virtual Human & Persona Lead",
-      specialization: "Consistent Brand Spokespersons & LoRAs",
+      role: "AI Digital Human & Video Persona Lead",
+      specialization: "Consistent AI Video Presenters & Spokesperson Avatars",
       category: "pipelines",
       avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300&auto=format&fit=crop&q=80",
       portfolioImg: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=800&auto=format&fit=crop&q=80",
-      deliverableType: "Brand LoRA Checkpoint (.safetensors)",
+      deliverableType: "Synchronized AI Video Presenter (.mp4)",
       aspectRatio: "9:16",
-      tools: ["Kohya-ss", "LivePortrait", "SDXL LoRA"],
+      tools: ["LivePortrait", "SadTalker", "Runway Gen-3"],
       rating: 4.96,
       projectsCompleted: 39,
       hourlyRate: "$110/hr",
       verificationBadge: "IP Cleared",
       workflow: {
-        positivePrompt: "Consistent brand ambassador persona, speaking directly to camera, natural micro-expressions, studio ring light catchlights in eyes, ultra photorealistic skin pores, 8k portrait",
-        negativePrompt: "uncanny valley, plastic smooth skin, asymmetrical eyes, weird teeth, frozen gaze",
-        model: "Custom Trained LoRA (0.85 weight) + SDXL 1.0",
+        positivePrompt: "Consistent AI brand presenter video, speaking directly to camera with natural micro-expressions and eye contact, studio lighting, perfectly synchronized lip movements, 4k ultra-realistic portrait motion",
+        negativePrompt: "uncanny valley, robotic jaw motion, temporal jitter, plastic smooth skin, asymmetrical eyes",
+        model: "LivePortrait + Custom Persona LoRA + Runway Gen-3",
         seed: "1938502391",
-        aspectRatio: "9:16 Vertical (1080x1920)",
+        aspectRatio: "9:16 Vertical Video (1080x1920)",
         cfgScale: 6.5,
         steps: 35,
-        sampler: "Euler Ancestral"
+        sampler: "Euler Ancestral (Video Lip-Sync)"
       }
     },
     {
       id: "c4",
       name: "Marcus Sterling",
-      handle: "@marcus_flux",
-      role: "Lead Synthetic Product Stills Director",
-      specialization: "Luxury E-Commerce & Print Catalog Renders",
-      category: "photography",
+      handle: "@marcus_visuals",
+      role: "AI Product Video & Commercial Motion Director",
+      specialization: "AI Product Commercials & Dynamic Motion Ads",
+      category: "video",
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80",
       portfolioImg: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80",
-      deliverableType: "4K Print Resolution Catalog Still",
-      aspectRatio: "1:1",
-      tools: ["Flux.1 Pro", "Midjourney v6", "Blender"],
+      deliverableType: "4K Commercial Product Video Ad (.mp4)",
+      aspectRatio: "16:9",
+      tools: ["Runway Gen-3", "Kling AI", "Luma Dream Machine"],
       rating: 4.97,
       projectsCompleted: 58,
-      hourlyRate: "$85/hr",
+      hourlyRate: "$95/hr",
       verificationBadge: "Toolchain Verified",
       workflow: {
-        positivePrompt: "Commercial photography of artisanal organic skincare serum in frosted amber dropper bottle, dew droplets, botanical rosemary sprigs in foreground, soft diffused window light, Vogue editorial aesthetic",
-        negativePrompt: "text artifacts, deformed bottle label, excessive grain, cartoonish rendering, oversaturated colors",
-        model: "Flux.1 Pro via BFL API",
+        positivePrompt: "Cinematic 4K commercial product video, artisanal luxury perfume bottle floating in pristine slow-motion liquid ripples, dynamic volumetric studio lighting, macro anamorphic lens flare, photorealistic physics, 60fps",
+        negativePrompt: "temporal flicker, jitter, stutter, morphing artifacts, deformed bottle geometry, low resolution",
+        model: "Runway Gen-3 Alpha + Kling 1.5 Pro",
         seed: "7320491823",
-        aspectRatio: "1:1 (2048x2048 raw master)",
-        cfgScale: 3.5,
-        steps: 40,
-        sampler: "Flux default flow-match"
+        aspectRatio: "16:9 4K Master Video (3840x2160)",
+        cfgScale: 7.5,
+        steps: 50,
+        sampler: "Euler a (Motion Vector 9.2)"
       }
     },
     {
@@ -488,27 +499,27 @@ export default function GenWorksMarketplaceLandingPage() {
       id: "c6",
       name: "Liam O'Connor",
       handle: "@liam_voicecraft",
-      role: "Audio Synthesis & Multilingual Voice Director",
-      specialization: "Zero-Latency Lip-Sync & 28-Language Localization",
+      role: "AI Voice Synthesis & Multilingual Video Dubbing Director",
+      specialization: "Zero-Latency Lip-Synced Video Dubbing in 28+ Languages",
       category: "audio",
       avatar: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=300&auto=format&fit=crop&q=80",
       portfolioImg: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&auto=format&fit=crop&q=80",
-      deliverableType: "Master Audio Stems & Dubbed Reel",
+      deliverableType: "Multilingual Dubbed 4K Video Reel (.mp4)",
       aspectRatio: "9:16",
-      tools: ["ElevenLabs", "LivePortrait", "Audition"],
+      tools: ["ElevenLabs", "LivePortrait", "Wav2Lip"],
       rating: 4.94,
       projectsCompleted: 61,
-      hourlyRate: "$75/hr",
+      hourlyRate: "$85/hr",
       verificationBadge: "IP Cleared",
       workflow: {
-        positivePrompt: "Professional cinematic corporate voiceover, warm baritone timbre, enthusiastic yet authoritative tone, zero background noise, studio acoustic treatment, natural breathing pauses",
-        negativePrompt: "robotic robotic inflection, metallic clipping, background hum, mispronounced syllables",
-        model: "ElevenLabs Multilingual v2 + LivePortrait Lip-Sync",
+        positivePrompt: "Master multilingual video dubbing pipeline, synchronized emotional speech across European and Asian language pairs, natural vocal acoustics matching original video environment, frame-accurate lip-sync",
+        negativePrompt: "robotic cadence, audio de-sync, unnatural mouth deformation, robotic pitch drift",
+        model: "ElevenLabs Neural Voice + LivePortrait Lip-Sync",
         seed: "9018471203",
-        aspectRatio: "Synchronized to 9:16 Master Video",
+        aspectRatio: "Synchronized 9:16 & 16:9 Video Master",
         cfgScale: 0.75,
         steps: 1,
-        sampler: "Direct Neural Vocoder"
+        sampler: "Neural Vocoder + Video Warp"
       }
     }
   ];
@@ -567,7 +578,7 @@ export default function GenWorksMarketplaceLandingPage() {
           className={`pointer-events-auto border px-6 py-3 rounded-full flex items-center justify-between gap-6 max-w-4xl w-full transition-all duration-700 ease-out transform ${
             navMounted
               ? "opacity-100 translate-y-0"
-              : "opacity-0 -translate-y-4 pointer-events-none"
+              : "opacity-75 -translate-y-1"
           } ${
             isScrolled
               ? "bg-[#ffffff]/95 backdrop-blur-xl border-[#e4e3d9] shadow-lg shadow-[#1b1c16]/5"
@@ -896,9 +907,9 @@ export default function GenWorksMarketplaceLandingPage() {
               {[
                 { id: "all", label: "All Disciplines" },
                 { id: "video", label: "Runway & 9:16 Video" },
-                { id: "photography", label: "Flux.1 Photorealism" },
-                { id: "pipelines", label: "ComfyUI & LoRAs" },
-                { id: "audio", label: "Voiceover & Audio" }
+                { id: "photography", label: "Product & Motion Video" },
+                { id: "pipelines", label: "ComfyUI & Video Pipelines" },
+                { id: "audio", label: "AI Voice & Lip-Sync Dubbing" }
               ].map((cat) => (
                 <button
                   key={cat.id}
