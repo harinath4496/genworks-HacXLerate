@@ -76,12 +76,12 @@ const config: Config = {
         },
         "pulse-sequence": {
           "0%, 100%": { transform: "scale(1)", opacity: "1" },
-          "50%": { transform: "scale(0.6)", opacity: "0.4" },
+          "50%": { transform: "scale(0.6)", opacity: "0.5" },
         },
       },
       animation: {
-        "spin-slow": "spin-slow 10s linear infinite",
-        "pulse-sequence": "pulse-sequence 2s infinite ease-in-out",
+        "spin-slow": "spin-slow 8s linear infinite",
+        "pulse-sequence": "pulse-sequence 1.5s infinite ease-in-out",
       },
     },
   },

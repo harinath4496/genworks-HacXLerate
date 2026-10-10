@@ -2,6 +2,46 @@
 
 import React from "react";
 
+/**
+ * AnimatedLogo Component
+ * Direct implementation from GenWorks_Animated_Logo.zip:
+ * - Vertical layout with centered spinning 2x2 cube grid and wordmark below
+ * - Grid: w-16 h-16 with gap-1.5, animate-spin-slow (8s)
+ * - 4 Cubes: 3 dark (#1A1A1A), 1 accent caramel (#D3A373) with pulse-sequence (1.5s)
+ * - Wordmark: text-4xl "GenWorks" (ExtraBold + Medium)
+ */
+export function AnimatedLogo() {
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 select-none">
+      {/* Grid Icon Container - Spins Slowly */}
+      <div className="grid grid-cols-2 gap-1.5 w-16 h-16 animate-spin-slow">
+        <div 
+          className="bg-[#1A1A1A] rounded-md animate-pulse-sequence" 
+          style={{ animationDelay: "0s" }}
+        />
+        <div 
+          className="bg-[#1A1A1A] rounded-md animate-pulse-sequence" 
+          style={{ animationDelay: "0.2s" }}
+        />
+        <div 
+          className="bg-[#1A1A1A] rounded-md animate-pulse-sequence" 
+          style={{ animationDelay: "0.6s" }}
+        />
+        <div 
+          className="bg-[#D3A373] rounded-md animate-pulse-sequence shadow-sm" 
+          style={{ animationDelay: "0.4s" }}
+        />
+      </div>
+      
+      {/* Wordmark */}
+      <div className="text-4xl tracking-tight text-[#1A1A1A] leading-none">
+        <strong className="font-extrabold font-sans">Gen</strong>
+        <span className="font-medium font-sans">Works</span>
+      </div>
+    </div>
+  );
+}
+
 interface GenWorksLogoProps {
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
@@ -11,12 +51,7 @@ interface GenWorksLogoProps {
 }
 
 /**
- * GenWorks Official Logo Component
- * Exact match to image_48eb78.png:
- * - 2x2 grid of distinct modular cubes (squares with crisp micro-rounded corners, NEVER circles)
- * - 3 solid deep charcoal/black cubes (#1A1A1A)
- * - 1 lower-right accent warm caramel cube (#D3A373)
- * - Dual-weight wordmark: "Gen" (Heavy Bold) + "Works" (Medium Sans)
+ * GenWorks Horizontal Navbar & Footer Logo Component (Matches image_48eb78.png)
  */
 export function GenWorksLogo({
   size = "md",
@@ -25,7 +60,6 @@ export function GenWorksLogo({
   animated = false,
   inverted = false,
 }: GenWorksLogoProps) {
-  // Dimensions carefully calibrated so tiles are unambiguously CUBES, not circles
   const iconConfig = {
     sm: {
       container: "w-6 h-6 gap-[2.5px]",
@@ -65,28 +99,24 @@ export function GenWorksLogo({
           animated ? "animate-spin-slow" : ""
         }`}
       >
-        {/* Top-Left Cube */}
         <div
           className={`${darkTileColor} ${config.tileRadius} aspect-square ${
             animated ? "animate-pulse-sequence" : ""
           }`}
           style={{ animationDelay: "0s" }}
         />
-        {/* Top-Right Cube */}
         <div
           className={`${darkTileColor} ${config.tileRadius} aspect-square ${
             animated ? "animate-pulse-sequence" : ""
           }`}
           style={{ animationDelay: "0.2s" }}
         />
-        {/* Bottom-Left Cube */}
         <div
           className={`${darkTileColor} ${config.tileRadius} aspect-square ${
             animated ? "animate-pulse-sequence" : ""
           }`}
           style={{ animationDelay: "0.6s" }}
         />
-        {/* Bottom-Right Accent Cube */}
         <div
           className={`${accentTileColor} ${config.tileRadius} aspect-square shadow-sm ${
             animated ? "animate-pulse-sequence" : ""
@@ -106,26 +136,24 @@ export function GenWorksLogo({
   );
 }
 
-// Backwards-compatible alias for existing imports
-export const AnimatedLogo = GenWorksLogo;
-
 /**
  * GenWorks Full-Screen Splash Screen
+ * Automatically displays on first load and smoothly fades out after 1.8 seconds
  */
 export function SplashScreen({ onFinish }: { onFinish?: () => void }) {
   const [visible, setVisible] = React.useState(true);
   const [fading, setFading] = React.useState(false);
 
   React.useEffect(() => {
-    // Hold splash for 1.3 seconds, then smoothly fade out
+    // Hold splash for 1.8 seconds, then initiate smooth fade out
     const timer = setTimeout(() => {
       setFading(true);
       const closeTimer = setTimeout(() => {
         setVisible(false);
         if (onFinish) onFinish();
-      }, 500);
+      }, 600);
       return () => clearTimeout(closeTimer);
-    }, 1300);
+    }, 1800);
 
     return () => clearTimeout(timer);
   }, [onFinish]);
@@ -134,22 +162,20 @@ export function SplashScreen({ onFinish }: { onFinish?: () => void }) {
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] bg-[#fbfaf0] flex flex-col items-center justify-center transition-opacity duration-500 ease-out ${
+      className={`fixed inset-0 z-[9999] bg-[#fbfaf0] flex flex-col items-center justify-center transition-opacity duration-600 ease-out ${
         fading ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >
-      <div className="flex flex-col items-center">
-        {/* Large GenWorks Cube Brand Mark */}
-        <div className="mb-7 scale-110 sm:scale-125">
-          <GenWorksLogo size="xl" animated={true} />
-        </div>
+      <div className="flex flex-col items-center animate-in fade-in zoom-in-95 duration-500">
+        {/* Exact Animated Logo from GenWorks_Animated_Logo.zip */}
+        <AnimatedLogo />
 
         {/* Minimalist Progress Indicator */}
-        <div className="w-36 h-1 bg-[#efeee4] rounded-full overflow-hidden mt-1">
+        <div className="w-40 h-1 bg-[#efeee4] rounded-full overflow-hidden mt-6">
           <div className="w-full h-full bg-[#d3a373] rounded-full origin-left animate-pulse" />
         </div>
 
-        <p className="font-mono text-[11px] tracking-widest uppercase text-[#50453b] mt-4 font-semibold">
+        <p className="font-mono text-[11px] tracking-widest uppercase text-[#50453b] mt-3 font-semibold">
           CURATED AI CREATIVE STUDIO
         </p>
       </div>
