@@ -29,7 +29,7 @@ import {
   Layers,
   Sparkle,
   Copy,
-  LogIn,
+  User,
   Briefcase,
   ArrowLeft
 } from "lucide-react";
@@ -468,7 +468,7 @@ export default function GenWorksMarketplaceLandingPage() {
               onClick={() => { setAuthStep("role-select"); setAuthMode("signin"); setIsAuthOpen(true); }}
               className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-extrabold px-4.5 py-2 rounded-full transition-all duration-300 flex items-center gap-1.5 shadow-md shadow-[#d3a373]/20 active:scale-95"
             >
-              <LogIn className="w-3.5 h-3.5 text-[#1b1c16]" />
+              <User className="w-3.5 h-3.5 text-[#1b1c16]" />
               <span>Sign In</span>
             </button>
 
@@ -492,7 +492,7 @@ export default function GenWorksMarketplaceLandingPage() {
             onClick={() => { setMobileMenuOpen(false); setAuthStep("role-select"); setAuthMode("signin"); setIsAuthOpen(true); }}
             className="bg-[#d3a373] text-[#1b1c16] px-8 py-3 rounded-full text-base font-extrabold shadow-md flex items-center gap-2"
           >
-            <LogIn className="w-4 h-4 text-[#1b1c16]" />
+            <User className="w-4 h-4 text-[#1b1c16]" />
             <span>Sign In</span>
           </button>
         </div>
