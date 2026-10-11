@@ -3,6 +3,7 @@
 > **ByteXL Challenge:** Challenge 2 — AI Content Creator Marketplace (by Kampus.VC)  
 > **Team:** CODE NOVA  
 > **Event:** HacXLerate 2026 Round 1 — QIS College Of Engineering And Technology  
+> **Live Production URL:** https://genworks-hacxlerate.vercel.app  
 > **Repository:** https://github.com/harinath4496/genworks-HacXLerate.git  
 > **Stack:** Next.js 14 (App Router), TypeScript, Tailwind CSS, Prisma ORM, MongoDB Atlas, Firebase Auth, Google Generative AI (Gemini 1.5 Flash), Brevo Mail API.
 
