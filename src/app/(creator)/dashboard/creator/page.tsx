@@ -83,7 +83,7 @@ export default async function CreatorDashboardHome() {
           <div className="bg-white rounded-3xl p-6 border border-gray-200/60 shadow-sm h-full max-h-[500px] overflow-y-auto scrollbar-hide">
             {profile?.creatorLogs && profile.creatorLogs.length > 0 ? (
               <div className="space-y-6">
-                {profile.creatorLogs.map((log) => (
+                {profile.creatorLogs.map((log: any) => (
                   <div key={log.id} className="pb-5 border-b border-gray-100 last:border-0 last:pb-0 relative">
                     <div className="absolute left-0 top-1 w-1 h-full bg-[#D3A373]/20 rounded-full" />
                     <div className="pl-4">

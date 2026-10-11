@@ -2155,37 +2155,40 @@ export default function GenWorksMarketplaceLandingPage() {
                         >
                           <div className="flex items-center gap-2">
                             <Building2 className="w-4 h-4 text-[#82756a]" />
-                            <span className="font-semibold text-[#1b1c16]">{selectedCategory.label}</span>
+                            <span className="font-semibold text-[#1b1c16]">
+                              {clientCategory === "brand" ? "Brand / Enterprise" : clientCategory === "agency" ? "Creative Agency" : "Individual / Founder"}
+                            </span>
                           </div>
                           <ChevronDown className={`w-4 h-4 text-[#82756a] transition-transform duration-200 ${isCategoryDropdownOpen ? "rotate-180" : ""}`} />
                         </button>
 
                         {isCategoryDropdownOpen && (
                           <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#e4e3d9] rounded-2xl shadow-xl z-20 overflow-hidden divide-y divide-[#e4e3d9]/40 max-h-56 overflow-y-auto animate-in fade-in duration-150">
-                            {CLIENT_CATEGORIES.map((opt) => {
-                              const isSelected = opt.value === authCategory;
+                            {[
+                              { id: "brand" as const, label: "Brand / Enterprise", desc: "Enterprise brand marketing team, retail, or DTC company" },
+                              { id: "agency" as const, label: "Creative Agency", desc: "Advertising, digital production, or creative studio" },
+                              { id: "individual" as const, label: "Individual / Founder", desc: "Independent commissioner, creator, or solopreneur" }
+                            ].map((opt) => {
+                              const isSelected = clientCategory === opt.id;
                               return (
                                 <button
                                   type="button"
-                                  key={opt.value}
+                                  key={opt.id}
                                   onClick={() => {
-                                    setAuthCategory(opt.value);
+                                    setClientCategory(opt.id);
                                     setIsCategoryDropdownOpen(false);
                                   }}
                                   className={`w-full px-4 py-3 flex items-start justify-between text-left transition-colors ${
                                     isSelected ? "bg-[#faf9f5]" : "hover:bg-[#fbfaf0]"
                                   }`}
                                 >
-                                  <div className="flex items-start gap-2.5">
-                                    <span className="text-base leading-none pt-0.5">{opt.icon}</span>
-                                    <div>
-                                      <p className={`font-headline text-xs font-bold ${isSelected ? "text-[#1b1c16]" : "text-[#50453b]"}`}>
-                                        {opt.label}
-                                      </p>
-                                      <p className="font-body text-[11px] text-[#82756a] leading-tight mt-0.5">
-                                        {opt.desc}
-                                      </p>
-                                    </div>
+                                  <div>
+                                    <p className={`font-headline text-xs font-bold ${isSelected ? "text-[#1b1c16]" : "text-[#50453b]"}`}>
+                                      {opt.label}
+                                    </p>
+                                    <p className="font-body text-[11px] text-[#82756a] leading-tight mt-0.5">
+                                      {opt.desc}
+                                    </p>
                                   </div>
                                   {isSelected && (
                                     <Check className="w-4 h-4 text-[#5a6242] shrink-0" />

@@ -391,6 +391,11 @@ export default function ClientDashboardPage() {
   const [newBriefBudget, setNewBriefBudget] = useState("$2,500");
   const [newBriefDetails, setNewBriefDetails] = useState("");
   const [newBriefDirector, setNewBriefDirector] = useState("Elena Vance");
+  const [newBriefAspectRatio, setNewBriefAspectRatio] = useState("9:16 Vertical (Reel/TikTok)");
+  const [newBriefCommercialUse, setNewBriefCommercialUse] = useState("Full Commercial Buyout & Global IP Transfer");
+  const [isAiGeneratingBrief, setIsAiGeneratingBrief] = useState(false);
+  const [aiIdeaInput, setAiIdeaInput] = useState("");
+  const [showAiIdeaBox, setShowAiIdeaBox] = useState(false);
 
   // Real User Session Authentication Guard
   const [authChecking, setAuthChecking] = useState<boolean>(true);
@@ -468,6 +473,17 @@ export default function ClientDashboardPage() {
     }
 
     checkAuthSession();
+
+    if (typeof window !== "undefined") {
+      const sp = new URLSearchParams(window.location.search);
+      if (sp.get("briefModal") === "true") {
+        setCreateBriefModalOpen(true);
+      }
+      const dir = sp.get("director");
+      if (dir) {
+        setNewBriefDirector(dir);
+      }
+    }
   }, [router]);
 
   // Close profile dropdown on outside click
@@ -566,6 +582,50 @@ export default function ClientDashboardPage() {
     setNewBriefTitle("");
     setNewBriefDetails("");
     triggerToast("✨ New Video Production Brief Created & Locked in Escrow!");
+  };
+
+  const handleGenerateAiBrief = (presetIdea?: string) => {
+    const prompt = presetIdea || aiIdeaInput || "Luxury sneaker commercial 9:16";
+    setIsAiGeneratingBrief(true);
+    setTimeout(() => {
+      const lower = prompt.toLowerCase();
+      if (lower.includes("sneaker") || lower.includes("shoe") || lower.includes("footwear") || lower.includes("athletic")) {
+        setNewBriefTitle("Neon Velocity: Cyberpunk 9:16 Athletic Footwear Reel");
+        setNewBriefCategory("9:16 Viral Video");
+        setNewBriefAspectRatio("9:16 Vertical (Reel/TikTok)");
+        setNewBriefBudget("$3,200");
+        setNewBriefDirector("Elena Vance");
+        setNewBriefCommercialUse("Full Commercial Buyout & Global IP Transfer");
+        setNewBriefDetails("Ultra-high dynamic range tracking shots of sneakers striking rain-slicked Tokyo neon pavement. Water droplet dispersion in slow-motion 120fps. Style inspired by Blade Runner 2049 with anamorphic lens flare. Seed reproducibility required on Runway Gen-3 Alpha.");
+      } else if (lower.includes("perfume") || lower.includes("luxury") || lower.includes("beauty") || lower.includes("cosmetic")) {
+        setNewBriefTitle("L'Aura Celestial: Luxury Perfume 4K Commercial");
+        setNewBriefCategory("4K Product Commercial");
+        setNewBriefAspectRatio("16:9 Cinematic (YouTube / 4K Ad)");
+        setNewBriefBudget("$4,500");
+        setNewBriefDirector("Marcus Sterling");
+        setNewBriefCommercialUse("Full Commercial Buyout & Global IP Transfer");
+        setNewBriefDetails("Crystalline perfume flacon floating through slow-motion liquid gold ribbons. Volumetric god-rays, macro condensation droplets, and photoreal refraction physics. Generated via Runway Gen-3 + Midjourney v6 photoreal pass.");
+      } else if (lower.includes("avatar") || lower.includes("spokesperson") || lower.includes("human") || lower.includes("presenter")) {
+        setNewBriefTitle("Aura 2.0: Synchronized AI FinTech Spokesperson Campaign");
+        setNewBriefCategory("AI Human & Lip-Sync");
+        setNewBriefAspectRatio("9:16 Vertical (Reel/TikTok)");
+        setNewBriefBudget("$2,800");
+        setNewBriefDirector("Zara Al-Mansoor");
+        setNewBriefCommercialUse("Digital Marketing License (1 Year)");
+        setNewBriefDetails("Consistent AI brand ambassador presenting quarterly wealth management updates. Frame-accurate micro-expressions, natural eye blinks, synchronized in English and Spanish via LivePortrait + ElevenLabs neural audio.");
+      } else {
+        setNewBriefTitle(`${prompt.slice(0, 32)} — AI Commercial Video`);
+        setNewBriefCategory("9:16 Viral Video");
+        setNewBriefAspectRatio("9:16 Vertical (Reel/TikTok)");
+        setNewBriefBudget("$2,500");
+        setNewBriefDirector("Kai Chen");
+        setNewBriefCommercialUse("Full Commercial Buyout & Global IP Transfer");
+        setNewBriefDetails(`High-fidelity visual production for: ${prompt}. Deterministic workflow delivered with reproducible JSON nodes, full commercial licensing, and 4K upscaled master render.`);
+      }
+      setIsAiGeneratingBrief(false);
+      setShowAiIdeaBox(false);
+      triggerToast("✨ AI generated your structured production brief!");
+    }, 600);
   };
 
   // Auth Gate: Luxury Brand Loader from WhatsApp Video 2026-10-10 at 9.33.07 PM.mp4
@@ -1251,14 +1311,39 @@ export default function ClientDashboardPage() {
           ======================================================== */
           <div className="p-4 sm:p-6 md:p-8 flex-1">
             {filteredPins.length === 0 ? (
-              <div className="text-center py-24">
-                <Bookmark className="w-12 h-12 text-[#82756a]/40 mx-auto mb-3" />
-                <h3 className="font-headline font-bold text-lg text-[#1b1c16]">
-                  No Reels Found
-                </h3>
-                <p className="text-xs text-[#82756a] mt-1">
-                  Try adjusting your search keywords or explore all disciplines.
-                </p>
+              <div className="max-w-md mx-auto text-center py-20 px-6 bg-white rounded-3xl border border-[#e4e3d9] shadow-xs my-8 space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-[#faf9f5] border border-[#e4e3d9] flex items-center justify-center mx-auto text-[#d3a373]">
+                  <Search className="w-6 h-6 text-[#d3a373]" />
+                </div>
+                <div>
+                  <h3 className="font-headline font-bold text-lg text-[#1b1c16]">
+                    No Creators or Reels Found
+                  </h3>
+                  <p className="text-xs text-[#82756a] mt-1.5 leading-relaxed">
+                    No deliverables match your search criteria. Try broadening your keywords, or commission a verified AI director directly.
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-2">
+                  <button
+                    onClick={() => {
+                      setSearchQuery("");
+                      setSelectedFilter("all");
+                    }}
+                    className="w-full sm:w-auto px-4 py-2.5 rounded-full border border-[#e4e3d9] text-xs font-bold text-[#50453b] hover:bg-[#efeee4] transition-colors"
+                  >
+                    Reset All Filters
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowAiIdeaBox(true);
+                      setCreateBriefModalOpen(true);
+                    }}
+                    className="w-full sm:w-auto px-4 py-2.5 rounded-full bg-[#1b1c16] text-[#fbfaf0] text-xs font-headline font-bold hover:bg-[#30312b] transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-[#d3a373]" />
+                    <span>Post Custom Brief with AI</span>
+                  </button>
+                </div>
               </div>
             ) : (
               /* Pinterest CSS Columns Masonry Grid */
@@ -1540,9 +1625,24 @@ export default function ClientDashboardPage() {
                   className="w-10 h-10 rounded-full object-cover ring-2 ring-[#d3a373]"
                 />
                 <div>
-                  <h3 className="font-headline font-bold text-sm sm:text-base text-[#1b1c16]">
+                  <Link
+                    href={`/creators/${
+                      selectedPin.director.name === "Elena Vance"
+                        ? "c1"
+                        : selectedPin.director.name === "Kai Chen"
+                        ? "c2"
+                        : selectedPin.director.name === "Zara Al-Mansoor"
+                        ? "c3"
+                        : selectedPin.director.name === "Marcus Sterling"
+                        ? "c4"
+                        : selectedPin.director.name === "Aria Thorne"
+                        ? "c5"
+                        : "c6"
+                    }`}
+                    className="font-headline font-bold text-sm sm:text-base text-[#1b1c16] hover:text-[#d3a373] transition-colors"
+                  >
                     {selectedPin.director.name}
-                  </h3>
+                  </Link>
                   <p className="text-xs text-[#82756a]">
                     {selectedPin.director.handle} • {selectedPin.director.rate}
                   </p>
@@ -1631,7 +1731,7 @@ export default function ClientDashboardPage() {
                 </div>
 
                 {/* Action CTA */}
-                <div className="pt-2">
+                <div className="pt-2 space-y-2">
                   <button
                     onClick={() => {
                       const target = selectedPin;
@@ -1643,6 +1743,24 @@ export default function ClientDashboardPage() {
                     <ShieldCheck className="w-4 h-4 text-[#d3a373]" />
                     <span>Commission {selectedPin.director.name} via Escrow</span>
                   </button>
+                  <Link
+                    href={`/creators/${
+                      selectedPin.director.name === "Elena Vance"
+                        ? "c1"
+                        : selectedPin.director.name === "Kai Chen"
+                        ? "c2"
+                        : selectedPin.director.name === "Zara Al-Mansoor"
+                        ? "c3"
+                        : selectedPin.director.name === "Marcus Sterling"
+                        ? "c4"
+                        : selectedPin.director.name === "Aria Thorne"
+                        ? "c5"
+                        : "c6"
+                    }`}
+                    className="w-full block text-center py-2 text-xs font-headline font-bold text-[#50453b] hover:text-[#d3a373] hover:underline"
+                  >
+                    View {selectedPin.director.name}&apos;s Full AI Portfolio & Badges →
+                  </Link>
                 </div>
               </div>
             </div>
@@ -1679,6 +1797,78 @@ export default function ClientDashboardPage() {
             </div>
 
             <form onSubmit={handleCreateBriefSubmit} className="space-y-4">
+              {/* AI-Assisted Brief Builder Assistant */}
+              <div className="bg-[#faf9f5] border border-[#d3a373]/50 rounded-2xl p-3.5 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#d3a373]" />
+                    <span className="text-xs font-headline font-bold text-[#1b1c16]">
+                      AI-Assisted Brief Builder
+                    </span>
+                    <span className="bg-[#dfe7bf] text-[#5a6242] text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full">
+                      Bonus Feature
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowAiIdeaBox(!showAiIdeaBox)}
+                    className="text-[11px] font-bold text-[#d3a373] hover:underline"
+                  >
+                    {showAiIdeaBox ? "Hide Assistant" : "Draft with AI ✨"}
+                  </button>
+                </div>
+
+                {showAiIdeaBox && (
+                  <div className="mt-3 pt-3 border-t border-[#e4e3d9] space-y-2.5">
+                    <p className="text-[11px] text-[#82756a]">
+                      Type a rough campaign idea or click a preset to auto-structure campaign parameters, aspect ratio, budget, and commercial rights.
+                    </p>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={aiIdeaInput}
+                        onChange={(e) => setAiIdeaInput(e.target.value)}
+                        placeholder="e.g. Cyberpunk athletic shoe video with neon rain..."
+                        className="flex-1 bg-white border border-[#e4e3d9] rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#d3a373]"
+                      />
+                      <button
+                        type="button"
+                        disabled={isAiGeneratingBrief}
+                        onClick={() => handleGenerateAiBrief()}
+                        className="bg-[#1b1c16] text-[#fbfaf0] text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 shrink-0 hover:bg-[#30312b] transition-all"
+                      >
+                        <Sparkles className="w-3.5 h-3.5 text-[#d3a373]" />
+                        <span>{isAiGeneratingBrief ? "Generating..." : "Auto-Fill"}</span>
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                      <span className="text-[10px] font-mono font-bold text-[#82756a]">Presets:</span>
+                      <button
+                        type="button"
+                        onClick={() => handleGenerateAiBrief("Cyberpunk Sneaker 9:16")}
+                        className="text-[10px] bg-white border border-[#e4e3d9] px-2 py-1 rounded-md hover:bg-[#efeee4] text-[#50453b]"
+                      >
+                        👟 Cyberpunk Sneaker
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleGenerateAiBrief("Luxury Perfume Commercial 16:9")}
+                        className="text-[10px] bg-white border border-[#e4e3d9] px-2 py-1 rounded-md hover:bg-[#efeee4] text-[#50453b]"
+                      >
+                        💎 Luxury Perfume 4K
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleGenerateAiBrief("AI Human Spokesperson")}
+                        className="text-[10px] bg-white border border-[#e4e3d9] px-2 py-1 rounded-md hover:bg-[#efeee4] text-[#50453b]"
+                      >
+                        🎙️ Digital Spokesperson
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div>
                 <label className="block text-xs font-bold text-[#1b1c16] mb-1.5">
                   Campaign Title / Deliverable Goal
@@ -1713,6 +1903,24 @@ export default function ClientDashboardPage() {
 
                 <div>
                   <label className="block text-xs font-bold text-[#1b1c16] mb-1.5">
+                    Format & Aspect Ratio
+                  </label>
+                  <select
+                    value={newBriefAspectRatio}
+                    onChange={(e) => setNewBriefAspectRatio(e.target.value)}
+                    className="w-full bg-[#fbfaf0] border border-[#e4e3d9] rounded-2xl px-4 py-3 text-sm text-[#1b1c16] focus:outline-none focus:border-[#d3a373]"
+                  >
+                    <option value="9:16 Vertical (Reel/TikTok)">9:16 Vertical (TikTok / Reels / Shorts)</option>
+                    <option value="16:9 Cinematic (YouTube / 4K Ad)">16:9 Cinematic (YouTube / TV / Widescreen)</option>
+                    <option value="1:1 Square (Instagram Feed)">1:1 Square (Instagram / LinkedIn Feed)</option>
+                    <option value="4:5 Portrait (IG Feed)">4:5 Portrait (Instagram Feed)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-xs font-bold text-[#1b1c16] mb-1.5">
                     Escrow Budget (USD)
                   </label>
                   <input
@@ -1721,6 +1929,21 @@ export default function ClientDashboardPage() {
                     onChange={(e) => setNewBriefBudget(e.target.value)}
                     className="w-full bg-[#fbfaf0] border border-[#e4e3d9] rounded-2xl px-4 py-3 text-sm text-[#1b1c16] focus:outline-none focus:border-[#d3a373]"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#1b1c16] mb-1.5">
+                    Commercial-Use Rights License
+                  </label>
+                  <select
+                    value={newBriefCommercialUse}
+                    onChange={(e) => setNewBriefCommercialUse(e.target.value)}
+                    className="w-full bg-[#fbfaf0] border border-[#e4e3d9] rounded-2xl px-4 py-3 text-sm text-[#1b1c16] focus:outline-none focus:border-[#d3a373]"
+                  >
+                    <option value="Full Commercial Buyout & Global IP Transfer">Full Commercial Buyout & Global IP Transfer (Exclusive)</option>
+                    <option value="Digital Ad License (1 Year)">Digital Ad License (1 Year Paid Ads)</option>
+                    <option value="Organic Social Media Only">Organic Social Media Only (Non-Exclusive)</option>
+                  </select>
                 </div>
               </div>
 
@@ -1733,12 +1956,12 @@ export default function ClientDashboardPage() {
                   onChange={(e) => setNewBriefDirector(e.target.value)}
                   className="w-full bg-[#fbfaf0] border border-[#e4e3d9] rounded-2xl px-4 py-3 text-sm text-[#1b1c16] focus:outline-none focus:border-[#d3a373]"
                 >
-                  <option value="Elena Vance">Elena Vance (@elena_cinema)</option>
-                  <option value="Kai Chen">Kai Chen (@kaichen_nodes)</option>
-                  <option value="Zara Al-Mansoor">Zara Al-Mansoor (@zara_virtual)</option>
-                  <option value="Marcus Sterling">Marcus Sterling (@marcus_visuals)</option>
-                  <option value="Aria Thorne">Aria Thorne (@aria_cinematics)</option>
-                  <option value="Liam O'Connor">Liam O'Connor (@liam_voicecraft)</option>
+                  <option value="Elena Vance">Elena Vance (@elena_cinema) — 98% AI Certified</option>
+                  <option value="Kai Chen">Kai Chen (@kaichen_nodes) — 99% AI Certified</option>
+                  <option value="Zara Al-Mansoor">Zara Al-Mansoor (@zara_virtual) — 96% AI Certified</option>
+                  <option value="Marcus Sterling">Marcus Sterling (@marcus_visuals) — 97% AI Certified</option>
+                  <option value="Aria Thorne">Aria Thorne (@aria_cinematics) — 95% AI Certified</option>
+                  <option value="Liam O'Connor">Liam O'Connor (@liam_voicecraft) — 94% AI Certified</option>
                 </select>
               </div>
 
