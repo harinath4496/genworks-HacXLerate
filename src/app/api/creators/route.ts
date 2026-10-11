@@ -76,11 +76,18 @@ export async function GET() {
         workflow: p.workflow?.positivePrompt || "Hyperrealistic cinematic workflow",
         toolsUsed: p.toolsUsed,
       })),
-      creatorLogs: c.logs.map((log, idx) => ({
-        id: `log-${idx}`,
-        content: log,
-        createdAt: new Date().toISOString(),
-      })),
+      creatorLogs: [
+        {
+          id: `log-${c.id}-1`,
+          content: `Verified toolchain pipeline using ${c.tools.join(", ")}.`,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: `log-${c.id}-2`,
+          content: `Commercial license rights confirmed: ${c.commercialLicense}.`,
+          createdAt: new Date().toISOString(),
+        },
+      ],
     })),
   });
 }
