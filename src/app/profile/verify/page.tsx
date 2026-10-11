@@ -159,10 +159,10 @@ export default function AIVerificationPage() {
                 &quot;{evaluationResult.feedback}&quot;
               </p>
               <Button 
-                onClick={async () => { await signOut(auth); router.push("/login"); }}
+                onClick={() => router.push("/dashboard/creator")}
                 className="h-12 px-8 bg-[#1A1A1A] hover:bg-gray-800 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
               >
-                Go to Dashboard <ArrowRight className="w-4 h-4" />
+                Go to Creator Studio <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
           ) : (

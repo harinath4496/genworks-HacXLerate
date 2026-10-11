@@ -48,10 +48,10 @@ export default function VerificationChoice() {
             </ul>
 
             <Button 
-              onClick={async () => { await signOut(auth); router.push("/login"); }}
+              onClick={() => router.push("/dashboard/creator")}
               className="w-full h-14 rounded-xl border-2 border-gray-200 bg-transparent text-[#1A1A1A] hover:bg-gray-50 text-base font-bold shadow-none"
             >
-              Continue Without Verification
+              Continue to Creator Studio
             </Button>
           </div>
 

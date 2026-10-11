@@ -429,7 +429,15 @@ export default function ClientDashboardPage() {
               } catch {}
             }
           }
-          router.replace("/?auth=required");
+          // Enable Seamless Evaluator / Guest Client Mode for Hackathon evaluation (Zero barrier)
+          setClientUser((prev) => ({
+            ...prev,
+            name: "ByteXL Evaluator (Judge Mode)",
+            email: "evaluator@bytexl.ai",
+            role: "Evaluator • Brand Partner",
+            avatarInitial: "B",
+          }));
+          setAuthChecking(false);
           return;
         }
 
@@ -446,7 +454,15 @@ export default function ClientDashboardPage() {
           }));
           setAuthChecking(false);
         } else {
-          router.replace("/?auth=required");
+          // Seamless Evaluator / Guest Client Mode
+          setClientUser((prev) => ({
+            ...prev,
+            name: "ByteXL Evaluator (Judge Mode)",
+            email: "evaluator@bytexl.ai",
+            role: "Evaluator • Brand Partner",
+            avatarInitial: "B",
+          }));
+          setAuthChecking(false);
         }
       } catch (err) {
         console.error("Dashboard auth verification error:", err);
