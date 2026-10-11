@@ -73,8 +73,8 @@ export async function GET() {
         mediaUrl: p.mediaUrl,
         contentType: p.category,
         aspectRatio: p.aspectRatio,
-        workflow: p.prompt,
-        toolsUsed: p.tools,
+        workflow: p.workflow?.positivePrompt || "Hyperrealistic cinematic workflow",
+        toolsUsed: p.toolsUsed,
       })),
       creatorLogs: c.logs.map((log, idx) => ({
         id: `log-${idx}`,
