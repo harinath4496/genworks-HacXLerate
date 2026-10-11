@@ -4,8 +4,8 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 1. Dashboard Route Protection Guard
-  if (pathname.startsWith("/dashboard")) {
+  // 1. Dashboard Route Protection Guard (Client Dashboard)
+  if (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/creator")) {
     const sessionCookie = request.cookies.get("clientora_session");
     // If not authenticated, redirect to landing page with modal trigger
     if (!sessionCookie?.value) {

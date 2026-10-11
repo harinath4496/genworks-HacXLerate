@@ -1,21 +1,31 @@
 import { Sparkles, Briefcase, TrendingUp, MessageSquarePlus, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
-const prisma = new PrismaClient();
 
 export default async function CreatorDashboardHome() {
-  const profile = await prisma.creatorProfile.findFirst({
-    orderBy: { createdAt: 'desc' },
-    include: {
-      user: true,
-      creatorLogs: { orderBy: { createdAt: 'desc' }, take: 3 },
-      portfolioItems: { take: 2 }
-    }
-  });
+  let profile: any = null;
 
-  const userName = profile?.user?.name || "AI Creator";
+  try {
+    const fetchProfile = prisma.creatorProfile.findFirst({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: true,
+        creatorLogs: { orderBy: { createdAt: 'desc' }, take: 3 },
+        portfolioItems: { take: 2 }
+      }
+    });
+    // 2-second timeout cap so the dashboard always renders immediately
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("DB timeout")), 2000)
+    );
+    profile = await Promise.race([fetchProfile, timeoutPromise]);
+  } catch (error) {
+    console.warn("Prisma creatorProfile query notice (using fallback profile data):", error);
+  }
+
+  const userName = profile?.user?.name || "AI Director";
   const views = Math.floor(Math.random() * 80) + 120;
   
   return (
