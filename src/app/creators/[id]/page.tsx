@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -28,12 +28,85 @@ export default function CreatorProfilePage() {
   const router = useRouter();
   const creatorId = (params?.id as string) || "c1";
 
-  const creator = getCreatorById(creatorId) || CREATORS_POOL[0];
+  const defaultCreator = getCreatorById(creatorId) || CREATORS_POOL[0];
+  const [creator, setCreator] = useState(defaultCreator);
   const [selectedItem, setSelectedItem] = useState<CreatorPortfolioItem | null>(
-    creator.portfolioItems[0] || null
+    defaultCreator.portfolioItems[0] || null
   );
   const [copiedSeed, setCopiedSeed] = useState(false);
   const [shareToast, setShareToast] = useState(false);
+
+  // Sync real-time creator from MongoDB Atlas if present
+  useEffect(() => {
+    async function loadDbCreator() {
+      try {
+        const res = await fetch("/api/creators", { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.success && Array.isArray(data.creators)) {
+            const dbCreator = data.creators.find(
+              (c: any) =>
+                c.id === creatorId ||
+                c.userId === creatorId ||
+                c.user?.name.toLowerCase().includes(creatorId.toLowerCase())
+            );
+            if (dbCreator) {
+              const mapped: any = {
+                id: dbCreator.id,
+                name: dbCreator.user?.name || defaultCreator.name,
+                handle: `@${(dbCreator.user?.name || "director").toLowerCase().replace(/[^a-z0-9]/g, "_")}`,
+                role: dbCreator.experienceLevel || defaultCreator.role,
+                avatar: dbCreator.user?.image || defaultCreator.avatar,
+                portfolioImg: defaultCreator.portfolioImg,
+                specialization: dbCreator.specializations?.[0] || defaultCreator.specialization,
+                category: defaultCreator.category,
+                deliverableType: defaultCreator.deliverableType,
+                aspectRatio: defaultCreator.aspectRatio,
+                rating: defaultCreator.rating,
+                projectsCompleted: defaultCreator.projectsCompleted,
+                hourlyRate: defaultCreator.hourlyRate,
+                location: "Global Remote",
+                verificationBadge: defaultCreator.verificationBadge,
+                verificationScore: dbCreator.verificationScore || defaultCreator.verificationScore,
+                bio: dbCreator.bio || defaultCreator.bio,
+                tools: dbCreator.tools?.length ? dbCreator.tools : defaultCreator.tools,
+                turnaroundTime: defaultCreator.turnaroundTime,
+                commercialLicense: defaultCreator.commercialLicense,
+                workflow: defaultCreator.workflow,
+                portfolioItems: dbCreator.portfolioItems?.length > 0 ? dbCreator.portfolioItems.map((p: any, idx: number) => ({
+                  id: p.id || `p-${idx}`,
+                  title: p.title,
+                  category: p.contentType || "Video",
+                  mediaUrl: p.mediaUrl,
+                  aspectRatio: "9:16",
+                  tools: p.toolsUsed || ["Runway Gen-3", "ComfyUI"],
+                  views: "18.4K",
+                  likes: "2.1K",
+                  workflow: {
+                    positivePrompt: p.workflow || "Hyperrealistic cinematic render with deterministic seed.",
+                    negativePrompt: "blurry, low quality, distortion, noise",
+                    model: (p.toolsUsed && p.toolsUsed[0]) || "Runway Gen-3 Alpha",
+                    seed: "84920194",
+                    aspectRatio: "9:16",
+                    cfgScale: 7.5,
+                    steps: 35,
+                    sampler: "Euler a",
+                  },
+                })) : defaultCreator.portfolioItems,
+              };
+              setCreator(mapped);
+              if (mapped.portfolioItems?.[0]) {
+                setSelectedItem(mapped.portfolioItems[0]);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Notice: Real creator fetch fall back to verified pool:", err);
+      }
+    }
+    loadDbCreator();
+  }, [creatorId, defaultCreator]);
 
   const handleCopySeed = (seed: string) => {
     navigator.clipboard.writeText(seed);

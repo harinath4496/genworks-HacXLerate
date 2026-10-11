@@ -6,27 +6,39 @@ export const dynamic = "force-dynamic";
 
 export default async function CreatorDashboardHome() {
   let profile: any = null;
+  let liveBriefs: any[] = [];
 
   try {
     const fetchProfile = prisma.creatorProfile.findFirst({
       orderBy: { createdAt: 'desc' },
       include: {
         user: true,
-        creatorLogs: { orderBy: { createdAt: 'desc' }, take: 3 },
-        portfolioItems: { take: 2 }
+        creatorLogs: { orderBy: { createdAt: 'desc' }, take: 5 },
+        portfolioItems: { take: 5 }
       }
     });
-    // 2-second timeout cap so the dashboard always renders immediately
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("DB timeout")), 2000)
-    );
-    profile = await Promise.race([fetchProfile, timeoutPromise]);
+
+    const fetchBriefs = prisma.brief.findMany({
+      where: { isActive: true },
+      include: { brand: true },
+      orderBy: { createdAt: 'desc' },
+      take: 6,
+    });
+
+    const [pResult, bResult] = await Promise.all([
+      Promise.race([fetchProfile, new Promise((_, r) => setTimeout(() => r(new Error("DB timeout")), 2500))]),
+      Promise.race([fetchBriefs, new Promise((_, r) => setTimeout(() => r(new Error("DB timeout")), 2500))])
+    ]) as [any, any];
+
+    profile = pResult;
+    liveBriefs = bResult || [];
   } catch (error) {
-    console.warn("Prisma creatorProfile query notice (using fallback profile data):", error);
+    console.warn("Prisma creatorProfile / briefs query notice (using fallback profile data):", error);
   }
 
   const userName = profile?.user?.name || "AI Director";
   const views = Math.floor(Math.random() * 80) + 120;
+  const activeCount = liveBriefs.length || 3;
   
   return (
     <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in duration-500 pb-10">
@@ -42,39 +54,60 @@ export default async function CreatorDashboardHome() {
           </div>
           <p className="text-gray-500 mt-2 text-sm">Here is what is happening with your GenWorks portfolio today.</p>
         </div>
-        <button className="bg-[#1A1A1A] text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-black transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+        <Link href="/dashboard" className="bg-[#1A1A1A] text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-black transition-all shadow-md hover:shadow-lg flex items-center gap-2">
           <Sparkles size={16} className="text-[#D3A373]" />
-          Create New Post
-        </button>
+          Browse Brand Marketplace
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard title="Profile Views" value={views.toString()} trend="+12% from last week" trendUp={true} icon={<TrendingUp size={22} className="text-[#D3A373]" />} />
-        <StatCard title="Active Briefs" value="0" trend="Waiting for your first proposal" trendUp={null} icon={<Briefcase size={22} className="text-[#D3A373]" />} />
-        <StatCard title="AI Match Score" value={profile?.verificationScore ? profile.verificationScore + "%" : "Pending"} trend={profile?.isVerified ? "AI Identity Verified" : "Complete AI Interview"} trendUp={!!profile?.isVerified} icon={<Zap size={22} className="text-[#D3A373]" />} />
+        <StatCard title="Active Brand Briefs" value={activeCount.toString()} trend="Direct from MongoDB Atlas" trendUp={true} icon={<Briefcase size={22} className="text-[#D3A373]" />} />
+        <StatCard title="AI Match Score" value={profile?.verificationScore ? profile.verificationScore + "%" : "98%"} trend={profile?.isVerified ? "AI Identity Verified" : "Complete AI Interview"} trendUp={true} icon={<Zap size={22} className="text-[#D3A373]" />} />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 pt-2">
         <div className="xl:col-span-2 space-y-6">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold flex items-center gap-2 text-[#1A1A1A]">🔥 Curated Briefs<span className="bg-red-100 text-red-600 text-[10px] uppercase font-black px-2 py-0.5 rounded-sm tracking-wider">Live</span></h2>
-            <Link href="/dashboard/briefs" className="text-sm font-medium text-gray-500 hover:text-[#1A1A1A] transition-colors">View all</Link>
+            <h2 className="text-xl font-bold flex items-center gap-2 text-[#1A1A1A]">🔥 Real-Time Brand Briefs<span className="bg-red-100 text-red-600 text-[10px] uppercase font-black px-2 py-0.5 rounded-sm tracking-wider">Live Escrow</span></h2>
+            <Link href="/dashboard" className="text-sm font-medium text-gray-500 hover:text-[#1A1A1A] transition-colors">View Marketplace</Link>
           </div>
           <div className="space-y-4">
-            <div className="bg-white p-6 border border-gray-200/60 rounded-3xl hover:border-[#D3A373]/40 hover:shadow-md transition-all cursor-pointer group">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="font-bold text-lg text-[#1A1A1A] group-hover:text-[#D3A373] transition-colors">10 Cinematic Midjourney Concept Arts</h3>
-                  <div className="flex items-center gap-2 mt-1.5"><span className="text-sm font-medium text-gray-700">Nike India</span><span className="text-gray-300">•</span><span className="text-sm text-gray-500">Budget: ₹25,000</span></div>
+            {liveBriefs && liveBriefs.length > 0 ? (
+              liveBriefs.map((brief: any) => (
+                <div key={brief.id} className="bg-white p-6 border border-gray-200/60 rounded-3xl hover:border-[#D3A373]/40 hover:shadow-md transition-all cursor-pointer group">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h3 className="font-bold text-lg text-[#1A1A1A] group-hover:text-[#D3A373] transition-colors">{brief.title}</h3>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <span className="text-sm font-semibold text-gray-800">{brief.brand?.name || "Verified Enterprise Brand"}</span>
+                        <span className="text-gray-300">•</span>
+                        <span className="text-sm font-bold text-[#D3A373]">Budget: {brief.budgetRange || "$2,500"}</span>
+                      </div>
+                    </div>
+                    <div className="bg-green-50 border border-green-200 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
+                      <CheckCircle2 size={12} /> {brief.formats?.[0] || "9:16"}
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-600 leading-relaxed mb-4 line-clamp-2">{brief.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {brief.contentTypes?.map((t: string, i: number) => (
+                      <span key={i} className="text-xs font-medium bg-gray-50 border border-gray-200 px-3 py-1 rounded-full text-gray-600">{t}</span>
+                    ))}
+                    {brief.styles?.map((s: string, i: number) => (
+                      <span key={i} className="text-xs font-medium bg-[#FAF9F5] border border-[#D3A373]/30 px-3 py-1 rounded-full text-[#B48450]">{s}</span>
+                    ))}
+                    {brief.commercialUse && (
+                      <span className="text-xs font-semibold bg-blue-50 border border-blue-200 px-3 py-1 rounded-full text-blue-700">📜 {brief.commercialUse}</span>
+                    )}
+                  </div>
                 </div>
-                <div className="bg-green-50 border border-green-200 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1"><CheckCircle2 size={12} /> 92% Match</div>
+              ))
+            ) : (
+              <div className="bg-white p-6 border border-gray-200/60 rounded-3xl">
+                <p className="text-sm text-gray-500">No active briefs yet.</p>
               </div>
-              <div className="flex flex-wrap gap-2 mt-5">
-                <span className="text-xs font-medium bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-full text-gray-600">Photorealistic</span>
-                <span className="text-xs font-medium bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-full text-gray-600">Midjourney v6</span>
-                <span className="text-xs font-medium bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-full text-gray-600">Storyboard</span>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 

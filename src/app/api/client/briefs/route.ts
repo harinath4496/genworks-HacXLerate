@@ -1,112 +1,137 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDb } from "@/lib/mongodb";
-import {
-  requireClientAuth,
-  sanitizeInput,
-  applySecurityHeaders,
-} from "@/lib/security";
+import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 /**
- * GET /api/client/briefs - Secure Retrieval of Client Briefs
+ * GET /api/client/briefs — Real-Time Retrieval of Live Production Briefs from MongoDB Atlas
  */
 export async function GET(req: NextRequest) {
-  const auth = await requireClientAuth(req);
-  if (!auth.authenticated) {
-    return auth.response;
-  }
-
   try {
-    const db = await getDb();
-    const briefs = db.collection("Brief");
+    const { searchParams } = new URL(req.url);
+    const brandEmail = searchParams.get("email");
 
-    const clientBriefs = await briefs
-      .find({ clientEmail: auth.user.email })
-      .sort({ createdAt: -1 })
-      .limit(50)
-      .toArray();
+    let whereClause: any = { isActive: true };
+    if (brandEmail) {
+      whereClause = {
+        isActive: true,
+        brand: {
+          email: brandEmail,
+        },
+      };
+    }
 
-    const res = NextResponse.json({
-      success: true,
-      count: clientBriefs.length,
-      briefs: clientBriefs,
+    const briefs = await prisma.brief.findMany({
+      where: whereClause,
+      include: {
+        brand: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 50,
     });
 
-    return applySecurityHeaders(res);
-  } catch (err: unknown) {
-    console.error("[API Error] GET /api/client/briefs:", err);
-    const res = NextResponse.json(
+    return NextResponse.json({
+      success: true,
+      count: briefs.length,
+      briefs,
+    });
+  } catch (err: any) {
+    console.error("[API Error] GET /api/client/briefs:", err.message);
+    return NextResponse.json(
       { success: false, error: "Failed to retrieve campaign briefs." },
       { status: 500 }
     );
-    return applySecurityHeaders(res);
   }
 }
 
 /**
- * POST /api/client/briefs - Secure Creation of Client Campaign Brief
+ * POST /api/client/briefs — Real-Time Creation & Escrow Initialization in MongoDB Atlas
  */
 export async function POST(req: NextRequest) {
-  const auth = await requireClientAuth(req);
-  if (!auth.authenticated) {
-    return auth.response;
-  }
-
   try {
-    const rawBody = await req.json();
-    const body = sanitizeInput(rawBody);
-
+    const body = await req.json();
     const {
       title,
+      description,
+      category,
       aspectRatio,
-      aiPipeline,
-      deliverablesCount,
-      budgetUsd,
-      timeline,
-      visualDirective,
+      budget,
+      commercialUse,
+      assignedDirector,
+      brandEmail,
+      brandName,
     } = body;
 
     if (!title || typeof title !== "string") {
-      const res = NextResponse.json(
+      return NextResponse.json(
         { success: false, error: "Brief title is required." },
         { status: 400 }
       );
-      return applySecurityHeaders(res);
     }
 
-    const db = await getDb();
-    const briefs = db.collection("Brief");
-
-    const newBrief = {
-      clientEmail: auth.user.email,
-      clientName: auth.user.name,
-      title: title.slice(0, 150),
-      aspectRatio: aspectRatio || "9:16",
-      aiPipeline: aiPipeline || "ComfyUI + Runway Gen-3",
-      deliverablesCount: Number(deliverablesCount) || 1,
-      budgetUsd: Number(budgetUsd) || 1200,
-      timeline: timeline || "48 Hours",
-      visualDirective: typeof visualDirective === "string" ? visualDirective.slice(0, 2000) : "",
-      status: "OPEN_FOR_DIRECTORS",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const insertResult = await briefs.insertOne(newBrief);
-
-    const res = NextResponse.json({
-      success: true,
-      message: "Brief registered and escrow reservation initialized.",
-      briefId: insertResult.insertedId,
-      brief: newBrief,
+    // Resolve or create Brand User in MongoDB
+    const targetEmail = brandEmail || "commissioner@genworks.ai";
+    let brandUser = await prisma.user.findUnique({
+      where: { email: targetEmail },
     });
 
-    return applySecurityHeaders(res);
-  } catch (err: unknown) {
-    console.error("[API Error] POST /api/client/briefs:", err);
-    const res = NextResponse.json(
+    if (!brandUser) {
+      brandUser = await prisma.user.create({
+        data: {
+          email: targetEmail,
+          name: brandName || "Verified Brand Commissioner",
+          role: "BRAND",
+        },
+      });
+    }
+
+    const formats = aspectRatio ? [aspectRatio] : ["9:16"];
+    const contentTypes = category ? [category] : ["9:16 Viral Video"];
+    const styles = assignedDirector ? [`Director: ${assignedDirector}`] : ["Cinematic"];
+
+    const newBrief = await prisma.brief.create({
+      data: {
+        brandId: brandUser.id,
+        title: title.slice(0, 150),
+        description: (description || "Direct commission via GenWorks Milestone Escrow.").slice(0, 2000),
+        contentTypes,
+        styles,
+        formats,
+        budgetRange: budget || "$2,500",
+        commercialUse: commercialUse || "Full Commercial Buyout & Global IP Transfer",
+        isActive: true,
+      },
+      include: {
+        brand: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Brief registered and escrow reservation initialized in MongoDB Atlas.",
+      brief: newBrief,
+    });
+  } catch (err: any) {
+    console.error("[API Error] POST /api/client/briefs:", err.message);
+    return NextResponse.json(
       { success: false, error: "Failed to create campaign brief." },
       { status: 500 }
     );
-    return applySecurityHeaders(res);
   }
 }

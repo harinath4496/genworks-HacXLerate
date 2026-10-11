@@ -474,6 +474,40 @@ export default function ClientDashboardPage() {
 
     checkAuthSession();
 
+    // Real-Time Data Sync with MongoDB Atlas for Live Production Briefs
+    async function fetchLiveBriefs() {
+      try {
+        const res = await fetch("/api/client/briefs", { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.success && Array.isArray(data.briefs) && data.briefs.length > 0) {
+            const mappedBriefs: ClientBrief[] = data.briefs.map((b: any) => ({
+              id: b.id,
+              title: b.title,
+              category: b.contentTypes?.[0] || "9:16 Viral Video",
+              budget: b.budgetRange || "$2,500",
+              status: b.isActive ? "Active Escrow" : "Completed",
+              assignedDirector: (b.styles?.[0] && b.styles[0].startsWith("Director: ")) ? b.styles[0].replace("Director: ", "") : (b.brand?.name || "Elena Vance"),
+              assignedAvatar: b.brand?.image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
+              assignedHandle: `@${(b.brand?.name || "director").toLowerCase().replace(/[^a-z0-9]/g, "_")}`,
+              deliverable: b.commercialUse || "Custom 4K AI Video Master & Verified JSON Workflow",
+              deadline: "7 Days from Approval",
+              escrowLocked: parseInt((b.budgetRange || "2500").replace(/[^0-9]/g, "")) || 2500,
+              milestones: [
+                { phase: "Milestone 1", name: "Prompt Seed & Styleframe Approval", status: "current", amount: "$750" },
+                { phase: "Milestone 2", name: "Motion Render Pass & Upscale", status: "pending", amount: "$1,000" },
+                { phase: "Milestone 3", name: "Master IP Delivery & Asset Archive", status: "pending", amount: "$750" },
+              ],
+            }));
+            setBriefs(mappedBriefs);
+          }
+        }
+      } catch (err) {
+        console.error("Live brief fetch error:", err);
+      }
+    }
+    fetchLiveBriefs();
+
     if (typeof window !== "undefined") {
       const sp = new URLSearchParams(window.location.search);
       if (sp.get("briefModal") === "true") {
@@ -582,6 +616,23 @@ export default function ClientDashboardPage() {
     setNewBriefTitle("");
     setNewBriefDetails("");
     triggerToast("✨ New Video Production Brief Created & Locked in Escrow!");
+
+    // Real-Time persistence to MongoDB Atlas
+    fetch("/api/client/briefs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: newBrief.title,
+        category: newBrief.category,
+        aspectRatio: newBriefAspectRatio,
+        budget: newBrief.budget,
+        description: newBriefDetails || "Production brief created via GenWorks Studio",
+        commercialUse: newBriefCommercialUse,
+        assignedDirector: newBriefDirector,
+        brandEmail: clientUser?.email || "commissioner@genworks.ai",
+        brandName: clientUser?.name || "Client Commissioner",
+      }),
+    }).catch((err) => console.error("Error persisting brief to MongoDB Atlas:", err));
   };
 
   const handleGenerateAiBrief = (presetIdea?: string) => {
