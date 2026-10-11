@@ -53,9 +53,26 @@ runTest('Architecture Check: Enterprise src/ layout with app, lib, and API endpo
   }
 });
 
+// Suite 5: Cloudinary Real-Time Upload & Creator Pipeline
+runTest('Cloudinary Pipeline Check: Real-time upload endpoint and creator studio pages active', () => {
+  const requiredFiles = [
+    'src/app/api/upload/route.ts',
+    'src/app/api/creator/logs/route.ts',
+    'src/app/api/creator/portfolio/route.ts',
+    'src/app/(creator)/portfolio/manage/page.tsx',
+    'src/app/(creator)/dashboard/creator/posts/page.tsx',
+    'src/components/creator/CreatorUploadModal.tsx'
+  ];
+  for (const file of requiredFiles) {
+    if (!fs.existsSync(path.join(__dirname, '..', file))) {
+      throw new Error(`Required file ${file} does not exist`);
+    }
+  }
+});
+
 console.log('\n------------------------------------------------------');
 if (failed === 0) {
-  console.log('  RESULT: ALL SUITES PASSED (4/4 PASS, 0 FAILURES)\n');
+  console.log('  RESULT: ALL SUITES PASSED (5/5 PASS, 0 FAILURES)\n');
   process.exit(0);
 } else {
   console.error(`  RESULT: ${failed} TEST(S) FAILED\n`);

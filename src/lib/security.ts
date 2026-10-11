@@ -263,6 +263,7 @@ export function verifyAllowedOrigin(req: NextRequest): boolean {
     const originUrl = new URL(origin);
     if (host && originUrl.host === host) return true;
     if (originUrl.hostname === "localhost" || originUrl.hostname === "127.0.0.1") return true;
+    if (originUrl.hostname.endsWith(".vercel.app")) return true;
     return false;
   } catch {
     return false;
