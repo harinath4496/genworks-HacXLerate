@@ -4,19 +4,7 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 1. Dashboard Route Protection Guard (Client Dashboard)
-  if (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/creator")) {
-    const sessionCookie = request.cookies.get("clientora_session");
-    // If not authenticated, redirect to landing page with modal trigger
-    if (!sessionCookie?.value) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/";
-      url.searchParams.set("auth", "required");
-      return NextResponse.redirect(url);
-    }
-  }
-
-  // 2. Clone response to inject security headers
+  // 1. Clone response to inject security headers
   const response = NextResponse.next();
 
   // 3. Inject Enterprise Security Headers

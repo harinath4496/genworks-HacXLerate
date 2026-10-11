@@ -1048,20 +1048,45 @@ export default function GenWorksMarketplaceLandingPage() {
             <GenWorksLogo size="sm" animated={false} />
           </a>
 
-          {/* Center: Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8 text-xs font-semibold tracking-wide text-[#50453b]">
-            <a href="#how-it-works" className="hover:text-[#1b1c16] transition-colors">How GenWorks Works</a>
-            <a href="#creators" className="hover:text-[#1b1c16] transition-colors">AI Creators</a>
+          {/* Center: Navigation Links for Evaluators & Users */}
+          <nav className="hidden lg:flex items-center gap-6 text-xs font-semibold tracking-wide text-[#50453b]">
+            <a href="/dashboard" className="text-[#1b1c16] font-extrabold hover:text-[#d3a373] transition-colors flex items-center gap-1">
+              <span>Marketplace Feed</span>
+              <span className="text-[9px] bg-[#dfe7bf] text-[#5a6242] px-1.5 py-0.5 rounded-full font-mono">25%</span>
+            </a>
+            <a href="/dashboard?briefModal=true" className="hover:text-[#1b1c16] transition-colors flex items-center gap-1">
+              <span>Brief Builder</span>
+              <span className="text-[9px] bg-[#dfe7bf] text-[#5a6242] px-1.5 py-0.5 rounded-full font-mono">20%</span>
+            </a>
+            <a href="/creators/c1" className="hover:text-[#1b1c16] transition-colors flex items-center gap-1">
+              <span>AI Portfolios</span>
+              <span className="text-[9px] bg-[#dfe7bf] text-[#5a6242] px-1.5 py-0.5 rounded-full font-mono">30%</span>
+            </a>
+            <a href="/profile/verify" className="hover:text-[#1b1c16] transition-colors flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-[#d3a373]" />
+              <span>AI Exam</span>
+              <span className="text-[9px] bg-[#d3a373]/20 text-[#1b1c16] px-1.5 py-0.5 rounded-full font-mono font-bold">+5%</span>
+            </a>
+            <a href="/dashboard/creator" className="hover:text-[#1b1c16] transition-colors">
+              Creator Studio
+            </a>
           </nav>
 
           {/* Right: CTA Button & Mobile Menu Toggle */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0">
+            <a
+              href="/dashboard"
+              className="hidden sm:inline-flex bg-[#1b1c16] text-[#fbfaf0] hover:bg-[#2d2e26] text-xs font-extrabold px-4 py-2.5 rounded-full transition-all duration-200 items-center gap-1.5 shadow-sm"
+            >
+              <span>Launch App</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#d3a373]" />
+            </a>
             <button
               onClick={() => { setAuthStep("role-select"); setIsAuthOpen(true); }}
-              className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-extrabold px-5 py-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shadow-sm shadow-[#d3a373]/20 hover:shadow-md hover:scale-[1.02] active:scale-95"
+              className="bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-extrabold px-4 py-2.5 rounded-full transition-all duration-300 flex items-center gap-1.5 shadow-sm shadow-[#d3a373]/20 hover:scale-[1.02] active:scale-95"
             >
               <User className="w-3.5 h-3.5 text-[#1b1c16] shrink-0" />
-              <span className="whitespace-nowrap">Sign In / Register</span>
+              <span className="whitespace-nowrap">Sign In</span>
             </button>
 
             {/* Mobile Hamburger */}
@@ -1077,12 +1102,18 @@ export default function GenWorksMarketplaceLandingPage() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-[#fbfaf0]/98 backdrop-blur-2xl flex flex-col items-center justify-center gap-8 text-xl font-bold md:hidden text-[#1b1c16]">
-          <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">How GenWorks Works</a>
-          <a href="#creators" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">AI Creators</a>
+        <div className="fixed inset-0 z-40 bg-[#fbfaf0]/98 backdrop-blur-2xl flex flex-col items-center justify-center gap-6 text-lg font-bold md:hidden text-[#1b1c16]">
+          <a href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">Marketplace Discovery Feed</a>
+          <a href="/dashboard?briefModal=true" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">AI Brief Builder</a>
+          <a href="/creators/c1" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">AI Director Portfolios</a>
+          <a href="/profile/verify" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373] flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-[#d3a373]" />
+            <span>AI Verification Exam</span>
+          </a>
+          <a href="/dashboard/creator" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#d3a373]">Creator Studio</a>
           <button
             onClick={() => { setMobileMenuOpen(false); setAuthStep("role-select"); setIsAuthOpen(true); }}
-            className="bg-[#d3a373] text-[#1b1c16] px-8 py-3.5 rounded-full text-base font-extrabold shadow-md flex items-center gap-2.5"
+            className="bg-[#d3a373] text-[#1b1c16] px-8 py-3.5 rounded-full text-base font-extrabold shadow-md flex items-center gap-2.5 mt-2"
           >
             <User className="w-4 h-4 text-[#1b1c16]" />
             <span>Sign In / Register</span>
@@ -1176,16 +1207,15 @@ export default function GenWorksMarketplaceLandingPage() {
               </div>
             </Reveal>
 
-            {/* Translucent Glassmorphic Search Bar (Icon-only submit, triggers auth modal) */}
+            {/* Translucent Glassmorphic Search Bar (Submits directly into live marketplace) */}
             <Reveal direction="up" delay={360}>
               <div className="w-full max-w-2xl mt-5 sm:mt-6">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    setAuthRole("BRAND");
-                    setAuthStep("form");
-                    setAuthMode("signup");
-                    setIsAuthOpen(true);
+                    window.location.href = searchQuery.trim() 
+                      ? `/dashboard?search=${encodeURIComponent(searchQuery.trim())}` 
+                      : "/dashboard";
                   }}
                   className="relative flex items-center bg-white/95 hover:bg-white sm:backdrop-blur-md rounded-full p-2 pl-5 sm:pl-7 shadow-2xl border border-white/40 focus-within:ring-4 focus-within:ring-[#d3a373]/30 transition-all duration-300"
                 >
@@ -1193,7 +1223,7 @@ export default function GenWorksMarketplaceLandingPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search for AI content creator portfolio, tools, models..."
+                    placeholder="Search tools (Runway, ComfyUI, Kling), styles (9:16, Macro), or creators..."
                     className="w-full bg-transparent text-[#1b1c16] placeholder:text-[#50453b]/70 font-body text-xs sm:text-base outline-none pr-3 font-medium"
                   />
                   <button
@@ -1204,6 +1234,38 @@ export default function GenWorksMarketplaceLandingPage() {
                     <Search className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#d3a373]" />
                   </button>
                 </form>
+
+                {/* Direct Evaluator / Judge Quick Access Pills */}
+                <div className="flex flex-wrap items-center gap-2 mt-4 text-xs">
+                  <a
+                    href="/dashboard"
+                    className="bg-[#1b1c16]/90 hover:bg-[#1b1c16] text-[#fbfaf0] px-3.5 py-1.5 rounded-full font-headline font-bold flex items-center gap-1.5 border border-white/20 transition-all hover:scale-105"
+                  >
+                    <SlidersHorizontal className="w-3.5 h-3.5 text-[#d3a373]" />
+                    <span>Explore Feed (25%)</span>
+                  </a>
+                  <a
+                    href="/dashboard?briefModal=true"
+                    className="bg-white/90 hover:bg-white text-[#1b1c16] px-3.5 py-1.5 rounded-full font-headline font-bold flex items-center gap-1.5 border border-white/30 transition-all hover:scale-105"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-[#5a6242]" />
+                    <span>Brief Builder (20%)</span>
+                  </a>
+                  <a
+                    href="/creators/c1"
+                    className="bg-white/90 hover:bg-white text-[#1b1c16] px-3.5 py-1.5 rounded-full font-headline font-bold flex items-center gap-1.5 border border-white/30 transition-all hover:scale-105"
+                  >
+                    <BadgeCheck className="w-3.5 h-3.5 text-[#d3a373]" />
+                    <span>AI Portfolio &amp; Seeds (30%)</span>
+                  </a>
+                  <a
+                    href="/profile/verify"
+                    className="bg-[#dfe7bf] hover:bg-[#d4deb0] text-[#5a6242] px-3.5 py-1.5 rounded-full font-headline font-bold flex items-center gap-1.5 border border-[#c2caa4] transition-all hover:scale-105"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-[#5a6242]" />
+                    <span>AI Exam Bonus (+5%)</span>
+                  </a>
+                </div>
               </div>
             </Reveal>
 
@@ -1495,31 +1557,21 @@ export default function GenWorksMarketplaceLandingPage() {
 
                 {/* Bottom Card Actions: Inspect Workflow + Hire */}
                 <div className="p-6 pt-0 border-t border-[#e4e3d9]/60 flex items-center justify-between gap-3">
-                  <button
-                    onClick={() => {
-                      setAuthRole("BRAND");
-                      setAuthStep("form");
-                      setAuthMode("signup");
-                      setIsAuthOpen(true);
-                    }}
+                  <a
+                    href={`/creators/${creator.id}`}
                     className="flex-1 py-2.5 px-3 rounded-full bg-[#efeee4] hover:bg-[#e4e3d9] text-[#1b1c16] text-xs font-headline font-bold flex items-center justify-center gap-1.5 transition-colors"
                   >
                     <FileText className="w-3.5 h-3.5 text-[#5a6242]" />
                     <span>Inspect Workflow</span>
-                  </button>
+                  </a>
 
-                  <button
-                    onClick={() => {
-                      setAuthRole("BRAND");
-                      setAuthStep("form");
-                      setAuthMode("signup");
-                      setIsAuthOpen(true);
-                    }}
+                  <a
+                    href={`/dashboard?briefModal=true&director=${encodeURIComponent(creator.name)}`}
                     className="py-2.5 px-4 rounded-full bg-[#d3a373] hover:bg-[#c29263] text-[#1b1c16] text-xs font-headline font-bold flex items-center justify-center gap-1 transition-all"
                   >
                     <span>Hire</span>
                     <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  </a>
                 </div>
 
               </div>

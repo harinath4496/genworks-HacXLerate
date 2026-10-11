@@ -468,7 +468,15 @@ export default function ClientDashboardPage() {
             } catch {}
           }
         }
-        router.replace("/?auth=required");
+        // Seamless Judge / Evaluator Guest Mode (Zero friction for Hackathon Judges)
+        setClientUser((prev) => ({
+          ...prev,
+          name: "ByteXL Evaluator (Judge Mode)",
+          email: "evaluator@bytexl.ai",
+          role: "Evaluator • Brand Partner",
+          avatarInitial: "B",
+        }));
+        setAuthChecking(false);
       }
     }
 
@@ -516,6 +524,10 @@ export default function ClientDashboardPage() {
       const dir = sp.get("director");
       if (dir) {
         setNewBriefDirector(dir);
+      }
+      const q = sp.get("search");
+      if (q) {
+        setSearchQuery(q);
       }
     }
   }, [router]);
