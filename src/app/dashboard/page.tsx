@@ -311,6 +311,330 @@ const INITIAL_PINS: PinItem[] = [
     likes: 712,
     saved: false,
   },
+  {
+    id: "pin-9",
+    title: "Alpine Serpent — High-Speed Porsche 911 Mountain Pass Tracking Shot",
+    aspectRatio: "16:9",
+    category: "commercial",
+    categoryLabel: "Automotive Cinema",
+    previewImg: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&auto=format&fit=crop&q=80",
+    director: {
+      name: "Marcus Vance",
+      handle: "@marcus_vfx",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80",
+      rating: 4.97,
+      completed: 52,
+      rate: "$120/hr",
+    },
+    tools: ["Runway Gen-3", "DaVinci Resolve", "Topaz Video AI"],
+    workflow: {
+      model: "Runway Gen-3 Alpha",
+      seed: "7719284012",
+      cfgScale: 7.8,
+      steps: 50,
+      sampler: "Euler a",
+      positivePrompt: "Ultra-wide tracking shot, silver Porsche 911 carving through wet asphalt on Swiss alpine switchback, motion blur on wheels, anamorphic golden hour flare, 4k cinema master",
+    },
+    likes: 840,
+    saved: true,
+  },
+  {
+    id: "pin-10",
+    title: "Haute Joaillerie — 18K Diamond Solitaire Refraction Macro",
+    aspectRatio: "1:1",
+    category: "commercial",
+    categoryLabel: "Luxury Jewelry Macro",
+    previewImg: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&auto=format&fit=crop&q=80",
+    director: {
+      name: "Siddharth Rao",
+      handle: "@siddharth_ai",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80",
+      rating: 4.96,
+      completed: 41,
+      rate: "$95/hr",
+    },
+    tools: ["Kling 1.5 Pro", "ComfyUI Pipeline", "Midjourney v6.1"],
+    workflow: {
+      model: "Kling 1.5 Pro + ComfyUI",
+      seed: "4018274910",
+      cfgScale: 8.2,
+      steps: 45,
+      sampler: "DPM++ 2M Karras",
+      positivePrompt: "Extreme macro 100mm lens, flawless cut diamond ring revolving smoothly on black obsidian pedestal, raytraced prismatic chromatic aberration, caustics, cinematic luxury advertisement",
+    },
+    likes: 620,
+    saved: false,
+  },
+  {
+    id: "pin-11",
+    title: "Celestial Glow — Hydrating Serum 9:16 Editorial Reel",
+    aspectRatio: "9:16",
+    category: "viral",
+    categoryLabel: "Beauty & Skincare",
+    previewImg: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=800&auto=format&fit=crop&q=80",
+    director: {
+      name: "Elena Vance",
+      handle: "@elena_cinema",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
+      rating: 4.98,
+      completed: 67,
+      rate: "$110/hr",
+    },
+    tools: ["Runway Gen-3", "LivePortrait", "ElevenLabs Dubbing"],
+    workflow: {
+      model: "Runway Gen-3 Alpha + LivePortrait",
+      seed: "8947219044",
+      cfgScale: 7.2,
+      steps: 40,
+      sampler: "Euler a",
+      positivePrompt: "9:16 vertical TikTok beauty ad, glass dropper dispensing golden vitamin C peptide serum onto dewy glass surface, micro air bubbles rising in liquid, pastel studio lighting, ultra-crisp skin macro",
+    },
+    likes: 915,
+    saved: true,
+  },
+  {
+    id: "pin-12",
+    title: "AeroPulse X — Gravity-Defying Cyberpunk Running Shoe",
+    aspectRatio: "9:16",
+    category: "commercial",
+    categoryLabel: "Sportswear Product",
+    previewImg: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80",
+    director: {
+      name: "Kenji Sato",
+      handle: "@kenji_generative",
+      avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80",
+      rating: 4.93,
+      completed: 38,
+      rate: "$85/hr",
+    },
+    tools: ["Kling 1.5", "ComfyUI Pipeline", "Flux.1 Dev"],
+    workflow: {
+      model: "Kling 1.5 + ComfyUI",
+      seed: "3104928173",
+      cfgScale: 8.0,
+      steps: 50,
+      sampler: "Euler a",
+      positivePrompt: "Vertical 9:16 commercial, crimson running shoe floating in mid-air, particle shockwaves erupting from sole on beat drops, dark studio lighting with red rim lights, 120fps slow-motion feel",
+    },
+    likes: 745,
+    saved: false,
+  },
+  {
+    id: "pin-13",
+    title: "Biophilic Metropolis — Parametric Pavilion Architecture Walkthrough",
+    aspectRatio: "16:9",
+    category: "cinematic",
+    categoryLabel: "Architectural VFX",
+    previewImg: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&auto=format&fit=crop&q=80",
+    director: {
+      name: "Mateo Silva",
+      handle: "@mateo_cinematics",
+      avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&auto=format&fit=crop&q=80",
+      rating: 4.91,
+      completed: 29,
+      rate: "$90/hr",
+    },
+    tools: ["Flux.1 Dev", "ComfyUI Pipeline", "Runway Gen-3"],
+    workflow: {
+      model: "Flux.1 Dev + ComfyUI ControlNet",
+      seed: "6192837401",
+      cfgScale: 7.0,
+      steps: 42,
+      sampler: "DPM++ 2M",
+      positivePrompt: "Slow cinematic glide through organic white curved timber canopy, sunlight filtering through foliage, architectural visualization award winner, hyper-detailed materiality",
+    },
+    likes: 512,
+    saved: true,
+  },
+  {
+    id: "pin-14",
+    title: "Chronos Perpetual — Titanium Tourbillon Escapement in Motion",
+    aspectRatio: "1:1",
+    category: "commercial",
+    categoryLabel: "Horology Macro",
+    previewImg: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&auto=format&fit=crop&q=80",
+    director: {
+      name: "Siddharth Rao",
+      handle: "@siddharth_ai",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80",
+      rating: 4.96,
+      completed: 41,
+      rate: "$95/hr",
+    },
+    tools: ["Midjourney v6", "Runway Gen-3", "Topaz Video AI"],
+    workflow: {
+      model: "Midjourney v6.1 + Runway Gen-3",
+      seed: "9918234710",
+      cfgScale: 8.6,
+      steps: 55,
+      sampler: "Euler a",
+      positivePrompt: "1:1 macro of mechanical watch tourbillon cage rotating in real time, Geneva stripes engraving, ruby jewel bearings glistening under soft studio key light",
+    },
+    likes: 670,
+    saved: false,
+  },
+  {
+    id: "pin-15",
+    title: "Shinjuku Autonomous Courier — Dystopian Delivery Drone at Dusk",
+    aspectRatio: "16:9",
+    category: "cinematic",
+    categoryLabel: "Sci-Fi Narrative",
+    previewImg: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=800&auto=format&fit=crop&q=80",
+    director: {
+      name: "Kenji Sato",
+      handle: "@kenji_generative",
+      avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80",
+      rating: 4.93,
+      completed: 38,
+      rate: "$85/hr",
+    },
+    tools: ["Runway Gen-3", "ComfyUI Pipeline", "ElevenLabs Dubbing"],
+    workflow: {
+      model: "Runway Gen-3 Alpha",
+      seed: "5501928471",
+      cfgScale: 8.0,
+      steps: 48,
+      sampler: "Euler a",
+      positivePrompt: "Cyberpunk neon street at twilight, stealth matte-black drone navigating tight alleyway between neon signs, wet reflections on puddle surfaces, Blade Runner 2049 color grade",
+    },
+    likes: 890,
+    saved: true,
+  },
+  {
+    id: "pin-16",
+    title: "Milano Alta Moda — Multilingual Digital Model Runway Walk",
+    aspectRatio: "9:16",
+    category: "human",
+    categoryLabel: "AI Spokesperson / Fashion",
+    previewImg: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&auto=format&fit=crop&q=80",
+    director: {
+      name: "Elena Vance",
+      handle: "@elena_cinema",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
+      rating: 4.98,
+      completed: 67,
+      rate: "$110/hr",
+    },
+    tools: ["LivePortrait", "ElevenLabs Dubbing", "Flux.1 Dev"],
+    workflow: {
+      model: "LivePortrait + Custom LoRA",
+      seed: "2847192039",
+      cfgScale: 7.5,
+      steps: 38,
+      sampler: "Euler a",
+      positivePrompt: "9:16 vertical haute couture runway model walking confidently toward camera, pleated metallic emerald gown catching stage lights, lifelike facial expressions, Milan fashion week atmosphere",
+    },
+    likes: 1042,
+    saved: false,
+  },
+  {
+    id: "pin-17",
+    title: "Botanical Essence — Crisp Citrus Sparkler Fluid Dynamics",
+    aspectRatio: "1:1",
+    category: "commercial",
+    categoryLabel: "Beverage Macro",
+    previewImg: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=800&auto=format&fit=crop&q=80",
+    director: {
+      name: "Marcus Vance",
+      handle: "@marcus_vfx",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80",
+      rating: 4.97,
+      completed: 52,
+      rate: "$120/hr",
+    },
+    tools: ["Kling 1.5 Pro", "ComfyUI Pipeline", "Topaz Video AI"],
+    workflow: {
+      model: "Kling 1.5 Pro",
+      seed: "7192830491",
+      cfgScale: 7.9,
+      steps: 50,
+      sampler: "DPM++ 2M",
+      positivePrompt: "High-speed 1000fps liquid pour of effervescent tonic water over ice cubes and lime wedge in crystal tumbler, carbonation bubble crown, splash droplets frozen in crystal clarity",
+    },
+    likes: 780,
+    saved: true,
+  },
+  {
+    id: "pin-18",
+    title: "Orbital Horizon — Deep Space Centrifuge Habitat Establishing Shot",
+    aspectRatio: "16:9",
+    category: "cinematic",
+    categoryLabel: "Sci-Fi Feature TVC",
+    previewImg: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80",
+    director: {
+      name: "Aria Thorne",
+      handle: "@aria_cinematics",
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80",
+      rating: 4.95,
+      completed: 44,
+      rate: "$105/hr",
+    },
+    tools: ["Runway Gen-3", "Midjourney v6", "DaVinci"],
+    workflow: {
+      model: "Runway Gen-3 Alpha + Luma Ray 2",
+      seed: "8274910293",
+      cfgScale: 8.4,
+      steps: 60,
+      sampler: "Euler a",
+      positivePrompt: "Epic cinematic pullback from spinning space station wheel over Earth's blue aurora limb, realistic physics, hard sunlight and deep shadows, 65mm IMAX cinematography",
+    },
+    likes: 1210,
+    saved: true,
+  },
+  {
+    id: "pin-19",
+    title: "Nordic Atelier — Minimalist Oak Armchair Sunlight Study",
+    aspectRatio: "1:1",
+    category: "commercial",
+    categoryLabel: "Interior Design Commercial",
+    previewImg: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&auto=format&fit=crop&q=80",
+    director: {
+      name: "Mateo Silva",
+      handle: "@mateo_cinematics",
+      avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&auto=format&fit=crop&q=80",
+      rating: 4.91,
+      completed: 29,
+      rate: "$90/hr",
+    },
+    tools: ["Midjourney v6", "ComfyUI Pipeline", "Flux.1 Dev"],
+    workflow: {
+      model: "Midjourney v6.1 + ComfyUI",
+      seed: "3918204719",
+      cfgScale: 7.2,
+      steps: 36,
+      sampler: "Euler a",
+      positivePrompt: "Serene Scandinavian living room, sunlight casting shadow patterns through sheer linen curtains across sculpted solid white oak chair, editorial architectural digest cover",
+    },
+    likes: 495,
+    saved: false,
+  },
+  {
+    id: "pin-20",
+    title: "Apex Aerodynamics — Electric Hypercar Wind Tunnel Smoke Stream",
+    aspectRatio: "16:9",
+    category: "commercial",
+    categoryLabel: "Automotive Spec TVC",
+    previewImg: "https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?w=800&auto=format&fit=crop&q=80",
+    director: {
+      name: "Marcus Vance",
+      handle: "@marcus_vfx",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80",
+      rating: 4.97,
+      completed: 52,
+      rate: "$120/hr",
+    },
+    tools: ["Runway Gen-3", "ComfyUI Pipeline", "Topaz Video AI"],
+    workflow: {
+      model: "Runway Gen-3 Alpha",
+      seed: "4920194821",
+      cfgScale: 8.0,
+      steps: 52,
+      sampler: "Euler a",
+      positivePrompt: "Sleek dark carbon fiber hypercar in aerodynamic wind tunnel, bright neon green illuminated smoke streams flowing across roofline and rear wing, high-speed camera slow motion",
+    },
+    likes: 1140,
+    saved: true,
+  },
 ];
 
 const INITIAL_BRIEFS: ClientBrief[] = [
@@ -565,12 +889,17 @@ export default function ClientDashboardPage() {
   // Filter Pins
   const filteredPins = useMemo(() => {
     return pins.filter((pin) => {
+      const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
-        searchQuery === "" ||
-        pin.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pin.director.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pin.tools.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        pin.categoryLabel.toLowerCase().includes(searchQuery.toLowerCase());
+        q === "" ||
+        pin.title.toLowerCase().includes(q) ||
+        pin.director.name.toLowerCase().includes(q) ||
+        pin.director.handle.toLowerCase().includes(q) ||
+        pin.tools.some((t) => t.toLowerCase().includes(q)) ||
+        pin.categoryLabel.toLowerCase().includes(q) ||
+        pin.workflow.model.toLowerCase().includes(q) ||
+        pin.workflow.positivePrompt.toLowerCase().includes(q) ||
+        pin.workflow.seed.toLowerCase().includes(q);
 
       if (!matchesSearch) return false;
 
@@ -1390,7 +1719,7 @@ export default function ClientDashboardPage() {
           ======================================================== */
           <div className="p-4 sm:p-6 md:p-8 flex-1">
             {filteredPins.length === 0 ? (
-              <div className="max-w-md mx-auto text-center py-20 px-6 bg-white rounded-3xl border border-[#e4e3d9] shadow-xs my-8 space-y-4">
+              <div className="max-w-md mx-auto text-center py-16 px-6 bg-white rounded-3xl border border-[#e4e3d9] shadow-xs my-8 space-y-4">
                 <div className="w-14 h-14 rounded-2xl bg-[#faf9f5] border border-[#e4e3d9] flex items-center justify-center mx-auto text-[#d3a373]">
                   <Search className="w-6 h-6 text-[#d3a373]" />
                 </div>
@@ -1399,8 +1728,20 @@ export default function ClientDashboardPage() {
                     No Creators or Reels Found
                   </h3>
                   <p className="text-xs text-[#82756a] mt-1.5 leading-relaxed">
-                    No deliverables match your search criteria. Try broadening your keywords, or commission a verified AI director directly.
+                    No deliverables match &quot;{searchQuery}&quot;. Try exploring our curated specializations or reset your search.
                   </p>
+                </div>
+                {/* Evaluator Quick Search Suggestions */}
+                <div className="flex flex-wrap items-center justify-center gap-1.5 py-1">
+                  {["Runway Gen-3", "Kling 1.5", "Automotive", "ComfyUI", "Fragrance", "9:16", "Jewelry"].map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => setSearchQuery(tag)}
+                      className="text-[11px] font-mono font-medium px-2.5 py-1 rounded-full bg-[#faf9f5] hover:bg-[#efeee4] text-[#50453b] border border-[#e4e3d9] transition-all hover:scale-105"
+                    >
+                      +{tag}
+                    </button>
+                  ))}
                 </div>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-2">
                   <button

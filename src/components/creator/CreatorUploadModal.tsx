@@ -159,6 +159,23 @@ export function CreatorUploadModal({
         });
       }
 
+      // 4. Save to Local Instant Cache so newly uploaded videos/images appear immediately
+      if (typeof window !== "undefined") {
+        try {
+          const existing = JSON.parse(localStorage.getItem("genworks_recent_uploads") || "[]");
+          const newEntry = {
+            id: `upload_${Date.now()}`,
+            title: title.trim(),
+            content: `Uploaded "${title.trim()}" generated with ${aiModel}. Seed: ${seed}, CFG: ${cfg}. Ready for commercial client licensing.`,
+            mediaUrl: finalMediaUrl,
+            createdAt: new Date().toISOString(),
+            toolsUsed: [aiModel, "Topaz Video AI"],
+            workflow: workflowData,
+          };
+          localStorage.setItem("genworks_recent_uploads", JSON.stringify([newEntry, ...existing]));
+        } catch {}
+      }
+
       setSuccess("Successfully uploaded to Cloudinary and published live!");
       setTimeout(() => {
         setIsUploading(false);
