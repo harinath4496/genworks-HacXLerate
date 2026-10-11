@@ -12,21 +12,22 @@
 
 | Criteria | Weight | GenWorks Implementation | Route / File |
 |---|---|---|---|
-| **1. Creator Profiles & AI Portfolios** | **30%** | Rich creator profiles with AI video/image showcase, exact tools/models used (Midjourney v6, Runway Gen-3, Sora, Kling, ComfyUI, Stable Diffusion), detailed AI workflow (prompts, seeds, CFG, samplers), and creator logs. | `/dashboard/creator`<br>`src/app/(creator)/dashboard/creator/page.tsx`<br>`src/app/profile/edit/page.tsx` |
-| **2. Brand / Agency Briefs** | **20%** | Comprehensive creative brief creation system capturing campaign requirements, content types, styles, aspect ratios (`9:16`, `16:9`, `1:1`), budget range, commercial licensing/IP transfer, and milestone escrow. | `/dashboard` (Brief Modal)<br>`src/app/api/client/briefs/route.ts`<br>`prisma/schema.prisma` (`Brief` model) |
-| **3. Creator Search & Filtering** | **25%** | Multi-faceted search and discovery engine: filter by AI tools, specializations, aspect ratios, content styles, with fallback handling for empty states. | `/dashboard`<br>`src/app/dashboard/page.tsx` (Masonry discovery & filter bar) |
+| **1. Creator Profiles & AI Portfolios** | **30%** | Dedicated public creator profiles and private studio with AI video/image showcase, exact tools/models used (Midjourney v6, Runway Gen-3, Sora, Kling, ComfyUI, Stable Diffusion), detailed AI workflow (prompts, seeds, CFG, samplers), and verification trust badges. | `/creators/[id]`<br>`/dashboard/creator`<br>`src/lib/creatorsData.ts`<br>`src/app/(creator)/dashboard/creator/page.tsx` |
+| **2. Brand / Agency Briefs** | **20%** | Comprehensive creative brief creation system capturing campaign requirements, content types, styles, aspect ratios (`9:16`, `16:9`, `1:1`, `4:5`), budget range, commercial licensing/IP transfer, and milestone escrow. | `/dashboard` (Brief Modal)<br>`src/app/api/client/briefs/route.ts`<br>`prisma/schema.prisma` (`Brief` model) |
+| **3. Creator Search & Filtering** | **25%** | Multi-faceted search and discovery engine: filter by AI tools, specializations, aspect ratios, content styles, with graceful handling and action triggers for empty search states. | `/dashboard`<br>`src/app/dashboard/page.tsx` (Masonry discovery & filter bar) |
 | **4. User Experience (UX)** | **15%** | Editorial soft-luxury design system (`#FAF9F5` cream, `#D3A373` gold, `#1B1C16` charcoal), smooth transitions, interactive modal previews, Pinterest-style masonry grid, mobile responsiveness. | Entire app theme & layout |
-| **5. Presentation & Working Prototype** | **10%** | Fully functional, end-to-end prototype with live SSR, zero runtime crashes, persistent MongoDB database, and live Firebase authentication. | Live Vercel deployment & GitHub repo |
+| **5. Presentation & Working Prototype** | **10%** | Fully functional, end-to-end prototype with live SSR, zero runtime crashes, persistent MongoDB database, live Firebase authentication, and automated integration test suite (`npm test`). | Live deployment, `scripts/test-runner.js`, & GitHub repo |
 | **★ Bonus 1: Creator Verification Signals** | **+5%** | AI-Powered Technical Verification Interview: interactive Gemini 1.5 Flash chat assessing prompt engineering, diffusion pipelines, style consistency, and issuing verified trust badges. | `/profile/verify`<br>`/api/ai/verify`<br>`src/app/profile/verify/page.tsx` |
-| **★ Bonus 2: AI-Assisted Brief Builder** | **+5%** | Transforms rough brand campaign thoughts into structured, technical production briefs with suggested AI pipelines, budgets, and aspect ratios. | `/api/client/briefs/generate` & Brief Builder Modal |
+| **★ Bonus 2: AI-Assisted Brief Builder** | **+5%** | One-click AI campaign structurer: transforms rough brand thoughts into structured, technical production briefs with suggested AI pipelines, budgets, aspect ratios, and commercial buyout terms. | `/dashboard` Brief Modal (AI Assistant toggle & presets) |
 
 ---
 
 ## 2. System Architecture & Routes
 
-### A. Public & Landing Routes
+### A. Public & Discovery Routes
 - `/` — High-converting landing page with cinematic hero, AI creator showcase, brand trust metrics, and dual-role modal.
 - `/?auth=creator` or `/?auth=client` — Triggers dedicated sign-in/registration modals directly.
+- `/creators/[id]` — Public Creator Profile & Portfolio showcase with verified toolstack, reproducible prompt drawer, and milestone commission CTA.
 
 ### B. Client & Agency Portal
 - `/dashboard` — Pinterest-style Masonry Reel discovery feed, AI workflow inspector, creative brief management, milestone escrow vault, and creator pipeline.
@@ -39,13 +40,13 @@
 - `/profile/verify` — Interactive AI Technical Quiz interview powered by Google Gemini 1.5 Flash.
 - `/profile/edit` — Creator profile editor for updating tools, models, bio, specializations, and portfolio items.
 - `/dashboard/creator` — Full Creator Studio Dashboard with metrics (Views, Briefs, AI Match Score), curated commercial briefs (e.g. Nike India, ₹25k), and creative logs.
-- `/dashboard/briefs` — Dedicated listing of all open brand briefs ready for proposals.
 
 ### D. API & Security Layer
 - `/api/auth/sync-user` — Synchronizes Firebase authenticated users to MongoDB Atlas (`User`, `CreatorProfile`, `BrandProfile`).
 - `/api/auth/send-otp` — Brevo email OTP service for passwordless verification.
 - `/api/ai/verify` — Gemini 1.5 Flash technical evaluation engine for creator certification.
 - `src/middleware.ts` — Edge middleware protecting private client/creator dashboards while preventing redirect loops.
+- `scripts/test-runner.js` — Automated CI integration test runner verifying security, schema integrity, and datasets.
 
 ---
 
