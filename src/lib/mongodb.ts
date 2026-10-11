@@ -3,7 +3,7 @@ import { MongoClient, Db, Collection, Document } from "mongodb";
 const uri = process.env.MONGODB_URI;
 const options = {};
 
-let client: MongoClient;
+let client: MongoClient | null = null;
 let clientPromise: Promise<MongoClient>;
 
 declare global {
@@ -11,24 +11,14 @@ declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-if (!uri) {
-  // Graceful handling during build time
-  if (process.env.NODE_ENV === "production" && !process.env.CI) {
-    console.warn("Please add your MONGODB_URI to .env.local");
-  }
-}
-
 if (process.env.NODE_ENV === "development") {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
   if (!global._mongoClientPromise && uri) {
     client = new MongoClient(uri, options);
     global._mongoClientPromise = client.connect();
   }
-  clientPromise = global._mongoClientPromise || (uri ? new MongoClient(uri, options).connect() : Promise.reject(new Error("MONGODB_URI is not defined")));
+  clientPromise = global._mongoClientPromise || (uri ? new MongoClient(uri, options).connect() : (null as any));
 } else {
-  // In production mode, it's best to not use a global variable.
-  clientPromise = uri ? new MongoClient(uri, options).connect() : Promise.reject(new Error("MONGODB_URI is not defined"));
+  clientPromise = uri ? new MongoClient(uri, options).connect() : (null as any);
 }
 
 export default clientPromise;
@@ -37,6 +27,13 @@ export default clientPromise;
  * Returns database instance (default: "clientora")
  */
 export async function getDb(dbName = "clientora"): Promise<Db> {
+  if (!clientPromise) {
+    const mongoUri = process.env.MONGODB_URI;
+    if (!mongoUri) {
+      throw new Error("MONGODB_URI is not defined in runtime environment.");
+    }
+    clientPromise = new MongoClient(mongoUri, options).connect();
+  }
   const connectedClient = await clientPromise;
   return connectedClient.db(dbName);
 }

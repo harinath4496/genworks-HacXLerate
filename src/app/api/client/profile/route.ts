@@ -6,6 +6,8 @@ import {
   applySecurityHeaders,
 } from "@/lib/security";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET /api/client/profile - Secure Client Profile Retrieval
  * Protected by Cryptographic Session Token & Role Guard

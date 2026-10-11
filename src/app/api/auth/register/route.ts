@@ -9,6 +9,8 @@ import {
   applySecurityHeaders,
 } from "@/lib/security";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     // 1. CSRF / Origin Verification
