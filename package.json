@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "node scripts/test-runner.js",
     "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {
