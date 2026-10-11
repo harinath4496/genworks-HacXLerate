@@ -59,7 +59,7 @@ export async function GET() {
       tools: c.tools,
       experienceLevel: c.role,
       verificationScore: c.verificationScore,
-      isVerified: c.verified,
+      isVerified: Boolean(c.verificationBadge),
       user: {
         id: c.id,
         name: c.name,
